@@ -14,9 +14,6 @@ const Header = () => {
         <SignInButton mode="modal" />
         <SignUpButton mode="modal" />
       </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
       <ThemeSwitcher />
     </header>
   );

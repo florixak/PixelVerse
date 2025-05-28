@@ -3,19 +3,24 @@ import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import PixelDit from "@/public/pixeldit.png";
+import UserCard from "./user-card";
+import Image from "next/image";
 
 // Menu items.
 const items = [
   {
-    title: "Home",
-    url: "#",
+    title: "Posts",
+    url: "/",
     icon: Home,
   },
   {
@@ -43,6 +48,9 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
+      <SidebarHeader>
+        <Image src={PixelDit} alt="PixelDit Logo" width={120} height={120} />
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -62,6 +70,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <UserCard />
+      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -75,10 +75,12 @@ export default async function RootLayout({
             <SidebarProvider defaultOpen={defaultOpen}>
               <AppSidebar />
 
-              <main>
-                <SidebarTrigger className="size-10 cursor-pointer" />
-                {children}
-              </main>
+              <SidebarTrigger
+                className="sticky top-20 ml-5 z-30 flex items-center justify-center size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
+                aria-label="Toggle sidebar"
+              />
+
+              <main>{children}</main>
             </SidebarProvider>
             <Footer />
           </ThemeProvider>
