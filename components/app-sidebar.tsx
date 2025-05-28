@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Calendar, Home, Newspaper, Search, Settings } from "lucide-react";
 
 import {
   Sidebar,
@@ -15,18 +15,20 @@ import {
 import PixelDit from "@/public/pixeldit.png";
 import UserCard from "./user-card";
 import Image from "next/image";
+import Link from "next/link";
+import { cache, Suspense } from "react";
+import { getTopics } from "@/data/dummyData";
 
-// Menu items.
-const items = [
+const menu = [
   {
-    title: "Posts",
-    url: "/",
+    title: "Topics",
+    url: "/topics",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Newest",
+    url: "/topics?order=newest",
+    icon: Newspaper,
   },
   {
     title: "Calendar",
@@ -45,7 +47,25 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+async function TopicsList() {
+  const items = await getTopics(5);
+
+  return (
+    <>
+      {items.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <Link href={`/topics/${item.slug}`}>
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </>
+  );
+}
+
+export async function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -53,19 +73,29 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {menu.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Your Topics</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <Suspense fallback={<div>Loading topics...</div>}>
+                <TopicsList />
+              </Suspense>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
