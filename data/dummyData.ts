@@ -1,11 +1,26 @@
-import { Topic } from "@/lib/types";
+import { SortOrder, Topic } from "@/lib/types";
 import { cache } from "react";
 
 export const getTopics = cache(
-  async (count: number = dummyTopics.length): Promise<Topic[]> => {
+  async (
+    count: number = dummyTopics.length,
+    order: SortOrder = "alphabetical"
+  ): Promise<Topic[]> => {
     return new Promise((resolve) => {
+      const dummyTopicsCopy = [...dummyTopics];
       setTimeout(() => {
-        resolve(dummyTopics.slice(0, count));
+        if (order === "latest") {
+          dummyTopicsCopy.sort(
+            (a, b) => b.lastModified.getTime() - a.lastModified.getTime()
+          );
+        } else if (order === "oldest") {
+          dummyTopicsCopy.sort(
+            (a, b) => a.lastModified.getTime() - b.lastModified.getTime()
+          );
+        } else if (order === "alphabetical") {
+          dummyTopicsCopy.sort((a, b) => a.title.localeCompare(b.title));
+        }
+        resolve(dummyTopicsCopy.slice(0, count));
       }, 1000);
     });
   }
