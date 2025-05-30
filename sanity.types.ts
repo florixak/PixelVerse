@@ -20,25 +20,10 @@ export type Comment = {
   _updatedAt: string;
   _rev: string;
   content?: string;
-  post?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "post";
-  };
-  author?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "user";
-  };
+  post?: Post;
+  author?: User;
   publishedAt?: string;
-  parentComment?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "comment";
-  };
+  parentComment?: Comment;
   upvotes?: number;
   downvotes?: number;
   isEdited?: boolean;
@@ -74,18 +59,8 @@ export type Post = {
     _key: string;
   }>;
   excerpt?: string;
-  author?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "user";
-  };
-  topic?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "topic";
-  };
+  author?: User;
+  topic?: Topic;
   publishedAt?: string;
   postType?:
     | "text"
@@ -155,6 +130,7 @@ export type User = {
   createdAt?: string;
   isReported?: boolean;
   imageUrl?: string;
+  favoriteTopics?: Topic[];
 };
 
 export type SanityImagePaletteSwatch = {
