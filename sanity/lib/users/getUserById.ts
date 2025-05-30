@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 
-const getUserById = (userId: string) => {
+const getUserById = async (userId: string) => {
   return client.fetch(
     groq`*[_type == "user" && _id == $userId][0] {
       _id,
