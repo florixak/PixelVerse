@@ -69,7 +69,9 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Image src={PixelDit} alt="PixelDit Logo" width={120} height={120} />
+        <Link href="/">
+          <Image src={PixelDit} alt="PixelDit Logo" width={120} height={120} />
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
