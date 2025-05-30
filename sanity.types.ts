@@ -117,6 +117,7 @@ export type Topic = {
   description?: string;
   iconUrl?: string;
   bannerUrl?: string;
+  postCount?: number;
 };
 
 export type User = {
