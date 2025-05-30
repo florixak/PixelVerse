@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
-import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 import React, { Suspense } from "react";
@@ -31,7 +30,7 @@ const TopicsPage = async ({ searchParams }: TopicsProps) => {
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {topics.map((topic) => (
             <div
-              key={topic._id}
+              key={topic._id + topic.slug}
               className="border rounded-lg p-4 w-[20rem] overflow-hidden"
             >
               {topic.bannerUrl && (
@@ -43,6 +42,9 @@ const TopicsPage = async ({ searchParams }: TopicsProps) => {
               )}
               <h2 className="text-xl font-bold mt-2">{topic.title}</h2>
               <p className="text-sm text-gray-600">{topic.description}</p>
+              <p>
+                <span className="font-semibold">Posts:</span> {topic.postCount}
+              </p>
               <Button asChild>
                 <Link href={`/topics/${topic.slug}`}>View Topic</Link>
               </Button>
