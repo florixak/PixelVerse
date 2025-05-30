@@ -2,6 +2,7 @@
 
 import { SignedIn, useClerk, UserButton } from "@clerk/nextjs";
 import React from "react";
+import { Button } from "./ui/button";
 
 type UserCardProps = {
   collapsed?: boolean;
