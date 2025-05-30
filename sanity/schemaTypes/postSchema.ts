@@ -1,0 +1,222 @@
+import { defineField, defineType } from "sanity";
+
+export const postSchema = defineType({
+  name: "post",
+  title: "Post",
+  type: "document",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      validation: (Rule) => Rule.required().max(100),
+    }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: {
+        source: "title",
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "content",
+      title: "Content",
+      type: "array",
+      of: [{ type: "block" }],
+    }),
+    defineField({
+      name: "excerpt",
+      title: "Excerpt",
+      type: "text",
+      rows: 3,
+      description: "Short summary that appears in feed",
+    }),
+    defineField({
+      name: "author",
+      title: "Author",
+      type: "reference",
+      to: { type: "user" },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "topic",
+      title: "Topic",
+      type: "reference",
+      to: { type: "topic" },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "publishedAt",
+      title: "Published at",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
+    }),
+
+    // Pixel Art Specific Fields
+    defineField({
+      name: "postType",
+      title: "Post Type",
+      type: "string",
+      options: {
+        list: [
+          { title: "Text Only", value: "text" },
+          { title: "Pixel Art", value: "pixelArt" },
+          { title: "Animation", value: "animation" },
+          { title: "Tutorial", value: "tutorial" },
+          { title: "Resource", value: "resource" },
+          { title: "Question", value: "question" },
+        ],
+        layout: "radio",
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "image",
+      title: "Pixel Art Image",
+      type: "image",
+      hidden: ({ document }) =>
+        document?.postType !== "pixelArt" &&
+        document?.postType !== "animation" &&
+        document?.postType !== "tutorfial",
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
+      name: "dimensions",
+      title: "Dimensions (pixels)",
+      type: "object",
+      fields: [
+        { name: "width", type: "number", title: "Width" },
+        { name: "height", type: "number", title: "Height" },
+      ],
+      hidden: ({ document }) =>
+        document?.postType !== "pixelArt" && document?.postType !== "animation",
+    }),
+    defineField({
+      name: "software",
+      title: "Software Used",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "Aseprite", value: "aseprite" },
+          { title: "Piskel", value: "piskel" },
+          { title: "Pixel Studio", value: "pixelStudio" },
+          { title: "LibreSprite", value: "libreSprite" },
+          { title: "Photoshop", value: "photoshop" },
+          { title: "Other", value: "other" },
+        ],
+      },
+      hidden: ({ document }) =>
+        document?.postType !== "pixelArt" && document?.postType !== "animation",
+    }),
+
+    defineField({
+      name: "colorPalette",
+      title: "Color Palette",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "hex", type: "string", title: "Hex Code" },
+            { name: "name", type: "string", title: "Color Name" },
+          ],
+        },
+      ],
+      hidden: ({ document }) =>
+        document?.postType !== "pixelArt" && document?.postType !== "animation",
+    }),
+    defineField({
+      name: "difficulty",
+      title: "Difficulty Level",
+      type: "string",
+      options: {
+        list: [
+          { title: "Beginner", value: "beginner" },
+          { title: "Intermediate", value: "intermediate" },
+          { title: "Advanced", value: "advanced" },
+        ],
+      },
+      hidden: ({ document }) =>
+        document?.postType !== "pixelArt" &&
+        document?.postType !== "animation" &&
+        document?.postType !== "tutorial",
+    }),
+    defineField({
+      name: "timeSpent",
+      title: "Time Spent (hours)",
+      type: "number",
+      hidden: ({ document }) =>
+        document?.postType !== "pixelArt" && document?.postType !== "animation",
+    }),
+    defineField({
+      name: "tutorialSteps",
+      title: "Tutorial Steps",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "title", type: "string", title: "Step Title" },
+            { name: "description", type: "text", title: "Description" },
+            { name: "imageUrl", type: "url", title: "Step Image URL" },
+          ],
+        },
+      ],
+      hidden: ({ document }) => document?.postType !== "tutorial",
+    }),
+
+    // Community Features
+    defineField({
+      name: "upvotes",
+      title: "Upvotes",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+    }),
+    defineField({
+      name: "downvotes",
+      title: "Downvotes",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+    }),
+    defineField({
+      name: "tags",
+      title: "Tags",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
+      name: "isOriginal",
+      title: "Original Creation",
+      type: "boolean",
+      description: "Is this pixel art an original creation?",
+      initialValue: true,
+      hidden: ({ document }) =>
+        document?.postType !== "pixelArt" && document?.postType !== "animation",
+    }),
+    defineField({
+      name: "inspirationSource",
+      title: "Inspiration Source",
+      type: "string",
+      hidden: ({ document }) => document?.isOriginal !== false,
+    }),
+  ],
+  preview: {
+    select: {
+      title: "title",
+      author: "author.name",
+      media: "image",
+    },
+    prepare(selection) {
+      const { author } = selection;
+      return { ...selection, subtitle: author && `by ${author}` };
+    },
+  },
+});
