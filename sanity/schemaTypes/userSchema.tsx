@@ -1,5 +1,3 @@
-import { UserIcon } from "lucide-react";
-import Image from "next/image";
 import { defineType, defineField } from "sanity";
 
 export const userSchema = defineType({
@@ -39,10 +37,21 @@ export const userSchema = defineType({
       title: "Image URL",
       type: "url",
       description: "URL of the user's profile image",
-      validation: (Rule) =>
-        Rule.uri({
-          scheme: ["https"],
-        }),
+    }),
+    defineField({
+      name: "favoriteTopics",
+      title: "Favorite Topics",
+      type: "array",
+      of: [{ type: "reference", to: { type: "topic" } }],
+    }),
+    defineField({
+      name: "clerkId",
+      title: "Clerk ID",
+      type: "string",
+      description:
+        "Unique identifier for the user from Clerk, used for authentication.",
+      validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
   ],
   preview: {
@@ -50,19 +59,14 @@ export const userSchema = defineType({
       title: "username",
       media: "imageUrl",
     },
-    prepare({ title, media }) {
+    prepare(selection) {
+      const { title, media } = selection;
       return {
-        title,
+        title: title || "Unnamed User",
+        // Create a proper media object for external URLs
         media: media ? (
-          <Image
-            src={media}
-            alt={`User avatar for ${title}`}
-            width={40}
-            height={40}
-          />
-        ) : (
-          <UserIcon />
-        ),
+          <img src={media} alt={title} style={{ objectFit: "cover" }} />
+        ) : null,
       };
     },
   },
