@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 
-const getAllPosts = () => {
+const getAllPosts = async () => {
   return client.fetch(
     groq`*[_type == "post"] {
       _id,

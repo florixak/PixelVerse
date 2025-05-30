@@ -1,7 +1,7 @@
 import { client } from "../client";
 import { groq } from "next-sanity";
 
-const getPostBySlug = (topicSlug: string) => {
+const getPostBySlug = async (topicSlug: string) => {
   return client.fetch(
     groq`*[_type == "post" && references(*[_type == "topic" && slug.current == $topicSlug]._id)] {
       _id,

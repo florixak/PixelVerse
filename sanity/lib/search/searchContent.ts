@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 
-const searchContent = (query: string) => {
+const searchContent = async (query: string) => {
   if (!query || query.trim() === "") {
     return Promise.resolve({ posts: [], topics: [] });
   }

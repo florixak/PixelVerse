@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 
-const getFeaturedContent = () => {
+const getFeaturedContent = async () => {
   return client.fetch(
     groq`{
       "featuredPosts": *[_type == "post"] | order(upvotes desc)[0...6] {

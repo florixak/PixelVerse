@@ -2,7 +2,7 @@ import { groq } from "next-sanity";
 
 import { client } from "../client";
 
-const getPostByType = (postType: string) => {
+const getPostByType = async (postType: string) => {
   return client.fetch(
     groq`*[_type == "post" && postType == $postType] {
       _id,
