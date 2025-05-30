@@ -13,11 +13,11 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import PixelDit from "@/public/pixeldit.png";
-import UserCard from "./user-card";
 import Image from "next/image";
 import Link from "next/link";
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
 import { getTopics } from "@/data/dummyData";
+import { CollapsibleUserCard } from "./collapsible-user-card";
 
 const menu = [
   {
@@ -27,7 +27,7 @@ const menu = [
   },
   {
     title: "Newest",
-    url: "/topics?order=newest",
+    url: "/topics?order=latest",
     icon: Newspaper,
   },
   {
@@ -65,9 +65,9 @@ async function TopicsList() {
   );
 }
 
-export async function AppSidebar() {
+export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <Image src={PixelDit} alt="PixelDit Logo" width={120} height={120} />
       </SidebarHeader>
@@ -101,7 +101,7 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <UserCard />
+        <CollapsibleUserCard />
       </SidebarFooter>
     </Sidebar>
   );
