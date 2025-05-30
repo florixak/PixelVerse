@@ -11,3 +11,5 @@ export type Topic = {
     lastModified: Date;
   }[];
 };
+
+export type SortOrder = "latest" | "oldest" | "alphabetical";
