@@ -3,7 +3,11 @@
 import { SignedIn, useClerk, UserButton } from "@clerk/nextjs";
 import React from "react";
 
-const UserCard = () => {
+type UserCardProps = {
+  collapsed?: boolean;
+};
+
+const UserCard = ({ collapsed }: UserCardProps) => {
   const user = useClerk().user;
   if (!user) {
     return null;
@@ -11,16 +15,23 @@ const UserCard = () => {
 
   return (
     <SignedIn>
-      <div className="flex items-center justify-between p-4 gap-4">
-        {user.firstName && user.lastName ? (
-          <span className="text-sm font-semibold">
-            {user.firstName} {user.lastName}
-          </span>
-        ) : (
-          <span className="text-sm font-semibold">
-            {user.username || user.emailAddresses[0]?.emailAddress || "User"}
-          </span>
-        )}
+      <div
+        className={`flex items-center gap-2 p-2 ${
+          !collapsed
+            ? "flex-col text-center"
+            : "flex-row justify-between w-full"
+        }`}
+      >
+        {collapsed &&
+          (user.firstName && user.lastName ? (
+            <span className="text-sm font-semibold">
+              {user.firstName} {user.lastName}
+            </span>
+          ) : (
+            <span className="text-sm font-semibold">
+              {user.username || user.emailAddresses[0]?.emailAddress || "User"}
+            </span>
+          ))}
 
         <UserButton />
       </div>
