@@ -24,7 +24,8 @@ const getAllTopics = async ({
       createdAt,
       updatedAt,
         "iconUrl": icon.asset->url,
-        "bannerUrl": banner.asset->url
+        "bannerUrl": banner.asset->url,
+        "postCount": count(*[_type == "post" && references(^._id)])
     }`
   );
 };

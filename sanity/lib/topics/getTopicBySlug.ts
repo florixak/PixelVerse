@@ -6,7 +6,7 @@ const getTopicBySlug = async (slug: string): Promise<Topic> => {
     `*[_type == "topic" && slug.current == $slug][0] {
         _id,
         title,
-        slug,
+        "slug": slug.current,
         description,
         createdAt,
         updatedAt,
