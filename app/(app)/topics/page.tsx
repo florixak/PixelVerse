@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
+import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 import React, { Suspense } from "react";
@@ -18,7 +19,6 @@ const TopicsPage = async ({ searchParams }: TopicsProps) => {
     order: order === "latest" ? "latest" : "alphabetical",
     from: 0,
   });
-  console.log(topics);
 
   return (
     <div className="p-6">
