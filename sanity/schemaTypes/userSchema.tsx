@@ -12,6 +12,12 @@ export const userSchema = defineType({
       validation: (Rule) => Rule.required().min(3),
     }),
     defineField({
+      name: "fullName",
+      title: "Full Name",
+      type: "string",
+      description: "The user's full name, if available.",
+    }),
+    defineField({
       name: "email",
       title: "Email",
       type: "string",

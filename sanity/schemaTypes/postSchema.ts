@@ -1,3 +1,8 @@
+import {
+  DIFFICULTY_LEVELS,
+  POST_TYPES,
+  SOFTWARE_OPTIONS,
+} from "@/lib/constants";
 import { defineField, defineType } from "sanity";
 
 export const postSchema = defineType({
@@ -53,6 +58,7 @@ export const postSchema = defineType({
       title: "Published at",
       type: "datetime",
       initialValue: () => new Date().toISOString(),
+      readOnly: true,
     }),
 
     // Pixel Art Specific Fields
@@ -61,14 +67,7 @@ export const postSchema = defineType({
       title: "Post Type",
       type: "string",
       options: {
-        list: [
-          { title: "Text Only", value: "text" },
-          { title: "Pixel Art", value: "pixelArt" },
-          { title: "Animation", value: "animation" },
-          { title: "Tutorial", value: "tutorial" },
-          { title: "Resource", value: "resource" },
-          { title: "Question", value: "question" },
-        ],
+        list: POST_TYPES,
         layout: "radio",
       },
       validation: (Rule) => Rule.required(),
@@ -102,14 +101,7 @@ export const postSchema = defineType({
       type: "array",
       of: [{ type: "string" }],
       options: {
-        list: [
-          { title: "Aseprite", value: "aseprite" },
-          { title: "Piskel", value: "piskel" },
-          { title: "Pixel Studio", value: "pixelStudio" },
-          { title: "LibreSprite", value: "libreSprite" },
-          { title: "Photoshop", value: "photoshop" },
-          { title: "Other", value: "other" },
-        ],
+        list: SOFTWARE_OPTIONS,
       },
       hidden: ({ document }) =>
         document?.postType !== "pixelArt" && document?.postType !== "animation",
@@ -136,11 +128,7 @@ export const postSchema = defineType({
       title: "Difficulty Level",
       type: "string",
       options: {
-        list: [
-          { title: "Beginner", value: "beginner" },
-          { title: "Intermediate", value: "intermediate" },
-          { title: "Advanced", value: "advanced" },
-        ],
+        list: DIFFICULTY_LEVELS,
       },
       hidden: ({ document }) =>
         document?.postType !== "pixelArt" &&
