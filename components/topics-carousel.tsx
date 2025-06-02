@@ -1,17 +1,14 @@
-import { Topic } from "@/sanity.types";
+import { getPopularTopics } from "@/sanity/lib/featured/getPopularTopics";
 import Image from "next/image";
 
 type TopicsCarouselProps = {
-  topics?: Topic[];
   className?: string;
   showTitle?: boolean;
   title?: string;
 };
 
-const TopicsCarousel = ({
-  topics = [],
-  className = "",
-}: TopicsCarouselProps) => {
+const TopicsCarousel = async ({ className = "" }: TopicsCarouselProps) => {
+  const topics = await getPopularTopics();
   return (
     <div className={`topics-carousel ${className}`}>
       <div className="flex overflow-x-auto gap-4 p-4">
