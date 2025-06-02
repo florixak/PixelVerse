@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createPost } from "@/actions/userActions";
+import { createPost } from "@/actions/postActions";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { Topic } from "@/sanity.types";
 import TutorialFields from "./tutorial-fields";
 import ConditionalFields from "./conditional-fields";
 import BasicFields from "./basic-fields";
+import toast from "react-hot-toast";
 
 type CreatePostFormProps = {
   topics: Topic[];
@@ -95,22 +96,17 @@ export default function CreatePostForm({ topics }: CreatePostFormProps) {
 
       const result = await createPost(formData);
 
-      /*toast({
-        title: "Post created successfully!",
-        description: "Your post has been published.",
-        variant: "default",
-      });*/
+      toast.success(
+        `Post created successfully! Your post "${result.title}" has been created.`,
+        { duration: 5000 }
+      );
 
-      // Redirect to the new post
       router.push(`/topics/${result.topicSlug.current}/${result.slug.current}`);
     } catch (error) {
       console.error("Error creating post:", error);
-      /*toast({
-        title: "Error creating post",
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });*/
+      toast.error("Failed to create post. Please try again.", {
+        duration: 5000,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -119,7 +115,7 @@ export default function CreatePostForm({ topics }: CreatePostFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-8 max-w-4xl mx-auto w-full"
+      className="space-y-8 max-w-4xl mx-auto w-full p-6"
     >
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Create a New Post</h1>
@@ -151,8 +147,8 @@ export default function CreatePostForm({ topics }: CreatePostFormProps) {
         />
       )}
       <div className="flex justify-end space-x-4">
-        <Button type="button" variant="outline" asChild>
-          <Link href="/topics">Cancel</Link>
+        <Button type="button" variant="outline" onClick={() => router.back()}>
+          Cancel
         </Button>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Creating..." : "Create Post"}
