@@ -16,18 +16,19 @@ import PixelDit from "@/public/pixeldit.png";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { getTopics } from "@/data/dummyData";
+
 import { CollapsibleUserCard } from "./collapsible-user-card";
+import { getPopularTopics } from "@/sanity/lib/featured/getPopularTopics";
 
 const menu = [
   {
-    title: "Topics",
-    url: "/topics",
+    title: "Home",
+    url: "/",
     icon: Home,
   },
   {
-    title: "Newest",
-    url: "/topics?order=latest",
+    title: "Topics",
+    url: "/topics",
     icon: Newspaper,
   },
   {
@@ -48,11 +49,11 @@ const menu = [
 ];
 
 async function TopicsList() {
-  const items = await getTopics(5);
+  const popularTopics = await getPopularTopics();
 
   return (
     <>
-      {items.map((item) => (
+      {popularTopics.map((item) => (
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton asChild>
             <Link href={`/topics/${item.slug}`}>
@@ -92,7 +93,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Your Topics</SidebarGroupLabel>
+          <SidebarGroupLabel>Popular Topics</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <Suspense fallback={<div>Loading topics...</div>}>
