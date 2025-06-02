@@ -24,8 +24,8 @@ export type Comment = {
   author?: User;
   publishedAt?: string;
   parentComment?: Comment;
-  upvotes?: number;
-  downvotes?: number;
+  likes?: number;
+  dislikes?: number;
   isEdited?: boolean;
   lastEditedAt?: string;
   pixelArtUrl?: string;
@@ -88,11 +88,12 @@ export type Post = {
     imageUrl?: string;
     _key: string;
   }>;
-  upvotes?: number;
-  downvotes?: number;
+  likes?: number;
+  dislikes?: number;
   tags?: Array<string>;
   isOriginal?: boolean;
   inspirationSource?: string;
+  comments?: Array<Comment>;
 };
 
 export type Topic = {
@@ -112,25 +113,24 @@ export type Topic = {
 export type User = {
   _id: string;
   _type: "user";
-  _createdAt: string;
   _updatedAt: string;
   _rev: string;
   username?: string;
-  fullName?: string; // Added
+  fullName?: string;
   email?: string;
-  clerkId?: string; // Added
+  clerkId?: string;
   createdAt?: string;
   isReported?: boolean;
   imageUrl?: string;
   favoriteTopics?: Topic[];
 
   // Activity statistics
-  postCount?: number; // Added
-  commentCount?: number; // Added
+  postCount?: number;
+  commentCount?: number;
 
   // Voting history
-  upvotedPosts?: string[]; // Added - array of post IDs
-  downvotedPosts?: string[]; // Added - array of post IDs
+  upvotedPosts?: string[];
+  downvotedPosts?: string[];
 };
 
 export type SanityImagePaletteSwatch = {

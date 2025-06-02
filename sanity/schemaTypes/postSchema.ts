@@ -161,15 +161,15 @@ export const postSchema = defineType({
 
     // Community Features
     defineField({
-      name: "upvotes",
-      title: "Upvotes",
+      name: "likes",
+      title: "Likes",
       type: "number",
       initialValue: 0,
       readOnly: true,
     }),
     defineField({
-      name: "downvotes",
-      title: "Downvotes",
+      name: "dislikes",
+      title: "Dislikes",
       type: "number",
       initialValue: 0,
       readOnly: true,
