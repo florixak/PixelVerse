@@ -10,6 +10,7 @@ import {
   CommandList,
 } from "./ui/command";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 const CommandSearch = () => {
   const [open, setOpen] = useState(false);
@@ -34,10 +35,32 @@ const CommandSearch = () => {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Posts">
-            <CommandItem onSelect={() => router.push("/create-post")}>
-              Create new post
-            </CommandItem>
+            <CommandItem>Create new post</CommandItem>
             <CommandItem>View the latest posts</CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+    );
+  }
+
+  if (pathname.startsWith("/topics/")) {
+    const topicSlug = pathname.replace("/topics", "");
+    return (
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Posts">
+            <CommandItem>
+              <Link href={`/topics/${topicSlug}/new-post`}>
+                Create new post
+              </Link>
+            </CommandItem>
+            <CommandItem>
+              <Link href={`/topics/${topicSlug}?order=latest`}>
+                View the latest posts
+              </Link>
+            </CommandItem>
           </CommandGroup>
         </CommandList>
       </CommandDialog>
@@ -51,11 +74,10 @@ const CommandSearch = () => {
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Topics">
           <CommandItem>View All Topics</CommandItem>
-          <CommandItem>Search Topics</CommandItem>
         </CommandGroup>
         <CommandGroup heading="Posts">
-          <CommandItem onSelect={() => router.push("/create-post")}>
-            Create new post
+          <CommandItem>
+            <Link href={""}>Create new post</Link>
           </CommandItem>
           <CommandItem>View the latest posts</CommandItem>
         </CommandGroup>
