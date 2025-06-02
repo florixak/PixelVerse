@@ -21,7 +21,7 @@ const getAllTopics = async ({
       title,
       "slug": slug.current,
       description,
-      createdAt,
+      publishedAt,
       updatedAt,
         "iconUrl": icon.asset->url,
         "bannerUrl": banner.asset->url,

@@ -11,7 +11,7 @@ const getPostBySlug = async (topicSlug: string) => {
       publishedAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId},
       dimensions,
       software,
       upvotes,

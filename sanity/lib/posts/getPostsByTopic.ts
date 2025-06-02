@@ -9,15 +9,17 @@ const getPostsByTopic = async (topicSlug: string): Promise<Post[]> => {
       title,
       "slug": slug.current,
       excerpt,
-      publishedAt,
+      _createdAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId},
+      "topicSlug": *[_type == "topic" && _id == ^.topic._ref][0].slug.current,
       dimensions,
       software,
       upvotes,
       downvotes,
-      tags
+      tags,
+
     } | order(publishedAt desc)`,
     { topicSlug }
   );
