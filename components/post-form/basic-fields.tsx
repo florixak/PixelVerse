@@ -53,7 +53,7 @@ const BasicFields = ({ topics, setPostType }: BasicFieldsProps) => {
           </SelectContent>
         </Select>
         <Button type="button" variant="outline" size="sm" asChild>
-          <a href="/topics/new">+</a>
+          <a href="/topics/new-topic">+</a>
         </Button>
       </div>
 
