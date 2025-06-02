@@ -1,7 +1,16 @@
-import React from "react";
+import { cn } from "@/lib/utils";
 
-const Card = () => {
-  return <div className="roun"></div>;
+type CardProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+const Card = ({ children, className }: CardProps) => {
+  return (
+    <div className={cn("border rounded-lg p-4 overflow-hidden", className)}>
+      {children}
+    </div>
+  );
 };
 
 export default Card;
