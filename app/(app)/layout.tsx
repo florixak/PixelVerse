@@ -9,6 +9,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cookies } from "next/headers";
 import { dark } from "@clerk/themes";
+import { Toaster } from "react-hot-toast";
+import CommandSearch from "@/components/command-search";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,6 +75,8 @@ export default async function RootLayout({
         >
           <ThemeProvider defaultTheme="system" attribute="class" enableSystem>
             <Header />
+            <Toaster position="bottom-right" />
+            <CommandSearch />
             <SidebarProvider defaultOpen={defaultOpen}>
               <AppSidebar />
 
