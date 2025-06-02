@@ -1,23 +1,22 @@
+import TopicCard from "@/components/topic-card";
 import { Button } from "@/components/ui/button";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
 import Link from "next/link";
 
 import React, { Suspense } from "react";
 
-type TopicsProps = {
+type TopicsPageProps = {
   searchParams: Promise<{
     order?: string;
   }>;
 };
 
-const TopicsPage = async ({ searchParams }: TopicsProps) => {
-  const { order } = await searchParams;
+type TopicsProps = {
+  order?: string;
+};
 
-  const topics = await getAllTopics({
-    limit: 10,
-    order: order === "latest" ? "latest" : "alphabetical",
-    from: 0,
-  });
+const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
+  const { order } = await searchParams;
 
   return (
     <div className="p-6">
@@ -27,31 +26,23 @@ const TopicsPage = async ({ searchParams }: TopicsProps) => {
         topic to see related posts.
       </p>
       <Suspense fallback={<div>Loading topics...</div>}>
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {topics.map((topic) => (
-            <div
-              key={topic._id + topic.slug}
-              className="border rounded-lg p-4 w-[20rem] overflow-hidden"
-            >
-              {topic.bannerUrl && (
-                <img
-                  src={topic.bannerUrl}
-                  alt={topic.title}
-                  className="w-full object-cover rounded-lg"
-                />
-              )}
-              <h2 className="text-xl font-bold mt-2">{topic.title}</h2>
-              <p className="text-sm text-gray-600">{topic.description}</p>
-              <p>
-                <span className="font-semibold">Posts:</span> {topic.postCount}
-              </p>
-              <Button asChild>
-                <Link href={`/topics/${topic.slug}`}>View Topic</Link>
-              </Button>
-            </div>
-          ))}
-        </div>
+        <Topics order={order} />
       </Suspense>
+    </div>
+  );
+};
+
+const Topics = async ({ order }: TopicsProps) => {
+  const topics = await getAllTopics({
+    limit: 10,
+    order: order === "latest" ? "latest" : "alphabetical",
+    from: 0,
+  });
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {topics.map((topic) => (
+        <TopicCard key={topic._id} topic={topic} />
+      ))}
     </div>
   );
 };
