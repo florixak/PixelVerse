@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PixelDit",
+  title: "PixelVerse",
   description: "Post your pixel art and share it with the world!",
   keywords: [
     "pixel art",
@@ -35,10 +35,10 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Ondřej Pták", url: "https://ondrejptak.dev" }],
   openGraph: {
-    title: "PixelDit",
+    title: "PixelVerse",
     description: "Post your pixel art and share it with the world!",
-    url: "https://pixeldit.com",
-    siteName: "PixelDit",
+    url: "https://pixelverse.com",
+    siteName: "PixelVerse",
     images: [
       {
         url: "https://pixeldit.com/og-image.png",
@@ -52,10 +52,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PixelDit",
+    title: "PixelVerse",
     description: "Post your pixel art and share it with the world!",
-    images: ["https://pixeldit.com/og-image.png"],
-    creator: "@pixeldit",
+    images: ["https://pixelverse.com/og-image.png"],
+    creator: "@pixelverse",
   },
 };
 
@@ -81,11 +81,11 @@ export default async function RootLayout({
               <AppSidebar />
 
               <SidebarTrigger
-                className="sticky top-20 ml-5 z-30 flex items-center justify-center size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
+                className="sticky top-20 ml-5 z-30 size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
                 aria-label="Toggle sidebar"
               />
 
-              <main>{children}</main>
+              <main className="min-h-screen w-full">{children}</main>
             </SidebarProvider>
             <Footer />
           </ThemeProvider>
