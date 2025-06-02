@@ -26,6 +26,15 @@ const getAllTopics = async ({
         "iconUrl": icon.asset->url,
         "bannerUrl": banner.asset->url,
         "postCount": count(*[_type == "post" && references(^._id)])
+      "comments": *[
+    _type == "comment" &&
+    references(*[_type == "post" && references(^._id)]._id)
+  ]{
+    _id,
+    text,
+    author->{username, "imageUrl": imageUrl},
+    createdAt
+  }  
     }`
   );
 };
