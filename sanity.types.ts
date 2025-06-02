@@ -60,7 +60,7 @@ export type Post = {
   }>;
   excerpt?: string;
   author?: User;
-  topic?: Topic;
+  topicSlug?: Topic["slug"];
   publishedAt?: string;
   postType?:
     | "text"
@@ -69,18 +69,7 @@ export type Post = {
     | "tutorial"
     | "resource"
     | "question";
-  image?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
+  imageUrl?: string;
   dimensions?: {
     width?: number;
     height?: number;
@@ -127,11 +116,21 @@ export type User = {
   _updatedAt: string;
   _rev: string;
   username?: string;
+  fullName?: string; // Added
   email?: string;
+  clerkId?: string; // Added
   createdAt?: string;
   isReported?: boolean;
   imageUrl?: string;
   favoriteTopics?: Topic[];
+
+  // Activity statistics
+  postCount?: number; // Added
+  commentCount?: number; // Added
+
+  // Voting history
+  upvotedPosts?: string[]; // Added - array of post IDs
+  downvotedPosts?: string[]; // Added - array of post IDs
 };
 
 export type SanityImagePaletteSwatch = {
