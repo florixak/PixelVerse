@@ -8,7 +8,7 @@ export const getUserByClerkId = async (
   return client.fetch(
     groq`*[_type == "user" && clerkId == $clerkId][0] {
       _id,
-      _createdAt,
+      createdAt,
       username,
       fullName,
       email,
