@@ -15,13 +15,46 @@ export async function createPost(formData: FormData) {
   const topicId = formData.get("topic")?.toString() || "";
   const postTitle = formData.get("title")?.toString() || "Untitled Post";
 
+  const imageFile = formData.get("image") as File;
+  let imageAsset = null;
+
+  if (imageFile && imageFile.size > 0) {
+    const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+
+    imageAsset = await writeClient.assets.upload("image", imageBuffer, {
+      filename: imageFile.name,
+      contentType: imageFile.type,
+    });
+  }
+
+  let baseSlug = slugify(postTitle, { lower: true, strict: true });
+
+  const existingSlugs = await writeClient.fetch(
+    `*[_type == "post" && slug.current == $slug].slug.current`,
+    { slug: baseSlug }
+  );
+
+  let finalSlug = baseSlug;
+  if (existingSlugs.length > 0) {
+    finalSlug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
+  }
+
   const newPost = await writeClient.create({
     _type: "post",
     title: postTitle,
     slug: {
       _type: "slug",
-      current: slugify(postTitle, { lower: true, strict: true }),
+      current: finalSlug,
     },
+    image: imageAsset
+      ? {
+          _type: "image",
+          asset: {
+            _type: "reference",
+            _ref: imageAsset._id,
+          },
+        }
+      : null,
     content: formData.get("content")?.toString() || "",
     excerpt: formData.get("content")?.toString().substring(0, 150) || "",
     topic: {
