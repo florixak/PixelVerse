@@ -2,7 +2,7 @@ import { writeClient } from "@/sanity/lib/client";
 import addUser from "@/sanity/lib/users/addUser";
 import { User } from "@clerk/nextjs/server";
 
-export async function ensureSanityUser(user: User) {
+export async function ensureSanityUser(user: User): Promise<string> {
   if (!user) throw new Error("No user provided");
 
   const existingUser = await writeClient.fetch(
