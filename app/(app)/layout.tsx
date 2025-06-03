@@ -80,14 +80,13 @@ export default async function RootLayout({
             <SidebarProvider defaultOpen={defaultOpen}>
               <AppSidebar />
 
-              <div className="relative">
+              <main className="relative min-h-screen w-full px-4">
                 <SidebarTrigger
-                  className="absolute left-5 -top-12 z-30 size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
+                  className="fixed top-3 z-40 size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
                   aria-label="Toggle sidebar"
                 />
-
-                <main className="min-h-screen w-full">{children}</main>
-              </div>
+                {children}
+              </main>
             </SidebarProvider>
             <Footer />
           </ThemeProvider>
