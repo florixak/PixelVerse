@@ -94,6 +94,10 @@ export type Post = {
   isOriginal?: boolean;
   inspirationSource?: string;
   comments?: Array<Comment>;
+  reactions?: Array<{
+    user: User;
+    type: "like" | "dislike" | null;
+  }>;
 };
 
 export type Topic = {
@@ -131,6 +135,12 @@ export type User = {
   // Voting history
   upvotedPosts?: string[];
   downvotedPosts?: string[];
+};
+
+export type Reaction = {
+  user: User;
+  type: "like" | "dislike" | null;
+  _key: string;
 };
 
 export type SanityImagePaletteSwatch = {
