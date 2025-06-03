@@ -1,8 +1,5 @@
 import TopicCard from "@/components/topic-card";
-import { Button } from "@/components/ui/button";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
-import Link from "next/link";
-
 import React, { Suspense } from "react";
 
 type TopicsPageProps = {
