@@ -2,9 +2,11 @@ import TopicsCarousel from "@/components/topics-carousel";
 import FeaturedPosts from "@/components/featured-posts";
 import { Suspense } from "react";
 
+export const revalidate = 3600;
+
 export default function Home() {
   return (
-    <div className="container py-8">
+    <div className="flex-center flex-col p-10 md:p-16">
       <h1 className="text-4xl font-bold text-center mb-8">
         Welcome to PixelVerse
       </h1>
