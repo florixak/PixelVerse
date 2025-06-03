@@ -1,4 +1,4 @@
-import Card from "./card";
+import Card from "../card";
 import { Post } from "@/sanity.types";
 import { cn, formatDate } from "@/lib/utils";
 import Image from "next/image";

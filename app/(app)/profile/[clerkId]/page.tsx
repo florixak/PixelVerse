@@ -1,4 +1,4 @@
-import PostCard from "@/components/post-card";
+import PostCard from "@/components/post/post-card";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import getLatestActivityOfUser from "@/sanity/lib/featured/getLatestActivityOfUser";

@@ -1,4 +1,4 @@
-import PostCard from "@/components/post-card";
+import PostCard from "@/components/post/post-card";
 import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
 import React, { Suspense } from "react";

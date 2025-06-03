@@ -1,7 +1,7 @@
 "use client";
 
 import { deletePost } from "@/actions/postActions";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";

@@ -1,5 +1,5 @@
-import PostAuthorButtons from "@/components/post-author-buttons";
-import PostReactions from "@/components/post-reactions";
+import PostAuthorButtons from "@/components/post/post-author-buttons";
+import PostReactions from "@/components/post/post-reactions";
 import { formatDate } from "@/lib/utils";
 import getPostBySlug from "@/sanity/lib/posts/getPostBySlug";
 import { currentUser } from "@clerk/nextjs/server";
