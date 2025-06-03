@@ -4,23 +4,36 @@ import { Post } from "@/sanity.types";
 
 const getPostsByTopic = async (topicSlug: string): Promise<Post[]> => {
   return client.fetch(
-    groq`*[_type == "post" && references(*[_type == "topic" && slug.current == $topicSlug]._id)] {
+    groq`*[_type == "post" && references(*[_type == "topic" && slug.current == $topicSlug]._id) && isDeleted != true] | order(likes desc) {
       _id,
       title,
       "slug": slug.current,
       excerpt,
-      _createdAt,
+      publishedAt,
       postType,
       "imageUrl": image.asset->url,
       "author": author->{_id, username, "imageUrl": imageUrl, clerkId},
       "topicSlug": *[_type == "topic" && _id == ^.topic._ref][0].slug.current,
       dimensions,
       software,
-      upvotes,
-      downvotes,
+      "likes": count(reactions[type == "like"]),
+      "dislikes": count(reactions[type == "dislike"]),
       tags,
-
-    } | order(publishedAt desc)`,
+      isDeleted,
+      "comments": *[_type == "comment" && references(^._id)]{
+        _id,
+        content,
+        author->{_id, username, "imageUrl": imageUrl, clerkId},
+        publishedAt,
+        parentComment,
+        likes,
+        dislikes,
+        isEdited,
+        lastEditedAt,
+        pixelArtUrl,
+        isDeleted
+      }
+    }`,
     { topicSlug }
   );
 };

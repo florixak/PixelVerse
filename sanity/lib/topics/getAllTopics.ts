@@ -25,16 +25,23 @@ const getAllTopics = async ({
       updatedAt,
         "iconUrl": icon.asset->url,
         "bannerUrl": banner.asset->url,
-        "postCount": count(*[_type == "post" && references(^._id)])
+        "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
       "comments": *[
-    _type == "comment" &&
-    references(*[_type == "post" && references(^._id)]._id)
-  ]{
-    _id,
-    text,
-    author->{username, "imageUrl": imageUrl},
-    createdAt
-  }  
+        _type == "comment" &&
+        references(*[_type == "post" && references(^._id) && isDeleted != true]._id)
+      ]{
+        _id,
+        content,
+        author->{username, "imageUrl": imageUrl},
+        publishedAt,
+        parentComment,
+        likes,
+        dislikes,
+        isEdited,
+        lastEditedAt,
+        pixelArtUrl,
+        isDeleted
+      } 
     }`
   );
 };

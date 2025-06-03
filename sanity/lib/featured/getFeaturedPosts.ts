@@ -5,7 +5,7 @@ import { Post } from "@/sanity.types";
 export const getFeaturedPosts = async (): Promise<Post[]> => {
   return client.fetch(
     groq`
-      *[_type == "post"] | order(upvotes desc)[0...6] {
+      *[_type == "post" && isDeleted != true] | order(upvotes desc)[0...6] {
         _id,
         title,
         "slug": slug.current,
@@ -14,7 +14,19 @@ export const getFeaturedPosts = async (): Promise<Post[]> => {
         "imageUrl": image.asset->url,
         "author": author->{username, "imageUrl": imageUrl, clerkId},
         "topic": topic->{title, "slug": slug.current},
-        upvotes
+        "comments": *[_type == "comment" && references(^._id)]{
+        _id,
+        content,
+        author->{_id, username, "imageUrl": imageUrl},
+        publishedAt,
+        parentComment,
+        likes,
+        dislikes,
+        isEdited,
+        lastEditedAt,
+        pixelArtUrl,
+        isDeleted
+      }
       }
     `
   );
