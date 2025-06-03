@@ -25,22 +25,19 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
   }
   const user = await getUserByClerkId(clerkId);
 
-  console.log("User:", user);
-  console.log(user?.createdAt);
-
   return (
-    <section className="flex flex-col p-16">
-      <div className="flex flex-row justify-between items-start w-ful px-32">
+    <section className="flex flex-col">
+      <div className="flex flex-col items-end i md:flex-row md:justify-between md:items-start w-ful px-32">
         <div className="flex flex-row items-center">
           <Image
-            src={user?.imageUrl || "/avatar-default.png"}
+            src={user?.imageUrl || "/avatar-default.svg"}
             alt={`${user?.username}'s avatar`}
             className="w-36 h-36 rounded-full mr-8"
             width={192}
             height={192}
             loading="lazy"
             placeholder="blur"
-            blurDataURL="/avatar-default.png"
+            blurDataURL="/avatar-default.svg"
           />
           <div className="flex flex-col justify-center">
             <h1 className="text-4xl font-semibold">{user?.username}</h1>
@@ -73,7 +70,7 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col mt-8 px-32">
+      <div className="flex flex-col mt-8 px-10 sm:px-20 md:px-32">
         <h2 className="text-2xl font-semibold">Latest Activity</h2>
         <p className="text-muted-foreground">
           Here are the latest posts and comments made by {user?.username}.
