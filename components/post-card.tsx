@@ -45,7 +45,11 @@ const PostCard = ({ post, className, imageSize }: PostCardProps) => {
       </p>
       <p>
         <span className="font-semibold">Published:</span>{" "}
-        {formatDate(post._createdAt)}
+        {formatDate(post.publishedAt)}
+      </p>
+      <p>
+        <span className="font-semibold">Comments:</span>{" "}
+        {post.comments?.length || 0}
       </p>
     </Card>
   );
