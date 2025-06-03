@@ -9,6 +9,7 @@ export const postSchema = defineType({
   name: "post",
   title: "Post",
   type: "document",
+  description: "A blog post or tutorial related to pixel art",
   fields: [
     defineField({
       name: "title",
@@ -23,6 +24,7 @@ export const postSchema = defineType({
       options: {
         source: "title",
         maxLength: 96,
+        isUnique: (slug, context) => context.defaultIsUnique(slug, context),
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -158,22 +160,6 @@ export const postSchema = defineType({
       ],
       hidden: ({ document }) => document?.postType !== "tutorial",
     }),
-
-    // Community Features
-    defineField({
-      name: "likes",
-      title: "Likes",
-      type: "number",
-      initialValue: 0,
-      readOnly: true,
-    }),
-    defineField({
-      name: "dislikes",
-      title: "Dislikes",
-      type: "number",
-      initialValue: 0,
-      readOnly: true,
-    }),
     defineField({
       name: "tags",
       title: "Tags",
@@ -194,6 +180,20 @@ export const postSchema = defineType({
       title: "Inspiration Source",
       type: "string",
       hidden: ({ document }) => document?.isOriginal !== false,
+    }),
+    defineField({
+      name: "isDeleted",
+      title: "Is Deleted",
+      type: "boolean",
+      initialValue: false,
+      description: "If true, this post is hidden from users but not deleted.",
+    }),
+    defineField({
+      name: "reactions",
+      title: "Reactions",
+      type: "array",
+      of: [{ type: "reaction" }],
+      options: { layout: "grid" },
     }),
   ],
   preview: {

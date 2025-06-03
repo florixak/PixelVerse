@@ -3,7 +3,8 @@ import { postSchema } from "./postSchema";
 import { userSchema } from "./userSchema";
 import { topicSchema } from "./topicSchema";
 import { commentSchema } from "./commentSchema";
+import { reactionSchema } from "./reactionSchema";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [userSchema, postSchema, commentSchema, topicSchema],
+  types: [userSchema, postSchema, commentSchema, topicSchema, reactionSchema],
 };
