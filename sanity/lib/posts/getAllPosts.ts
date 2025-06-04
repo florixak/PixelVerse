@@ -21,19 +21,6 @@ const getAllPosts = async () => {
       software,
       isDeleted,
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
-      "comments": *[_type == "comment" && references(^._id)]{
-        _id,
-        content,
-        author->{_id, username, "imageUrl": imageUrl},
-        publishedAt,
-        parentComment,
-        likes,
-        dislikes,
-        isEdited,
-        lastEditedAt,
-        pixelArtUrl,
-        isDeleted
-      }
     }`
   );
 };

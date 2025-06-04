@@ -26,6 +26,7 @@ const getPostBySlug = async (
       user->{_id, username, "imageUrl": imageUrl, clerkId},
       type
     },
+    "commentsCount": count(*[_type == "comment" && references(^._id)]),
     tags,
     isDeleted,
     ${userReactionField}

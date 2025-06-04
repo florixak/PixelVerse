@@ -20,19 +20,7 @@ const getPostsByTopic = async (topicSlug: string): Promise<Post[]> => {
       "dislikes": count(reactions[type == "dislike"]),
       tags,
       isDeleted,
-      "comments": *[_type == "comment" && references(^._id)]{
-        _id,
-        content,
-        author->{_id, username, "imageUrl": imageUrl, clerkId},
-        publishedAt,
-        parentComment,
-        likes,
-        dislikes,
-        isEdited,
-        lastEditedAt,
-        pixelArtUrl,
-        isDeleted
-      }
+      "commentsCount": count(*[_type == "comment" && references(^._id)]),
     }`,
     { topicSlug }
   );
