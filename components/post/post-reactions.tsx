@@ -82,9 +82,41 @@ const PostReactions = ({
     });
   };
 
-  const handleShareClick = () => {
-    // Implement share functionality here
-    toast.success("Share functionality is not implemented yet.");
+  const handleShareClick = async () => {
+    const shareUrl = window.location.href;
+    const shareTitle = "Check out this pixel art on PixelVerse!";
+    const shareText = "I found this amazing pixel art, check it out!";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch (error) {
+        if (
+          typeof error === "object" &&
+          error !== null &&
+          "name" in error &&
+          (error as { name?: string }).name === "AbortError"
+        ) {
+          console.log("User canceled share operation");
+          return;
+        }
+
+        console.error("Error sharing:", error);
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      toast.error("Couldn't copy link. Try again or use the share menu.");
+    }
   };
 
   return (
@@ -100,7 +132,9 @@ const PostReactions = ({
               userReactionState === "like" ? "text-green-400" : ""
             }`}
           />
-          <span className="text-gray-700">{likes} likes</span>
+          <p className="text-gray-700">
+            {likes} <span className="hidden md:inline">likes</span>
+          </p>
         </button>
         <button
           onClick={handleDislike}
@@ -112,14 +146,18 @@ const PostReactions = ({
               userReactionState === "dislike" ? "text-red-700" : ""
             }`}
           />
-          <span className="text-gray-700">{dislikes} dislikes</span>
+          <p className="text-gray-700">
+            {dislikes} <span className="hidden md:inline">dislikes</span>
+          </p>
         </button>
         <button
           className="flex items-center cursor-pointer gap-1"
           onClick={handleCommentClick}
         >
           <MessageCircle />
-          <span className="text-gray-700">{commentsCount} Comments</span>
+          <p className="text-gray-700">
+            {commentsCount} <span className="hidden md:inline">comments</span>
+          </p>
         </button>
       </div>
 
@@ -129,7 +167,9 @@ const PostReactions = ({
           onClick={handleShareClick}
         >
           <Share2 />
-          <span className="text-gray-700">Share</span>
+          <p className="text-gray-700">
+            Share <span className="hidden md:inline">this post</span>
+          </p>
         </button>
       </div>
     </div>
