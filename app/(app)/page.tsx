@@ -6,7 +6,7 @@ export const revalidate = 3600;
 
 export default function Home() {
   return (
-    <div className="flex-center flex-col p-10 md:p-16">
+    <div className="w-full min-w-0 max-w-full flex flex-col p-10 md:p-16">
       <h1 className="text-4xl font-bold text-center mb-8">
         Welcome to PixelVerse
       </h1>
