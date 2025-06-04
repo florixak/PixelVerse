@@ -42,7 +42,7 @@
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/pixelverse.git
+   git clone https://github.com/florixak/PixelVerse.git
    cd pixelverse
    ```
 
@@ -60,10 +60,12 @@
 
    ```env
    # Example:
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
-   CLERK_SECRET_KEY=your_clerk_secret
-   SANITY_PROJECT_ID=your_sanity_project_id
-   SANITY_DATASET=production
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
+   NEXT_PUBLIC_SANITY_DATASET=production
+   NEXT_PUBLIC_SANITY_TOKEN=your_sanity_token
+   NEXT_PUBLIC_OPENAI_API_KEY=your_openai_api_key
    ```
 
 4. **Run the development server**
