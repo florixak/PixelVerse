@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PixelVerse
 
-## Getting Started
+<img alt="PixelVerse Logo" src="https://place-hold.it/800x200/181820/39D353/bold&fontsize=40&text=PixelVerse">
 
-First, run the development server:
+**PixelVerse** is a modern community platform for pixel artists to share creations, connect with fellow artists, and explore the vibrant world of pixel art.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🎨 Features
+
+- **Showcase Pixel Art**: Upload and display your pixel art creations with proper rendering.
+- **Community Interaction**: Comment, upvote, and discuss artworks.
+- **Topic Organization**: Browse art by topics or tags.
+- **User Profiles**: Personalized profiles with activity history and stats.
+- **Responsive Design**: Seamless experience across desktop and mobile.
+- **Achievement System**: Earn badges based on participation and artistic contributions.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
+- **Backend**: Sanity.io (Headless CMS)
+- **Authentication**: [Clerk](https://clerk.dev)
+- **Image Handling**: Next.js Image optimization
+- **Styling**: Tailwind CSS, Shadcn UI components
+- **Deployment**: Vercel
+
+---
+
+## 📋 Prerequisites
+
+- [Node.js](https://nodejs.org/) v18+
+- npm or yarn
+- [Sanity.io](https://www.sanity.io/) account
+- [Clerk](https://clerk.dev) account for authentication
+
+---
+
+## 🚀 Getting Started
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/yourusername/pixelverse.git
+   cd pixelverse
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Environment setup**
+
+   Create a `.env.local` file with the required environment variables:
+
+   ```env
+   # Example:
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
+   CLERK_SECRET_KEY=your_clerk_secret
+   SANITY_PROJECT_ID=your_sanity_project_id
+   SANITY_DATASET=production
+   ```
+
+4. **Run the development server**
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) to see your app running.
+
+---
+
+## 📐 Project Structure
+
+```
+/components       → Reusable UI components
+/pages            → Route definitions
+/sanity           → Sanity schemas and queries
+/styles           → Tailwind and global styles
+/utils            → Utility functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔄 Data Flow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Authentication**: Managed via Clerk
+- **Data Storage**: Posts, comments, and user info stored in Sanity.io
+- **Content Fetching**: GROQ queries retrieve content from Sanity
+- **Rendering**: Done via Next.js and React components
+- **User Interactions**: Processed through server actions
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🤝 Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+We welcome contributions! Here's how to get started:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Fork the repository
+2. Create your feature branch:
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m 'Add some amazing feature'
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. Open a Pull Request
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📜 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.
+
+---
+
+## 📸 Screenshots
+
+_Coming soon!_
+
+---
+
+## 🙏 Acknowledgements
+
+- [Next.js](https://nextjs.org)
+- [Sanity.io](https://www.sanity.io)
+- [Clerk](https://clerk.dev)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Shadcn UI](https://ui.shadcn.com)
+
+> Built with ❤️ for the pixel art community.
