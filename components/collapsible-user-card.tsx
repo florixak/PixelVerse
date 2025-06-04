@@ -6,5 +6,5 @@ import UserCard from "./user-card";
 
 export function CollapsibleUserCard() {
   const { open } = useSidebar();
-  return <UserCard collapsed={open} />;
+  return <UserCard collapsed={!open} />;
 }
