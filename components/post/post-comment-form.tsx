@@ -1,15 +1,17 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { SignIn, SignInButton, useSignIn, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { Textarea } from "../ui/textarea";
 import { createComment } from "@/actions/postActions";
 import { Comment, Post } from "@/sanity.types";
 import toast from "react-hot-toast";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { use, useActionState, useEffect, useRef, useState } from "react";
 import SubmitButton from "../submit-button";
 import PostComment from "./post-comment";
 import PostCommentsWrapper from "./post-comments-wrapper";
+import { Button } from "../ui/button";
+import AuthButtons from "../auth-buttons";
 
 type PostCommentFormProps = {
   post: Post;
@@ -38,6 +40,7 @@ const initialState: CommentFormState = {
 
 const PostCommentForm = ({ post }: PostCommentFormProps) => {
   const { user } = useUser();
+  const { signIn, isLoaded } = useSignIn();
   const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction] = useActionState(createComment, initialState);
   const [optimisticComments, setOptimisticComments] = useState<
@@ -72,14 +75,6 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
       formRef.current?.reset();
     }
   }, [state]);
-
-  if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center p-4 border border-muted rounded-lg bg-background">
-        <p className="text-muted-foreground">Please log in to comment.</p>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -117,8 +112,13 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
             required
           />
         </div>
-
-        <SubmitButton label="Post Comment" submittingLabel="Posting..." />
+        <div className="flex justify-end items-center gap-2">
+          {!user ? (
+            <AuthButtons />
+          ) : (
+            <SubmitButton label="Post Comment" submittingLabel="Posting..." />
+          )}
+        </div>
       </form>
       {optimisticComments.length > 0 && (
         <PostCommentsWrapper>
