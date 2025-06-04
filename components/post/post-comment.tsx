@@ -27,7 +27,6 @@ const PostComment = ({ comment, currentUserId }: PostCommentProps) => {
           width={32}
           height={32}
           loading="lazy"
-          placeholder="blur"
           blurDataURL="/avatar-default.svg"
         />
       </Link>
