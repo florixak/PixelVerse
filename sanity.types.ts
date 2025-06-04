@@ -93,11 +93,7 @@ export type Post = {
   tags?: Array<string>;
   isOriginal?: boolean;
   inspirationSource?: string;
-  comments?: Array<Comment>;
-  reactions?: Array<{
-    user: User;
-    type: "like" | "dislike" | null;
-  }>;
+  reactions?: Reaction[];
 };
 
 export type Topic = {
