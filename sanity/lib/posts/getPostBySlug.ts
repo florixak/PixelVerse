@@ -29,19 +29,6 @@ const getPostBySlug = async (
     tags,
     isDeleted,
     ${userReactionField}
-    "comments": *[_type == "comment" && references(^._id)]{
-      _id,
-      content,
-      author->{_id, username, "imageUrl": imageUrl, clerkId},
-      publishedAt,
-      parentComment,
-      likes,
-      dislikes,
-      isEdited,
-      lastEditedAt,
-      pixelArtUrl,
-      isDeleted
-    }
   }`;
 
   return client.fetch(query, { postSlug });
