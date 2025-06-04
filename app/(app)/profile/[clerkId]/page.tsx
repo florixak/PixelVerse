@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import getLatestActivityOfUser from "@/sanity/lib/featured/getLatestActivityOfUser";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
-import { Calendar, DotSquare, Ellipsis, Menu } from "lucide-react";
+import { Calendar, Ellipsis } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -27,12 +27,12 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
 
   return (
     <section className="flex flex-col">
-      <div className="flex flex-col items-end i md:flex-row md:justify-between md:items-start w-ful px-32">
-        <div className="flex flex-row items-center">
+      <div className="flex flex-col items-center md:flex-row md:justify-between md:items-start w-ful md:px-32">
+        <div className="flex flex-col md:flex-row items-center">
           <Image
             src={user?.imageUrl || "/avatar-default.svg"}
             alt={`${user?.username}'s avatar`}
-            className="w-36 h-36 rounded-full mr-8"
+            className="w-48 h-48 rounded-full md:mr-8"
             width={192}
             height={192}
             loading="lazy"
@@ -40,7 +40,12 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
             blurDataURL="/avatar-default.svg"
           />
           <div className="flex flex-col justify-center">
-            <h1 className="text-4xl font-semibold">{user?.username}</h1>
+            <h1 className="text-4xl font-semibold">
+              {user?.fullName || user?.username}
+            </h1>
+            <p className="text-muted-foreground text-base">
+              @{user?.username || "Unknown User"}
+            </p>
             <p
               className={`${
                 user?.createdAt ? "block" : "hidden"
@@ -49,7 +54,7 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
             >
               <Calendar size={16} /> Joined on {formatDate(user?.createdAt)}
             </p>
-            <div className="flex flex-row justify-end gap-4">
+            <div className="flex flex-row justify-center md:justify-end gap-4">
               <div className="flex flex-col items-end">
                 <p className="text-2xl font-semibold">{user?.postCount || 0}</p>
                 <p className="text-muted-foreground">Posts</p>
