@@ -9,7 +9,7 @@ type PostCommentProps = {
   currentUserId?: User["clerkId"];
 };
 
-const PostComment = async ({ comment, currentUserId }: PostCommentProps) => {
+const PostComment = ({ comment, currentUserId }: PostCommentProps) => {
   return (
     <div className="relative flex items-center gap-2 w-full py-2 px-4 border border-muted rounded-lg bg-background">
       <div className="absolute left-0 top-0 h-full w-px bg-muted">
