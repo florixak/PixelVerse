@@ -13,7 +13,10 @@ const PostComments = async ({ post }: PostCommentProps) => {
   const comments = await getCommentsByPostId(post._id, 5, 0);
   const user = await currentUser();
   return (
-    <div className="flex-center flex-col gap-2 border border-muted rounded-lg p-4 bg-background">
+    <div
+      id="comments-section"
+      className="flex-center flex-col gap-2 border border-muted rounded-lg p-4 bg-background"
+    >
       <p className="text-muted-foreground">Comments</p>
       <PostCommentForm post={post} />
       <PostCommentsWrapper>

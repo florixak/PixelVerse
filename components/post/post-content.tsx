@@ -1,6 +1,7 @@
 import { Post, User } from "@/sanity.types";
 import Image from "next/image";
 import PostReactions from "./post-reactions";
+import { Separator } from "../ui/separator";
 
 type PostContentProps = {
   post: Post;
@@ -9,7 +10,7 @@ type PostContentProps = {
 
 const PostContent = ({ post, userId }: PostContentProps) => {
   return (
-    <div className="w-full">
+    <div className="flex flex-col gap-2 w-full">
       {post.imageUrl && (
         <Image
           src={post.imageUrl}
@@ -28,7 +29,7 @@ const PostContent = ({ post, userId }: PostContentProps) => {
       </p>
 
       {post.tags && post.tags.length > 0 && (
-        <div className="mt-4">
+        <div>
           {post.tags.map((tag) => (
             <span
               key={tag}
@@ -40,13 +41,14 @@ const PostContent = ({ post, userId }: PostContentProps) => {
         </div>
       )}
 
-      <div className="mt-4">
-        <PostReactions
-          postId={post._id}
-          reactions={post.reactions || []}
-          currentUserClerkId={userId}
-        />
-      </div>
+      <Separator />
+
+      <PostReactions
+        postId={post._id}
+        reactions={post.reactions || []}
+        currentUserClerkId={userId}
+        commentsCount={post.commentsCount || 0}
+      />
 
       {post.dimensions && (
         <div className="mt-4 text-sm text-muted-foreground">
