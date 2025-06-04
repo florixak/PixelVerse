@@ -98,10 +98,9 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
             src={user?.imageUrl || "/avatar-default.svg"}
             alt={`${user?.username || "Anonymous"}'s avatar`}
             className="w-10 h-10 rounded-full object-cover mt-2"
-            width={40}
-            height={40}
+            width={32}
+            height={32}
             loading="lazy"
-            placeholder="blur"
             blurDataURL="/avatar-default.svg"
           />
           <Textarea
