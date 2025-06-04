@@ -118,7 +118,7 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
           />
         </div>
 
-        <SubmitButton />
+        <SubmitButton label="Post Comment" submittingLabel="Posting..." />
       </form>
       {optimisticComments.length > 0 && (
         <PostCommentsWrapper>
