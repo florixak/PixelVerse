@@ -15,7 +15,7 @@ const PostContent = ({ post, userId }: PostContentProps) => {
         <Image
           src={post.imageUrl}
           alt={post.title || "Post Image"}
-          className="object-contain max-h-[70vh] rounded-md"
+          className="object-contain max-h-[70vh] rounded-md mx-auto"
           width={800}
           height={600}
           loading="lazy"
