@@ -12,17 +12,17 @@ const TopicPage = async ({ params }: TopicPageProps) => {
   const topic = await getTopicBySlug(slug);
   if (!topic || !topic.slug) {
     return (
-      <div className="p-6">
+      <section className="p-6">
         <h1 className="text-2xl font-bold mb-4">Topic Not Found</h1>
         <p className="text-gray-700">
           The topic <strong>{slug}</strong> does not exist.
         </p>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="p-6">
+    <section className="p-6">
       <h1 className="text-2xl font-bold mb-4">{topic.title}</h1>
       <p className="text-gray-700">
         {topic.description || "No description available for this topic."}
@@ -30,7 +30,7 @@ const TopicPage = async ({ params }: TopicPageProps) => {
       <Suspense fallback={<div>Loading posts...</div>}>
         <Posts slug={slug} />
       </Suspense>
-    </div>
+    </section>
   );
 };
 

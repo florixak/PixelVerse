@@ -16,7 +16,7 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
   const { order } = await searchParams;
 
   return (
-    <div className="p-6">
+    <section className="p-6">
       <h1 className="text-2xl font-bold mb-4">All the topics of PixelDit</h1>
       <p className="text-gray-700">
         Here you can explore various topics related to pixel art. Click on a
@@ -25,7 +25,7 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
       <Suspense fallback={<div>Loading topics...</div>}>
         <Topics order={order} />
       </Suspense>
-    </div>
+    </section>
   );
 };
 
