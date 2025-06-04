@@ -94,6 +94,7 @@ export type Post = {
   isOriginal?: boolean;
   inspirationSource?: string;
   reactions?: Reaction[];
+  commentsCount?: number;
 };
 
 export type Topic = {
