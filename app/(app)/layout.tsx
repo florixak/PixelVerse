@@ -80,7 +80,7 @@ export default async function RootLayout({
             <SidebarProvider defaultOpen={defaultOpen}>
               <AppSidebar />
 
-              <main className="relative min-h-screen w-full px-4">
+              <main className="relative min-h-screen w-full px-4 mt-6">
                 <SidebarTrigger
                   className="fixed top-3 z-40 size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
                   aria-label="Toggle sidebar"
