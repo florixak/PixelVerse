@@ -1,10 +1,13 @@
-import PostAuthorButtons from "@/components/post/post-author-buttons";
+import PostComments from "@/components/post/post-comments";
+import PostContent from "@/components/post/post-content";
+import PostHeader from "@/components/post/post-header";
 import PostReactions from "@/components/post/post-reactions";
 import { formatDate } from "@/lib/utils";
 import getPostBySlug from "@/sanity/lib/posts/getPostBySlug";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 const PostPage = async ({
   params,
@@ -19,49 +22,16 @@ const PostPage = async ({
   }
 
   return (
-    <div className="relative p-6 flex-center w-full flex-col">
-      {post.author?.clerkId === user?.id && (
-        <PostAuthorButtons postId={post._id} />
-      )}
-      <div className="max-w-2xl w-full">
-        <h1 className="text-3xl font-bold">
-          {post.title}
-          {post.isOriginal && (
-            <span
-              className="ml-2 px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-medium"
-              title="This post is marked as an original creation by the author"
-            >
-              Original
-            </span>
-          )}
-        </h1>
+    <div className="relative max-w-4xl mx-auto flex-col">
+      <div className="flex flex-col gap-2 border border-muted rounded-lg p-4 bg-background">
+        <PostHeader post={post} isAuthor={post.author?.clerkId === user?.id} />
 
-        <p className="text-gray-500 mb-2">
-          {post.author?.username} on{" "}
-          {formatDate(post.publishedAt || post._createdAt)}
-        </p>
-        <p>{post.excerpt || "No excerpt available for this post."}</p>
+        <PostContent post={post} userId={user?.id} />
       </div>
 
-      <div className="max-w-2xl w-full mt-6">
-        {post.imageUrl && (
-          <Image
-            src={post.imageUrl}
-            alt={post.title || "Post Image"}
-            className="w-full rounded-lg mt-4"
-            width={800}
-            height={450}
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL={post.imageUrl}
-          />
-        )}
-        <PostReactions
-          postId={post._id}
-          reactions={post.reactions || []}
-          currentUserClerkId={user?.id || ""}
-        />
-      </div>
+      <Suspense fallback={<p>Loading comments...</p>}>
+        <PostComments postId={post._id} />
+      </Suspense>
     </div>
   );
 };

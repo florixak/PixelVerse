@@ -42,9 +42,9 @@ const PostAuthorButtons = ({ postId }: PostAuthorButtonsProps) => {
   };
 
   return (
-    <div className="absolute z-10 mb-4 text-sm text-muted-foreground right-5 top-5 bg-muted p-2 rounded shadow">
+    <div className="flex items-center gap-2">
       <Button
-        variant="ghost"
+        variant="outline"
         className="text-sm"
         onClick={handleEdit}
         disabled={editing || deleting}
