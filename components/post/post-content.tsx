@@ -2,6 +2,7 @@ import { Post, User } from "@/sanity.types";
 import Image from "next/image";
 import PostReactions from "./post-reactions";
 import { Separator } from "../ui/separator";
+import PostTags from "./post-tags";
 
 type PostContentProps = {
   post: Post;
@@ -28,18 +29,7 @@ const PostContent = ({ post, userId }: PostContentProps) => {
         {"No content available for this post."}
       </p>
 
-      {post.tags && post.tags.length > 0 && (
-        <div>
-          {post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-block bg-muted text-foreground text-sm px-2 py-1 rounded-full mr-2 mb-2"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
+      <PostTags tags={post.tags} />
 
       <Separator />
 
