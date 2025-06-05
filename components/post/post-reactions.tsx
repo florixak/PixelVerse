@@ -1,6 +1,7 @@
 "use client";
 
 import { reactOnPost } from "@/actions/postActions";
+import { cn } from "@/lib/utils";
 import { Post, Reaction, User } from "@/sanity.types";
 import { ThumbsUp, ThumbsDown, MessageCircle, Share2 } from "lucide-react";
 import { useState } from "react";
@@ -9,8 +10,11 @@ import toast from "react-hot-toast";
 type PostReactionsProps = {
   postId: Post["_id"];
   reactions: Reaction[];
-  currentUserClerkId: User["clerkId"];
+  currentUserClerkId?: User["clerkId"];
   commentsCount?: Post["commentsCount"];
+  collapsed?: boolean;
+  className?: string;
+  commentsLink?: string;
 };
 
 const PostReactions = ({
@@ -18,6 +22,9 @@ const PostReactions = ({
   currentUserClerkId,
   reactions,
   commentsCount = 0,
+  collapsed = false,
+  className = "",
+  commentsLink = "",
 }: PostReactionsProps) => {
   const [likes, setLikes] = useState(
     reactions.filter((reaction) => reaction.type === "like").length
@@ -76,8 +83,12 @@ const PostReactions = ({
   };
 
   const handleCommentClick = () => {
+    if (commentsLink) {
+      window.location.href = commentsLink;
+      return;
+    }
     scrollTo({
-      top: document.getElementById("comments-section")?.offsetTop || 0,
+      top: document.getElementById("comments")?.offsetTop || 0,
       behavior: "smooth",
     });
   };
@@ -120,43 +131,57 @@ const PostReactions = ({
   };
 
   return (
-    <div className="mt-4 text-gray-700 flex flex-row justify-between gap-3">
+    <div
+      className={cn(
+        `mt-4 text-gray-700 flex flex-row justify-between gap-3`,
+        className
+      )}
+    >
       <div className="flex items-center gap-4">
         <button
           onClick={handleLike}
           disabled={isLiking}
           className="flex items-center cursor-pointer gap-1"
+          title={`${likes} likes`}
         >
           <ThumbsUp
             className={`inline-block text-blue-500 cursor-pointer ${
               userReactionState === "like" ? "text-green-400" : ""
             }`}
           />
+
           <p className="text-gray-700">
-            {likes} <span className="hidden md:inline">likes</span>
+            {likes}{" "}
+            {!collapsed && <span className="hidden md:inline">likes</span>}
           </p>
         </button>
         <button
           onClick={handleDislike}
           disabled={isDisliking}
           className="flex items-center cursor-pointer gap-1"
+          title={`${dislikes} dislikes`}
         >
           <ThumbsDown
             className={`inline-block text-red-500 cursor-pointer ${
               userReactionState === "dislike" ? "text-red-700" : ""
             }`}
           />
+
           <p className="text-gray-700">
-            {dislikes} <span className="hidden md:inline">dislikes</span>
+            {dislikes}{" "}
+            {!collapsed && <span className="hidden md:inline">dislikes</span>}
           </p>
         </button>
         <button
           className="flex items-center cursor-pointer gap-1"
           onClick={handleCommentClick}
+          title={`${commentsCount} comments`}
         >
           <MessageCircle />
+
           <p className="text-gray-700">
-            {commentsCount} <span className="hidden md:inline">comments</span>
+            {commentsCount}{" "}
+            {!collapsed && <span className="hidden md:inline">comments</span>}
           </p>
         </button>
       </div>
@@ -168,7 +193,8 @@ const PostReactions = ({
         >
           <Share2 />
           <p className="text-gray-700">
-            Share <span className="hidden md:inline">this post</span>
+            Share{" "}
+            {!collapsed && <span className="hidden md:inline">this post</span>}
           </p>
         </button>
       </div>
