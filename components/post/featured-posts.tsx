@@ -1,6 +1,5 @@
-import React from "react";
-import PostCard from "./post/post-card";
 import { getFeaturedPosts } from "@/sanity/lib/featured/getFeaturedPosts";
+import PostCard from "./post-card";
 
 type FeaturedPostsProps = {
   className?: string;
