@@ -1,28 +1,22 @@
 import PostCard from "@/components/post/post-card";
 import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
+import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
-interface TopicPageProps {
+type TopicPageProps = {
   params: Promise<{ slug: string }>;
-}
+};
 
 const TopicPage = async ({ params }: TopicPageProps) => {
   const { slug } = await params;
   const topic = await getTopicBySlug(slug);
   if (!topic || !topic.slug) {
-    return (
-      <section className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Topic Not Found</h1>
-        <p className="text-gray-700">
-          The topic <strong>{slug}</strong> does not exist.
-        </p>
-      </section>
-    );
+    notFound();
   }
 
   return (
-    <section className="p-6">
+    <section className="px-0 py-6 md:p-6">
       <h1 className="text-2xl font-bold mb-4">{topic.title}</h1>
       <p className="text-gray-700">
         {topic.description || "No description available for this topic."}
