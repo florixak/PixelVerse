@@ -14,7 +14,7 @@ const PostComments = async ({ post }: PostCommentProps) => {
   const user = await currentUser();
   return (
     <div
-      id="comments-section"
+      id="comments"
       className="flex-center flex-col gap-2 border border-muted rounded-lg p-4 bg-background"
     >
       <p className="text-muted-foreground">Comments</p>
