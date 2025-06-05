@@ -34,7 +34,7 @@ const UserCard = ({ collapsed }: UserCardProps) => {
         }`}
       >
         {!collapsed && (
-          <div>
+          <div className="text-nowrap">
             <p className="font-semibold">{user.fullName || user.username}</p>
             <p className="text-muted-foreground">@{user.username}</p>
           </div>
