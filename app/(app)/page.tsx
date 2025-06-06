@@ -1,5 +1,6 @@
+import FeaturedPosts from "@/components/post/featured-posts";
 import TopicsCarousel from "@/components/topics-carousel";
-import FeaturedPosts from "@/components/featured-posts";
+
 import { Suspense } from "react";
 
 export const revalidate = 3600;
