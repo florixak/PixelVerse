@@ -1,6 +1,7 @@
-import PostCard from "@/components/post/post-card";
+import Posts from "@/components/post/posts";
 import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
@@ -16,34 +17,37 @@ const TopicPage = async ({ params }: TopicPageProps) => {
   }
 
   return (
-    <section className="px-0 py-6 md:p-6">
-      <h1 className="text-2xl font-bold mb-4">{topic.title}</h1>
-      <p className="text-gray-700">
-        {topic.description || "No description available for this topic."}
-      </p>
+    <section className="flex flex-col gap-3 px-0 py-6 md:p-6">
+      <div className="flex flex-col items-start gap-4">
+        {topic.bannerUrl && (
+          <Image
+            src={topic.bannerUrl}
+            alt={`Banner for ${topic.title}`}
+            width={1200}
+            height={400}
+            className="w-full h-64 object-cover rounded-lg"
+            priority
+          />
+        )}
+        <div>
+          <h1 className="text-4xl font-bold">{topic.title}</h1>
+          <p className="text-gray-700">
+            {topic.description || "No description available for this topic."}
+          </p>
+        </div>
+      </div>
+
       <Suspense fallback={<div>Loading posts...</div>}>
-        <Posts slug={slug} />
+        <PostsList slug={slug} />
       </Suspense>
     </section>
   );
 };
 
-const Posts = async ({ slug }: { slug: string }) => {
+const PostsList = async ({ slug }: { slug: string }) => {
   const posts = await getPostsByTopic(slug);
 
-  return (
-    <div className="columns-1 sm:columns-2 md:columns-3 gap-4 mt-6 space-y-4">
-      {posts && posts.length > 0 ? (
-        posts.map((post) => (
-          <div key={post._id} className="break-inside-avoid mb-4">
-            <PostCard post={post} />
-          </div>
-        ))
-      ) : (
-        <div className="text-gray-500">No posts found for this topic.</div>
-      )}
-    </div>
-  );
+  return <Posts posts={posts} />;
 };
 
 export default TopicPage;
