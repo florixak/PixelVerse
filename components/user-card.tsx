@@ -51,7 +51,7 @@ const UserCard = ({ collapsed }: UserCardProps) => {
         <span className={`${collapsed ? "hidden" : "block"}`}>Settings</span>
       </Button>
 
-      <Button asChild variant="default" className="w-full">
+      <Button asChild variant="outline" className="w-full">
         <SignOutButton>
           <div className="flex items-center gap-2 justify-center">
             <LogOut className="h-4 w-4" />
