@@ -1,5 +1,6 @@
 "use client";
 
+import { SortOrder } from "@/lib/types";
 import { Input } from "../ui/input";
 import {
   Select,
@@ -10,7 +11,7 @@ import {
 } from "../ui/select";
 
 type TopicSearchProps = {
-  order?: string;
+  order?: SortOrder;
 };
 
 const TopicSearch = ({ order }: TopicSearchProps) => {
