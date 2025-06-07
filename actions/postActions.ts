@@ -6,6 +6,7 @@ import slugify from "slugify";
 import { ensureSanityUser } from "@/lib/user-utils";
 import { Post, Reaction } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
+import { error } from "console";
 
 export async function createPost(formData: FormData) {
   try {
@@ -184,5 +185,43 @@ export async function deleteComment(commentId: string) {
   } catch (error) {
     console.error("Error deleting comment:", error);
     return { error: "Failed to delete comment" };
+  }
+}
+
+export async function reportPost(
+  postId: string,
+  reason: string,
+  additionalInfo?: string
+) {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return {
+        success: false,
+        error: "You must be logged in to report a post",
+      };
+    }
+
+    const userId = await ensureSanityUser(user);
+
+    await writeClient.create({
+      _type: "report",
+      post: {
+        _type: "reference",
+        _ref: postId,
+      },
+      reporter: {
+        _type: "reference",
+        _ref: userId,
+      },
+      additionalInfo: additionalInfo?.trim() || "",
+      reason,
+      reportedAt: new Date().toISOString(),
+    });
+
+    return { success: true, error: null };
+  } catch (error) {
+    console.error("Error reporting post:", error);
+    return { error: "Failed to report post", success: false };
   }
 }
