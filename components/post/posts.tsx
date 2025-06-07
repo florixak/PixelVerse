@@ -11,9 +11,11 @@ const Posts = ({ posts }: PostsProps) => {
   return (
     <MasonryWrapper>
       {posts.map((post) => (
-        <div key={post._id} className="break-inside-avoid mb-4">
-          <PostCard post={post} />
-        </div>
+        <PostCard
+          key={post._id}
+          post={post}
+          className="break-inside-avoid mb-4"
+        />
       ))}
     </MasonryWrapper>
   );
