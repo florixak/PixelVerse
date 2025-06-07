@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Press_Start_2P, VT323 } from "next/font/google";
 import "../globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/header";
@@ -11,16 +11,6 @@ import { cookies } from "next/headers";
 import { dark } from "@clerk/themes";
 import { Toaster } from "react-hot-toast";
 import CommandSearch from "@/components/command-search";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "PixelVerse",
@@ -70,9 +60,7 @@ export default async function RootLayout({
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        <body className={`antialiased`}>
           <ThemeProvider defaultTheme="system" attribute="class" enableSystem>
             <Header />
             <Toaster position="bottom-right" />
