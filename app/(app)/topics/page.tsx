@@ -1,20 +1,29 @@
 import MasonryWrapper from "@/components/masonry-wrapper";
-import TopicCard from "@/components/topic-card";
+import TopicTrendingCard from "@/components/topic/topic-trending-card";
+
 import TopicSearch from "@/components/topic/topic-search";
-import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { SortOrder } from "@/lib/types";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
-import { Star } from "lucide-react";
+import { Info, Sparkles, Star, TrendingUp } from "lucide-react";
 import React, { Suspense } from "react";
+import TopicCard from "@/components/topic/topic-card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import TopicsSkeleton from "@/components/topic/topic-list-skeleton";
+import TrendingTopicsSkeleton from "@/components/topic/topic-trending-card-skeleton";
+import PopularTopicsSkeleton from "@/components/topic/popular-topics-skeleton";
 
 type TopicsPageProps = {
   searchParams: Promise<{
-    order?: string;
+    order?: SortOrder;
   }>;
 };
 
 type TopicsProps = {
-  order?: string;
+  order?: SortOrder;
 };
 
 const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
@@ -24,25 +33,47 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
     <section className="flex-center flex-col w-full gap-3 p-6 md:p-10">
       <div className="flex flex-col items-center w-full gap-2 max-w-3xl">
         <h1 className="text-2xl font-bold">Explore Topics</h1>
-        <p className="text-gray-700">
+        <p className="text-muted-foreground">
           Here you can explore various topics related to pixel art. Click on a
           topic to see related posts.
         </p>
       </div>
       <TopicSearch order={order} />
-
-      <div className="flex items-start gap-2 flex-col">
-        <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
-          <Star color="yellow" /> Popular Topics
-        </h2>
-        <Suspense fallback={<div>Loading popular topics...</div>}>
-          <PopularTopics />
-        </Suspense>
-      </div>
-      <div>
-        <Suspense fallback={<div>Loading topics...</div>}>
-          <Topics order={order} />
-        </Suspense>
+      <div className="w-full flex items-start gap-10 flex-col">
+        <div className="w-full flex items-start gap-2 flex-col">
+          <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
+            <Sparkles className="text-yellow-500" /> Popular Topics{" "}
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-sm">
+                  Topics that have gained the most traction in the last 7 days.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </h2>
+          <Suspense fallback={<PopularTopicsSkeleton />}>
+            <PopularTopics />
+          </Suspense>
+        </div>
+        <div className="flex items-start gap-2 flex-col">
+          <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
+            <TrendingUp color="lime" /> Trending Topics
+          </h2>
+          <Suspense fallback={<TrendingTopicsSkeleton />}>
+            <TrendingTopics />
+          </Suspense>
+        </div>
+        <div className="flex items-start gap-2 flex-col">
+          <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
+            All Topics
+          </h2>
+          <Suspense fallback={<TopicsSkeleton />}>
+            <Topics order={"alphabetical"} />
+          </Suspense>
+        </div>
       </div>
     </section>
   );
@@ -60,6 +91,21 @@ const Topics = async ({ order }: TopicsProps) => {
         <TopicCard key={topic._id} topic={topic} />
       ))}
     </MasonryWrapper>
+  );
+};
+
+const TrendingTopics = async () => {
+  const topics = await getAllTopics({
+    limit: 5,
+    order: "trending",
+    from: 0,
+  });
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {topics.map((topic) => (
+        <TopicTrendingCard key={topic._id} topic={topic} />
+      ))}
+    </div>
   );
 };
 
