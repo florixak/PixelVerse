@@ -59,6 +59,22 @@ export const userSchema = defineType({
       validation: (Rule) => Rule.required(),
       readOnly: true,
     }),
+    defineField({
+      name: "role",
+      title: "User Role",
+      type: "string",
+      options: {
+        list: [
+          { title: "User", value: "user" },
+          { title: "Moderator", value: "moderator" },
+          { title: "Admin", value: "admin" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "user",
+      validation: (Rule) => Rule.required(),
+      description: "Determines user permissions within the platform",
+    }),
   ],
   preview: {
     select: {

@@ -124,6 +124,7 @@ export type User = {
   isReported?: boolean;
   imageUrl?: string;
   favoriteTopics?: Topic[];
+  role?: "user" | "admin" | "moderator";
 
   // Activity statistics
   postCount?: number;
