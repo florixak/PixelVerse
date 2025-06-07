@@ -29,7 +29,7 @@ const PostComments = async ({ post }: PostCommentProps) => {
             />
           ))
         ) : (
-          <p className="text-gray-500">No comments yet.</p>
+          <p className="text-muted-foreground">No comments yet.</p>
         )}
       </PostCommentsWrapper>
     </div>
