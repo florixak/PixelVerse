@@ -195,6 +195,13 @@ export const postSchema = defineType({
       of: [{ type: "reaction" }],
       options: { layout: "grid" },
     }),
+    defineField({
+      name: "reports",
+      title: "Reports",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "report" }] }],
+      description: "References to reports associated with this post",
+    }),
   ],
   preview: {
     select: {
