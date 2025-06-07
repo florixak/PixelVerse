@@ -10,9 +10,11 @@ import TutorialFields from "./tutorial-fields";
 import ConditionalFields from "./conditional-fields";
 import BasicFields from "./basic-fields";
 import toast from "react-hot-toast";
+import SubmitButton from "../submit-button";
 
 type CreatePostFormProps = {
   topics: Topic[];
+  topicSlug?: string;
 };
 
 export type ColorPaletteItem = {
@@ -26,10 +28,12 @@ export type TutorialStepType = {
   imageUrl: string;
 };
 
-export default function CreatePostForm({ topics }: CreatePostFormProps) {
+export default function CreatePostForm({
+  topics,
+  topicSlug,
+}: CreatePostFormProps) {
   const [postType, setPostType] = useState("text");
   const [isOriginal, setIsOriginal] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [software, setSoftware] = useState<string[]>([]);
   const [colorPalette, setColorPalette] = useState<ColorPaletteItem[]>([]);
   const [tutorialSteps, setTutorialSteps] = useState<TutorialStepType[]>([]);
@@ -76,7 +80,6 @@ export default function CreatePostForm({ topics }: CreatePostFormProps) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
     try {
       const formData = new FormData(e.currentTarget);
@@ -107,8 +110,6 @@ export default function CreatePostForm({ topics }: CreatePostFormProps) {
       toast.error("Failed to create post. Please try again.", {
         duration: 5000,
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -124,7 +125,11 @@ export default function CreatePostForm({ topics }: CreatePostFormProps) {
         </p>
       </div>
       {/* Basic Fields */}
-      <BasicFields topics={topics} setPostType={setPostType} />
+      <BasicFields
+        topics={topics}
+        setPostType={setPostType}
+        topicSlug={topicSlug}
+      />
       {/* Conditional Fields Based on Post Type */}
       {(postType === "pixelArt" || postType === "animation") && (
         <ConditionalFields
@@ -150,9 +155,10 @@ export default function CreatePostForm({ topics }: CreatePostFormProps) {
         <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Post"}
-        </Button>
+        <SubmitButton
+          label="Create post"
+          submittingLabel={"Creating Post..."}
+        />
       </div>
     </form>
   );

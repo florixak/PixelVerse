@@ -1,7 +1,7 @@
-import React from "react";
+"use client";
+
 import { Label } from "../ui/label";
 import { POST_TYPES, PostTypesType } from "@/lib/constants";
-import { Link } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -18,9 +18,10 @@ import { Topic } from "@/sanity.types";
 type BasicFieldsProps = {
   topics: Topic[];
   setPostType: (value: PostTypesType["value"]) => void;
+  topicSlug?: string;
 };
 
-const BasicFields = ({ topics, setPostType }: BasicFieldsProps) => {
+const BasicFields = ({ topics, setPostType, topicSlug }: BasicFieldsProps) => {
   return (
     <div className="space-y-4">
       <div>
@@ -40,13 +41,13 @@ const BasicFields = ({ topics, setPostType }: BasicFieldsProps) => {
         <Label htmlFor="topic">
           Topic <span className="text-red-500">*</span>
         </Label>
-        <Select name="topic" required>
+        <Select name="topic" required defaultValue={topicSlug}>
           <SelectTrigger>
             <SelectValue placeholder="Select a topic" />
           </SelectTrigger>
           <SelectContent>
             {topics.map((topic) => (
-              <SelectItem key={topic._id} value={topic._id}>
+              <SelectItem key={topic._id} value={topic.slug || topic._id}>
                 {topic.title}
               </SelectItem>
             ))}
