@@ -1,7 +1,10 @@
 import Posts from "@/components/post/posts";
+import { Button } from "@/components/ui/button";
 import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
+import { Plus } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
@@ -31,9 +34,21 @@ const TopicPage = async ({ params }: TopicPageProps) => {
         )}
         <div>
           <h1 className="text-4xl font-bold">{topic.title}</h1>
-          <p className="text-gray-700">
+          <p className="text-muted-foreground">
             {topic.description || "No description available for this topic."}
           </p>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-semibold">Posts:</span> {topic.postCount || 0}
+          </p>
+          <Button className="mt-4" variant="outline" asChild>
+            <Link
+              href={`/topics/${slug}/new-post`}
+              className="flex items-center gap-2"
+            >
+              <span>Create New Post</span>
+              <Plus />
+            </Link>
+          </Button>
         </div>
       </div>
 
