@@ -36,3 +36,11 @@ export const DIFFICULTY_LEVELS: DifficultyLevelType[] = [
   { title: "Intermediate", value: "intermediate" },
   { title: "Advanced", value: "advanced" },
 ];
+
+export const REPORT_REASONS = [
+  { value: "inappropriate_content", label: "Inappropriate Content" },
+  { value: "copyright", label: "Copyright Violation" },
+  { value: "spam", label: "Spam" },
+  { value: "harassment", label: "Harassment" },
+  { value: "other", label: "Other" },
+];
