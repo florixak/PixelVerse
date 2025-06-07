@@ -11,7 +11,8 @@ const getTopicBySlug = async (slug: string): Promise<Topic> => {
         createdAt,
         updatedAt,
         "iconUrl": icon.asset->url,
-        "bannerUrl": banner.asset->url
+        "bannerUrl": banner.asset->url,
+        "postCount": count(*[_type == "post" && references(^._id)]),
         }`,
     { slug }
   );
