@@ -2,6 +2,8 @@ import { cn, formatDate } from "@/lib/utils";
 import { Post } from "@/sanity.types";
 import Image from "next/image";
 import Link from "next/link";
+import { Badge } from "../ui/badge";
+import Role from "../role";
 
 type PostAuthorProps = {
   author: Post["author"];
@@ -40,13 +42,14 @@ const PostAuthor = ({
       )}
       <div className="flex flex-col">
         {!hideFullName && (
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
             <Link
               href={`/profile/${author?.clerkId}`}
               className="hover:underline"
             >
               {author?.fullName || author?.username || "Unknown Author"}
             </Link>
+            <Role role={author?.role} />
           </h2>
         )}
         <div className="text-sm text-muted-foreground">
