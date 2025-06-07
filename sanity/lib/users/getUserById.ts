@@ -12,6 +12,7 @@ const getUserById = async (userId: string): Promise<User> => {
       email,
       clerkId,
       imageUrl,
+      role,
       "favoriteTopics": favoriteTopics[]-> {
         _id,
         title,

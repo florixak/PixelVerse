@@ -12,7 +12,7 @@ export const getCommentsByPostId = async (
     groq`*[_type == "comment" && references($postId)] | order(publishedAt desc) [$offset...$offset+$limit] {
       _id,
       content,
-      author->{_id, username, "imageUrl": imageUrl, clerkId},
+      author->{_id, username, "imageUrl": imageUrl, clerkId, role},
       publishedAt,
       parentComment,
       likes,

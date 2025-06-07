@@ -1,10 +1,11 @@
 import { Topic } from "@/sanity.types";
 import { client } from "../client";
 import { groq } from "next-sanity";
+import { SortOrder } from "@/lib/types";
 
 type GetAllTopicsParams = {
   limit?: number;
-  order?: "alphabetical" | "latest" | "oldest" | "popular" | "trending";
+  order?: SortOrder;
   from?: number;
 };
 
@@ -57,7 +58,7 @@ const getAllTopics = async ({
       ]{
         _id,
         content,
-        author->{username, "imageUrl": imageUrl},
+        author->{username, "imageUrl": imageUrl, role},
         publishedAt,
         parentComment,
         likes,

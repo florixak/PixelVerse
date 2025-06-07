@@ -18,9 +18,11 @@ const getPostBySlug = async (
     publishedAt,
     postType,
     "imageUrl": image.asset->url,
-    "author": author->{_id, username, "imageUrl": imageUrl, clerkId},
+    "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
     "topicSlug": topic->slug.current,
     dimensions,
+    "likes": count(reactions[type == "like"]),
+    "dislikes": count(reactions[type == "dislike"]),
     software,
     "reactions": reactions[] {
       user->{_id, username, "imageUrl": imageUrl, clerkId},

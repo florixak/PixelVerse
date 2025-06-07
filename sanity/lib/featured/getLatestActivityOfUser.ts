@@ -16,10 +16,11 @@ const getLatestActivityOfUser = async (
       _createdAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl, clerkId},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
       "topicSlug": *[_type == "topic" && _id == ^.topic._ref][0].slug.current,
-      upvotes,
-      downvotes,
+      likes,
+      dislikes,
+      "commentsCount": count(*[_type == "comment" && references(^._id)]),
       tags
     } | order(_createdAt desc)[0...$limit]`,
     { clerkId, limit }

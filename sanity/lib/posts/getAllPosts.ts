@@ -12,7 +12,7 @@ const getAllPosts = async () => {
       updatedAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl, clerkId},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
       "topic": topic->{_id, title, "slug": slug.current},
       "likes": count(reactions[type == "like"]),
       "dislikes": count(reactions[type == "dislike"]),

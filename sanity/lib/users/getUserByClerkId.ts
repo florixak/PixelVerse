@@ -14,6 +14,7 @@ export const getUserByClerkId = async (
       email,
       clerkId,
       imageUrl,
+      role,
       "favoriteTopics": favoriteTopics[]-> {
         _id,
         title,

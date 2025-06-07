@@ -12,7 +12,7 @@ const getPostsByTopic = async (topicSlug: string): Promise<Post[]> => {
       publishedAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl, clerkId},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
       "topicSlug": *[_type == "topic" && _id == ^.topic._ref][0].slug.current,
       dimensions,
       software,
