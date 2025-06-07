@@ -3,43 +3,53 @@
 import { reactOnPost } from "@/actions/postActions";
 import { cn } from "@/lib/utils";
 import { Post, Reaction, User } from "@/sanity.types";
-import { ThumbsUp, ThumbsDown, MessageCircle, Share2 } from "lucide-react";
+import { useClerk } from "@clerk/nextjs";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  MessageCircle,
+  Share2,
+  FlagTriangleRight,
+} from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import ReactionButton from "../reaction-button";
+import { useRouter } from "next/navigation";
 
 type PostReactionsProps = {
-  postId: Post["_id"];
-  reactions: Reaction[];
+  post: Post;
   currentUserClerkId?: User["clerkId"];
-  commentsCount?: Post["commentsCount"];
   collapsed?: boolean;
   className?: string;
   commentsLink?: string;
 };
 
 const PostReactions = ({
-  postId,
+  post,
   currentUserClerkId,
-  reactions,
-  commentsCount = 0,
   collapsed = false,
   className = "",
   commentsLink = "",
 }: PostReactionsProps) => {
-  const [likes, setLikes] = useState(
-    reactions.filter((reaction) => reaction.type === "like").length
-  );
-  const [dislikes, setDislikes] = useState(
-    reactions.filter((reaction) => reaction.type === "dislike").length
-  );
+  const [likes, setLikes] = useState(post.likes || 0);
+  const [dislikes, setDislikes] = useState(post.dislikes || 0);
   const [isLiking, setIsLiking] = useState(false);
   const [isDisliking, setIsDisliking] = useState(false);
   const [userReactionState, setUserReactionState] = useState<Reaction["type"]>(
-    reactions.find((reaction) => reaction.user?.clerkId === currentUserClerkId)
-      ?.type || null
+    post.reactions?.find(
+      (reaction) => reaction.user?.clerkId === currentUserClerkId
+    )?.type || null
   );
+  const clerk = useClerk();
+  const router = useRouter();
 
   const handleLike = async () => {
+    if (!clerk.user) {
+      toast.error("You must be logged in to like a post.");
+      clerk.openSignIn();
+      return;
+    }
+
     if (isLiking) return;
     setIsLiking(true);
 
@@ -47,7 +57,7 @@ const PostReactions = ({
       const newLikes = userReactionState === "like" ? likes - 1 : likes + 1;
       setLikes(newLikes);
       setUserReactionState(userReactionState === "like" ? null : "like");
-      await reactOnPost(postId, "like");
+      await reactOnPost(post._id, "like");
     } catch (error) {
       console.error("Error liking post:", error);
 
@@ -60,6 +70,11 @@ const PostReactions = ({
   };
 
   const handleDislike = async () => {
+    if (!clerk.user) {
+      toast.error("You must be logged in to like a post.");
+      clerk.openSignIn();
+      return;
+    }
     if (isDisliking) return;
     setIsDisliking(true);
 
@@ -68,7 +83,7 @@ const PostReactions = ({
         userReactionState === "dislike" ? dislikes - 1 : dislikes + 1;
       setDislikes(newDislikes);
       setUserReactionState(userReactionState === "dislike" ? null : "dislike");
-      await reactOnPost(postId, "dislike");
+      await reactOnPost(post._id, "dislike");
     } catch (error) {
       console.error("Error disliking post:", error);
 
@@ -84,7 +99,7 @@ const PostReactions = ({
 
   const handleCommentClick = () => {
     if (commentsLink) {
-      window.location.href = commentsLink;
+      router.push(commentsLink);
       return;
     }
     scrollTo({
@@ -130,73 +145,78 @@ const PostReactions = ({
     }
   };
 
+  const handleReportClick = () => {
+    if (!clerk.user) {
+      toast.error("You must be logged in to report a post.");
+      clerk.openSignIn();
+      return;
+    }
+    router.push(`/report/post/${post.slug}`);
+  };
+
   return (
     <div
       className={cn(
-        `mt-4 text-gray-700 flex flex-row justify-between gap-3`,
+        `mt-4 text-muted-foreground flex flex-row justify-between gap-3`,
         className
       )}
     >
       <div className="flex items-center gap-4">
-        <button
+        <ReactionButton
+          icon={
+            <ThumbsUp className="inline-block text-blue-500 cursor-pointer" />
+          }
+          count={likes}
+          disabled={userReactionState === "like" || isLiking}
           onClick={handleLike}
-          disabled={isLiking}
-          className="flex items-center cursor-pointer gap-1"
+          isLoading={isLiking}
+          activeColor="text-green-400"
+          showLabel={!collapsed}
+          label="likes"
           title={`${likes} likes`}
-        >
-          <ThumbsUp
-            className={`inline-block text-blue-500 cursor-pointer ${
-              userReactionState === "like" ? "text-green-400" : ""
-            }`}
-          />
-
-          <p className="text-gray-700">
-            {likes}{" "}
-            {!collapsed && <span className="hidden md:inline">likes</span>}
-          </p>
-        </button>
-        <button
+        />
+        <ReactionButton
+          icon={
+            <ThumbsDown className="inline-block text-red-500 cursor-pointer" />
+          }
+          count={dislikes}
+          disabled={userReactionState === "dislike" || isDisliking}
           onClick={handleDislike}
-          disabled={isDisliking}
-          className="flex items-center cursor-pointer gap-1"
+          isLoading={isDisliking}
+          activeColor="text-red-400"
+          showLabel={!collapsed}
+          label="dislikes"
           title={`${dislikes} dislikes`}
-        >
-          <ThumbsDown
-            className={`inline-block text-red-500 cursor-pointer ${
-              userReactionState === "dislike" ? "text-red-700" : ""
-            }`}
-          />
-
-          <p className="text-gray-700">
-            {dislikes}{" "}
-            {!collapsed && <span className="hidden md:inline">dislikes</span>}
-          </p>
-        </button>
-        <button
-          className="flex items-center cursor-pointer gap-1"
+        />
+        <ReactionButton
+          icon={<MessageCircle className="inline-block text-gray-500" />}
+          count={post.commentsCount || 0}
+          disabled={false}
           onClick={handleCommentClick}
-          title={`${commentsCount} comments`}
-        >
-          <MessageCircle />
-
-          <p className="text-gray-700">
-            {commentsCount}{" "}
-            {!collapsed && <span className="hidden md:inline">comments</span>}
-          </p>
-        </button>
+          showLabel={!collapsed}
+          label="comments"
+          title={`${post.commentsCount} comments`}
+        />
       </div>
 
-      <div>
-        <button
-          className="flex items-center cursor-pointer gap-1"
+      <div className="flex items-center gap-4">
+        <ReactionButton
+          icon={<Share2 className="inline-block text-gray-500" />}
+          disabled={false}
           onClick={handleShareClick}
-        >
-          <Share2 />
-          <p className="text-gray-700">
-            Share{" "}
-            {!collapsed && <span className="hidden md:inline">this post</span>}
-          </p>
-        </button>
+          showLabel={true}
+          label="Share"
+          title="Share this post"
+        />
+
+        <ReactionButton
+          icon={<FlagTriangleRight className="inline-block text-gray-500" />}
+          disabled={false}
+          onClick={handleReportClick}
+          showLabel={true}
+          label="Report"
+          title="Report this post"
+        />
       </div>
     </div>
   );

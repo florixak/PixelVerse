@@ -33,12 +33,7 @@ const PostContent = ({ post, userId }: PostContentProps) => {
 
       <Separator />
 
-      <PostReactions
-        postId={post._id}
-        reactions={post.reactions || []}
-        currentUserClerkId={userId}
-        commentsCount={post.commentsCount || 0}
-      />
+      <PostReactions post={post} currentUserClerkId={userId} />
 
       {post.dimensions && (
         <div className="mt-4 text-sm text-muted-foreground">
