@@ -1,12 +1,13 @@
 import Card from "../card";
 import { Post } from "@/sanity.types";
-import { cn, formatDate } from "@/lib/utils";
-import Image from "next/image";
+import { cn } from "@/lib/utils";
+
 import Link from "next/link";
 import PostAuthor from "./post-author";
 import PostTags from "./post-tags";
 import PostReactions from "./post-reactions";
 import { Separator } from "../ui/separator";
+import SmartImage from "../media/smart-image";
 
 type PostCardProps = {
   post: Post;
@@ -18,19 +19,15 @@ const PostCard = ({ post, className, imageSize }: PostCardProps) => {
   return (
     <Card className={cn("h-auto flex p-0 flex-col gap-2", className)}>
       {post.imageUrl && (
-        <Image
-          src={post.imageUrl}
-          alt={post.title || "Post Image"}
-          className="object-cover rounded-lg w-full"
+        <SmartImage
+          src={post.imageUrl || "/avatar-default.svg"}
           width={
-            imageSize === "small" ? 150 : imageSize === "medium" ? 300 : 600
+            imageSize === "large" ? 1200 : imageSize === "medium" ? 800 : 400
           }
           height={
-            imageSize === "small" ? 150 : imageSize === "medium" ? 300 : 600
+            imageSize === "large" ? 600 : imageSize === "medium" ? 400 : 200
           }
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL={post.imageUrl}
+          alt={post.title}
         />
       )}
       <div className="flex flex-col p-4 gap-1">
@@ -49,7 +46,7 @@ const PostCard = ({ post, className, imageSize }: PostCardProps) => {
           </Link>
         </div>
         <div className="flex flex-col gap-2 mb-2">
-          <p className="text-sm text-gray-600 ml-1">{post.excerpt}</p>
+          <p className="text-sm text-muted-foreground ml-1">{post.excerpt}</p>
 
           <PostTags tags={post.tags} limit={3} className="mt-0" />
         </div>
@@ -57,11 +54,9 @@ const PostCard = ({ post, className, imageSize }: PostCardProps) => {
         <Separator />
 
         <PostReactions
-          postId={post._id}
-          reactions={post.reactions || []}
+          post={post}
           collapsed
-          className="mx-3 mt-2"
-          commentsCount={post.commentsCount || 0}
+          className="mt-2 scale-90"
           commentsLink={
             "/topics/" + post.topicSlug + "/" + post.slug + "#comments"
           }
