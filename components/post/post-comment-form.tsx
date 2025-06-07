@@ -1,16 +1,15 @@
 "use client";
 
-import { SignIn, SignInButton, useSignIn, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { Textarea } from "../ui/textarea";
 import { createComment } from "@/actions/postActions";
 import { Comment, Post } from "@/sanity.types";
 import toast from "react-hot-toast";
-import { use, useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import SubmitButton from "../submit-button";
 import PostComment from "./post-comment";
 import PostCommentsWrapper from "./post-comments-wrapper";
-import { Button } from "../ui/button";
 import AuthButtons from "../auth-buttons";
 
 type PostCommentFormProps = {
@@ -40,7 +39,6 @@ const initialState: CommentFormState = {
 
 const PostCommentForm = ({ post }: PostCommentFormProps) => {
   const { user } = useUser();
-  const { signIn, isLoaded } = useSignIn();
   const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction] = useActionState(createComment, initialState);
   const [optimisticComments, setOptimisticComments] = useState<
@@ -124,12 +122,13 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
           {optimisticComments.map((comment) => (
             <PostComment
               key={comment._id}
+              currentUserId={user?.id}
               comment={{
                 ...comment,
                 author: {
                   username: user?.username || "Anonymous",
                   imageUrl: user?.imageUrl || "/avatar-default.svg",
-                  clerkId: user?.id || "unknown",
+                  clerkId: user?.id,
                 },
               }}
             />
