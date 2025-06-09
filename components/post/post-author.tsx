@@ -24,10 +24,13 @@ const PostAuthor = ({
   className,
   imageClassName,
 }: PostAuthorProps) => {
+  const userProfile = author?.username
+    ? `/user/${author?.username}`
+    : `/profile/${author?.clerkId}`;
   return (
     <div className={cn("flex flex-row gap-4 items-center", className)}>
       {!hideImage && (
-        <Link href={`/profile/${author?.clerkId}`} className="hidden sm:block">
+        <Link href={userProfile} className="hidden sm:block">
           <Image
             src={author?.imageUrl || "/avatar-default.svg"}
             alt={author?.username || "Author Image"}
@@ -43,10 +46,7 @@ const PostAuthor = ({
       <div className="flex flex-col">
         {!hideFullName && (
           <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Link
-              href={`/profile/${author?.clerkId}`}
-              className="hover:underline"
-            >
+            <Link href={userProfile} className="hover:underline">
               {author?.fullName || author?.username || "Unknown Author"}
             </Link>
             <Role role={author?.role} />
