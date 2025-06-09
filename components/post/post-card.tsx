@@ -28,6 +28,7 @@ const PostCard = ({ post, className, imageSize }: PostCardProps) => {
             imageSize === "large" ? 600 : imageSize === "medium" ? 400 : 200
           }
           alt={post.title}
+          className="w-full"
         />
       )}
       <div className="flex flex-col p-4 gap-1">
