@@ -119,9 +119,11 @@ export type User = {
   username?: string;
   fullName?: string;
   email?: string;
+  bio?: string;
   clerkId?: string;
   createdAt?: string;
   isReported?: boolean;
+  isBanned?: boolean;
   imageUrl?: string;
   favoriteTopics?: Topic[];
   role?: "user" | "admin" | "moderator";
@@ -129,10 +131,7 @@ export type User = {
   // Activity statistics
   postCount?: number;
   commentCount?: number;
-
-  // Voting history
-  upvotedPosts?: string[];
-  downvotedPosts?: string[];
+  receivedLikes?: number;
 };
 
 export type Reaction = {
