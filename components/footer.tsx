@@ -1,13 +1,11 @@
-import React from "react";
-
 const Footer = () => {
   return (
-    <footer className="container mx-auto px-4 py-8 text-center">
-      <p className="text-sm text-muted-foreground">
-        &copy; {new Date().getFullYear()} PixelDit. All rights reserved.
-      </p>
-      <p className="text-sm text-muted-foreground">
-        Made with ❤️ by Ondřej Pták.
+    <footer className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
+      <p>&copy; {new Date().getFullYear()} PixelVerse. All rights reserved.</p>
+      <p>Made with ❤️ by Ondřej Pták.</p>
+      <p>
+        PixelVerse is a demonstration and not a live service (for now). No real
+        user data is collected or stored.
       </p>
     </footer>
   );
