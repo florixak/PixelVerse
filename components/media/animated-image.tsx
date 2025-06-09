@@ -30,7 +30,7 @@ const AnimatedImage = ({
         setGifSrc((prev) => prev ?? `${src}?t=${Date.now()}`);
         setIsVisible(entry.isIntersecting);
       },
-      { threshold: 0.2, rootMargin: "100px" }
+      { threshold: 0.4, rootMargin: "100px" }
     );
 
     if (containerRef.current) observer.observe(containerRef.current);
