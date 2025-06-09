@@ -47,7 +47,7 @@ const BasicFields = ({ topics, setPostType, topicSlug }: BasicFieldsProps) => {
           </SelectTrigger>
           <SelectContent>
             {topics.map((topic) => (
-              <SelectItem key={topic._id} value={topic.slug || topic._id}>
+              <SelectItem key={topic._id} value={topic._id}>
                 {topic.title}
               </SelectItem>
             ))}
