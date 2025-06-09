@@ -1,4 +1,5 @@
 import { writeClient } from "../client";
+import { ensureUniqueUsername } from "@/lib/user-utils";
 
 const addUser = async ({
   clerkId,
@@ -13,10 +14,14 @@ const addUser = async ({
   fullName?: string;
   imageUrl?: string;
 }) => {
+  if (!clerkId || !username || !email) {
+    throw new Error("clerkId, username, and email are required");
+  }
+
   return writeClient.create({
     _type: "user",
     clerkId,
-    username,
+    username: await ensureUniqueUsername(username),
     fullName,
     email,
     imageUrl,
