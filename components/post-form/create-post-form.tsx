@@ -14,7 +14,7 @@ import SubmitButton from "../submit-button";
 
 type CreatePostFormProps = {
   topics: Topic[];
-  topicSlug?: string;
+  topic: Topic | null;
 };
 
 export type ColorPaletteItem = {
@@ -28,10 +28,7 @@ export type TutorialStepType = {
   imageUrl: string;
 };
 
-export default function CreatePostForm({
-  topics,
-  topicSlug,
-}: CreatePostFormProps) {
+export default function CreatePostForm({ topics, topic }: CreatePostFormProps) {
   const [postType, setPostType] = useState("text");
   const [isOriginal, setIsOriginal] = useState(true);
   const [software, setSoftware] = useState<string[]>([]);
@@ -118,17 +115,11 @@ export default function CreatePostForm({
       onSubmit={handleSubmit}
       className="space-y-8 max-w-4xl mx-auto w-full p-6"
     >
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Create a New Post</h1>
-        <p className="text-muted-foreground">
-          Share your pixel art, tutorial, or question with the community
-        </p>
-      </div>
       {/* Basic Fields */}
       <BasicFields
         topics={topics}
         setPostType={setPostType}
-        topicSlug={topicSlug}
+        topicId={topic?._id}
       />
       {/* Conditional Fields Based on Post Type */}
       {(postType === "pixelArt" || postType === "animation") && (

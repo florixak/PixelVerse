@@ -18,10 +18,10 @@ import { Topic } from "@/sanity.types";
 type BasicFieldsProps = {
   topics: Topic[];
   setPostType: (value: PostTypesType["value"]) => void;
-  topicSlug?: string;
+  topicId?: string;
 };
 
-const BasicFields = ({ topics, setPostType, topicSlug }: BasicFieldsProps) => {
+const BasicFields = ({ topics, setPostType, topicId }: BasicFieldsProps) => {
   return (
     <div className="space-y-4">
       <div>
@@ -41,7 +41,7 @@ const BasicFields = ({ topics, setPostType, topicSlug }: BasicFieldsProps) => {
         <Label htmlFor="topic">
           Topic <span className="text-red-500">*</span>
         </Label>
-        <Select name="topic" required defaultValue={topicSlug}>
+        <Select name="topic" required defaultValue={topicId}>
           <SelectTrigger>
             <SelectValue placeholder="Select a topic" />
           </SelectTrigger>
