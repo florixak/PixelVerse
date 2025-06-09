@@ -1,8 +1,9 @@
+import { User as UserType } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import addUser from "@/sanity/lib/users/addUser";
 import { User } from "@clerk/nextjs/server";
 
-export async function ensureSanityUser(user: User): Promise<string> {
+export async function ensureSanityUser(user: User): Promise<UserType["_id"]> {
   if (!user) throw new Error("No user provided");
 
   const existingUser = await writeClient.fetch(
@@ -24,3 +25,37 @@ export async function ensureSanityUser(user: User): Promise<string> {
 
   return newUser._id;
 }
+
+export const ensureUniqueUsername = async (
+  username: string
+): Promise<string> => {
+  const sanitizedUsername = username
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, "_")
+    .trim();
+
+  const existingUsers: User[] = await writeClient.fetch(
+    `*[_type == "user" && username match $usernamePattern] { username }`,
+    { usernamePattern: `${sanitizedUsername}*` }
+  );
+
+  if (existingUsers.length === 0) {
+    return sanitizedUsername;
+  }
+
+  const suffixPattern = new RegExp(`^${sanitizedUsername}(\\d+)$`);
+  let highestSuffix = 0;
+
+  existingUsers.forEach((user) => {
+    if (typeof user.username === "string") {
+      const match = user.username.match(suffixPattern);
+      if (match && match[1]) {
+        const suffix = parseInt(match[1], 10);
+        highestSuffix = Math.max(highestSuffix, suffix);
+      }
+    }
+  });
+
+  return `${sanitizedUsername}${highestSuffix + 1}`;
+};
