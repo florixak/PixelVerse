@@ -3,7 +3,7 @@ import { client } from "../client";
 
 const getAllPosts = async () => {
   return client.fetch(
-    groq`*[_type == "post" && isDeleted != true] | order(publishedAt desc) {
+    groq`*[_type == "post" && isDeleted != true && author->isBanned != true] | order(publishedAt desc) {
       _id,
       title,
       "slug": slug.current,
@@ -12,7 +12,7 @@ const getAllPosts = async () => {
       updatedAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
       "topic": topic->{_id, title, "slug": slug.current},
       "likes": count(reactions[type == "like"]),
       "dislikes": count(reactions[type == "dislike"]),

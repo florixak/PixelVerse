@@ -10,7 +10,7 @@ const getPostBySlug = async (
     ? `"userReaction": reactions[user->clerkId == "${clerkId}"][0].type,`
     : "";
 
-  const query = groq`*[_type == "post" && slug.current == $postSlug && isDeleted != true][0] {
+  const query = groq`*[_type == "post" && slug.current == $postSlug && isDeleted != true && author->isBanned != true][0] {
     _id,
     title,
     "slug": slug.current,
@@ -18,7 +18,7 @@ const getPostBySlug = async (
     publishedAt,
     postType,
     "imageUrl": image.asset->url,
-    "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
+    "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
     "topicSlug": topic->slug.current,
     dimensions,
     "likes": count(reactions[type == "like"]),

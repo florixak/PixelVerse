@@ -6,7 +6,7 @@ export const getUserByClerkId = async (
   clerkId: string
 ): Promise<User | null> => {
   return client.fetch(
-    groq`*[_type == "user" && clerkId == $clerkId][0] {
+    groq`*[_type == "user" && clerkId == $clerkId && isBanned != true][0] {
       _id,
       createdAt,
       username,
@@ -14,6 +14,7 @@ export const getUserByClerkId = async (
       email,
       clerkId,
       imageUrl,
+      isBanned,
       role,
       "favoriteTopics": favoriteTopics[]-> {
         _id,
@@ -21,10 +22,11 @@ export const getUserByClerkId = async (
         "slug": slug.current,
         description
       },
-      "postCount": count(*[_type == "post" && references(^._id)]),
-      "commentCount": count(*[_type == "comment" && references(^._id)]),
-      "upvotedPosts": *[_type == "vote" && user._ref == ^._id && value > 0].post._ref,
-      "downvotedPosts": *[_type == "vote" && user._ref == ^._id && value < 0].post._ref,
+      "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
+      "commentCount": count(*[_type == "comment" && references(^._id) && isDeleted != true]),
+      "receivedLikes": count(*[_type == "post" && author._ref == ^._id]{
+        "likes": reactions[type == "like"]
+      }[].likes[]),
       isReported
     }`,
     { clerkId }
