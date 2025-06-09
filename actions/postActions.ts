@@ -6,7 +6,6 @@ import slugify from "slugify";
 import { ensureSanityUser } from "@/lib/user-utils";
 import { Post, Reaction } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
-import { error } from "console";
 
 export async function createPost(formData: FormData) {
   try {
@@ -16,6 +15,18 @@ export async function createPost(formData: FormData) {
     const userId = await ensureSanityUser(user);
 
     const topicId = formData.get("topic")?.toString() || "";
+
+    console.log("Creating post with topicId:", topicId);
+
+    const topicExists = await writeClient.fetch(
+      `*[_type == "topic" && _id == $topicId][0]._id`,
+      { topicId }
+    );
+
+    if (!topicExists) {
+      throw new Error(`Topic with ID "${topicId}" does not exist`);
+    }
+
     const postTitle = formData.get("title")?.toString() || "Untitled Post";
 
     const imageFile = formData.get("image") as File;
