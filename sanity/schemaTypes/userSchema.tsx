@@ -24,6 +24,14 @@ export const userSchema = defineType({
       validation: (Rule) => Rule.required().email(),
     }),
     defineField({
+      name: "bio",
+      title: "Bio",
+      type: "text",
+      description: "A short biography or description of the user.",
+      rows: 3,
+      validation: (Rule) => Rule.max(200).warning("Keep it concise!"),
+    }),
+    defineField({
       name: "createdAt",
       title: "Date Joined",
       type: "datetime",
@@ -37,6 +45,13 @@ export const userSchema = defineType({
       initialValue: false,
       description:
         "Indicates if the user has been reported for inappropriate content.",
+    }),
+    defineField({
+      name: "isBanned",
+      title: "Is Banned",
+      type: "boolean",
+      initialValue: false,
+      description: "Indicates if the user is banned from the platform.",
     }),
     defineField({
       name: "imageUrl",
