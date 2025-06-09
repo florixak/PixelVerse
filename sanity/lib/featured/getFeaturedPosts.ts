@@ -9,7 +9,7 @@ export const getFeaturedPosts = async (limit: number = 6): Promise<Post[]> => {
 
   return client.fetch<Post[]>(
     groq`
-      *[_type == "post" && isDeleted != true] | order(upvotes desc)[0...${limit}] {
+      *[_type == "post" && isDeleted != true && author->isBanned != true] | order(upvotes desc)[0...${limit}] {
         _id,
       title,
       "slug": slug.current,
@@ -17,7 +17,7 @@ export const getFeaturedPosts = async (limit: number = 6): Promise<Post[]> => {
       publishedAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
       "topicSlug": *[_type == "topic" && _id == ^.topic._ref][0].slug.current,
       dimensions,
       software,
@@ -25,7 +25,7 @@ export const getFeaturedPosts = async (limit: number = 6): Promise<Post[]> => {
       "dislikes": count(reactions[type == "dislike"]),
       tags,
       isDeleted,
-      "commentsCount": count(*[_type == "comment" && references(^._id)]),
+      "commentsCount": count(*[_type == "comment" && references(^._id) && isDeleted != true])
       }
     `
   );
