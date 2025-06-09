@@ -7,7 +7,7 @@ const getLatestActivityOfUser = async (
   limit: number = 10
 ): Promise<Post[]> => {
   return client.fetch(
-    groq`*[_type == "post" && author->clerkId == $clerkId && isDeleted != true] {
+    groq`*[_type == "post" && author->clerkId == $clerkId && isDeleted != true && author->isBanned != true] {
       _id,
       title,
       "slug": slug.current,
@@ -16,10 +16,10 @@ const getLatestActivityOfUser = async (
       _createdAt,
       postType,
       "imageUrl": image.asset->url,
-      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role},
+      "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
       "topicSlug": *[_type == "topic" && _id == ^.topic._ref][0].slug.current,
-      likes,
-      dislikes,
+      "likes": count(reactions[type == "like"]),
+      "dislikes": count(reactions[type == "dislike"]),
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
       tags
     } | order(_createdAt desc)[0...$limit]`,

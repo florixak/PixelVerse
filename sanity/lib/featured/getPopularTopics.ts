@@ -9,7 +9,7 @@ export const getPopularTopics = async (): Promise<Topic[]> => {
       title,
       "slug": slug.current,
       "iconUrl": icon.asset->url,
-      "postCount": count(*[_type == "post" && references(^._id)])
+      "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true && author->isBanned != true]),
     } | order(postCount desc)[0...8]
   `);
 };
