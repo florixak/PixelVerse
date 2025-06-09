@@ -6,6 +6,9 @@ type RoleProps = {
 };
 
 const Role = ({ role }: RoleProps) => {
+  if (!role) {
+    return null;
+  }
   return (
     <Badge
       className={
