@@ -146,11 +146,11 @@ const CommandSearch = () => {
               Latest Posts
             </CommandItem>
             <CommandItem
-              onSelect={() => navigate(`/topics/${topicSlug}?sort=top`)}
+              onSelect={() => navigate(`/topics/${topicSlug}?sort=trending`)}
               className="flex items-center"
             >
               <FlameIcon className="mr-2 h-4 w-4" />
-              Top Posts
+              Trending Posts
             </CommandItem>
             <CommandItem
               onSelect={handleCreatePost}
@@ -212,7 +212,7 @@ const CommandSearch = () => {
 
           <CommandGroup heading="Topic Actions">
             <CommandItem
-              onSelect={() => navigate("/topics/new")}
+              onSelect={() => navigate("/topics/suggest")}
               className="flex items-center"
             >
               <PlusIcon className="mr-2 h-4 w-4" />
