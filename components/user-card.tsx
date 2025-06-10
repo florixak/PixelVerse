@@ -1,15 +1,10 @@
 "use client";
 
-import {
-  SignedIn,
-  SignOutButton,
-  useClerk,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
-import React from "react";
+import { SignedIn, SignOutButton, useClerk, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { LogOut, Settings } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 type UserCardProps = {
   collapsed?: boolean;
@@ -29,8 +24,10 @@ const UserCard = ({ collapsed }: UserCardProps) => {
   return (
     <SignedIn key={user.id}>
       <div
-        className={`flex items-center gap-2 p-2 ${
-          collapsed ? "flex-col text-center" : "flex-row justify-between w-full"
+        className={`flex items-center gap-2  ${
+          collapsed
+            ? "flex-col text-center"
+            : "flex-row justify-between w-full p-2"
         }`}
       >
         {!collapsed && (
@@ -39,8 +36,15 @@ const UserCard = ({ collapsed }: UserCardProps) => {
             <p className="text-muted-foreground">@{user.username}</p>
           </div>
         )}
-
-        <UserButton />
+        <Link href={`/user/${user.username}`} className="flex-shrink-0">
+          <Image
+            src={user.imageUrl || "/avatar-default.svg"}
+            alt={user.fullName || user.username || "User Avatar"}
+            width={40}
+            height={40}
+            className="rounded-full cursor-pointer"
+          />
+        </Link>
       </div>
       <Button
         variant="ghost"
