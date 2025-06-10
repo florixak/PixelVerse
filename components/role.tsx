@@ -6,7 +6,7 @@ type RoleProps = {
 };
 
 const Role = ({ role }: RoleProps) => {
-  if (!role) {
+  if (!role || role === "user") {
     return null;
   }
   return (
