@@ -1,6 +1,7 @@
 import { User as UserType } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import addUser from "@/sanity/lib/users/addUser";
+import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { User } from "@clerk/nextjs/server";
 
 export async function ensureSanityUser(user: User): Promise<UserType["_id"]> {
@@ -58,4 +59,14 @@ export const ensureUniqueUsername = async (
   });
 
   return `${sanitizedUsername}${highestSuffix + 1}`;
+};
+
+export const canAccessDashboard = async (clerkId: string): Promise<boolean> => {
+  const user = await getUserByClerkId(clerkId);
+  return user?.role === "admin" || user?.role === "moderator";
+};
+
+export const isUserAdmin = async (clerkId: string): Promise<boolean> => {
+  const user = await getUserByClerkId(clerkId);
+  return user?.role === "admin";
 };
