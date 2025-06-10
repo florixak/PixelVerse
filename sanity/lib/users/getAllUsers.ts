@@ -1,0 +1,38 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { getUserByClerkId } from "./getUserByClerkId";
+import { canAccessDashboard } from "@/lib/user-utils";
+import { client } from "../client";
+import { groq } from "next-sanity";
+import { User } from "@/sanity.types";
+
+const getAllUsers = async (limit: number = 15): Promise<User[]> => {
+  const user = await currentUser();
+  if (!user) throw new Error("User not authenticated");
+
+  const sanityUser = await getUserByClerkId(user.id);
+  if (!sanityUser || !sanityUser.clerkId)
+    throw new Error("Sanity user not found or clerkId is missing");
+  if (sanityUser.isBanned) throw new Error("User is banned");
+  if (!canAccessDashboard(sanityUser.clerkId))
+    throw new Error("User is not an admin");
+
+  return client.fetch(
+    groq`*[_type == "user"] | order(createdAt desc) [0...$limit] {
+      _id,
+      createdAt,
+      username,
+      fullName,
+      email,
+      clerkId,
+      imageUrl,
+      isBanned,
+      role,
+      "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
+      "commentCount": count(*[_type == "comment" && references(^._id) && isDeleted != true]),
+      isReported
+    }`,
+    { limit }
+  );
+};
+
+export default getAllUsers;
