@@ -1,5 +1,4 @@
 import FeaturedPosts from "@/components/post/featured-posts";
-import PopularTopicsProps from "@/components/topic/popular-topics";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Image as ImageIcon } from "lucide-react";
