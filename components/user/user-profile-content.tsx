@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import Role from "@/components/role";
 import { Calendar, Ellipsis } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { User } from "@/sanity.types";
+import { Post, Topic, User } from "@/sanity.types";
 import LatestUserActivity from "./user-latest-activity";
+import getAllUserPosts from "@/sanity/lib/posts/getAllUserPosts";
+import { Suspense } from "react";
+import { getUserMostActiveTopic } from "@/sanity/lib/posts/getUserMostActiveTopic";
 
 type UserProfileContentProps = {
   user: User | null;
@@ -49,27 +52,13 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
             <p className="text-sm md:text-base text-muted-foreground mt-2">
               {user?.bio || "This user has not set a bio yet."}
             </p>
-
-            <div className="flex flex-row items-center justify-center sm:justify-start gap-4 mt-4">
-              <div className="flex flex-col items-end">
-                <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
-                  {user?.postCount || 0}
-                </p>
-                <p className="text-sm text-muted-foreground">Posts</p>
-              </div>
-              <div className="flex flex-col items-end">
-                <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
-                  {user?.commentCount || 0}
-                </p>
-                <p className="text-sm text-muted-foreground">Comments</p>
-              </div>
-              <div className="flex flex-col items-end">
-                <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
-                  {user?.receivedLikes || 0}
-                </p>
-                <p className="text-sm text-muted-foreground">Likes</p>
-              </div>
-            </div>
+            <Suspense
+              fallback={
+                <div className="h-16 w-full bg-gray-200 animate-pulse rounded-md" />
+              }
+            >
+              <UserProfileStats user={user} />
+            </Suspense>
           </div>
         </div>
 
@@ -95,6 +84,46 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
         <LatestUserActivity clerkId={user?.clerkId} limit={8} />
       </div>
     </section>
+  );
+};
+
+const UserProfileStats = async ({ user }: { user: User | null }) => {
+  if (!user) {
+    return null; // Handle case where user data is not available
+  }
+
+  const mostActiveTopic: Topic | null = await getUserMostActiveTopic(
+    user.clerkId || "",
+    {}
+  );
+
+  return (
+    <div className="flex flex-row items-center justify-center sm:justify-start gap-4 mt-4">
+      <div className="flex flex-col items-end">
+        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
+          {user?.postCount || 0}
+        </p>
+        <p className="text-sm text-muted-foreground">Posts</p>
+      </div>
+      <div className="flex flex-col items-end">
+        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
+          {user?.commentCount || 0}
+        </p>
+        <p className="text-sm text-muted-foreground">Comments</p>
+      </div>
+      <div className="flex flex-col items-end">
+        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
+          {user?.receivedLikes || 0}
+        </p>
+        <p className="text-sm text-muted-foreground">Likes</p>
+      </div>
+      <div className="flex flex-col items-end">
+        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
+          {mostActiveTopic?.title || "None"}
+        </p>
+        <p className="text-sm text-muted-foreground">Most Active Topic</p>
+      </div>
+    </div>
   );
 };
 
