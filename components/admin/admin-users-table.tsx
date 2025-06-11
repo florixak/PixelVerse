@@ -14,7 +14,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 import AdminRoleSelect from "./admin-role-select";
 import { useState } from "react";
-import { Role, User } from "@/sanity.types";
+import { User } from "@/sanity.types";
 import AdminUsersTablePagination from "./admin-users-table-pagination";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
@@ -94,7 +94,7 @@ const AdminUsersTable = ({
       header: "Role",
       cell: (info) => (
         <AdminRoleSelect
-          defaultRole={info.getValue() as Role}
+          defaultRole={info.getValue() as User["role"]}
           targetUser={info.row.original}
           currentUser={user}
         />
