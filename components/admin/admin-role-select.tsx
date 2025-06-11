@@ -49,14 +49,12 @@ const AdminRoleSelect = ({
       return;
     }
 
-    // Admin role requires confirmation
     if (newRole === "admin" && actualRole !== "admin") {
       setPendingRole(newRole as User["role"]);
       setShowConfirm(true);
       return;
     }
 
-    // For other roles, apply directly
     applyRoleChange(newRole as User["role"]);
   };
 
@@ -64,27 +62,29 @@ const AdminRoleSelect = ({
     try {
       setIsUpdating(true);
       setDisplayedRole(newRole);
-      toast.loading("Updating role...", {
-        id: "role-update",
-        duration: 0,
+
+      const updatePromise = updateUserRole(targetUser._id, newRole);
+
+      const result = await toast.promise(updatePromise, {
+        loading: `Updating role to ${newRole}...`,
+        success: (data) => {
+          if (data.success) {
+            return `Role updated to ${newRole}.`;
+          } else {
+            return `Failed: ${data.message || "Unknown error"}`;
+          }
+        },
+        error: (error) => {
+          return `Failed to update role: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`;
+        },
       });
-
-      const response = await updateUserRole(targetUser._id, newRole);
-
-      if (!response.success) {
-        setDisplayedRole(actualRole);
-        toast.error(response.message || "Failed to update role");
-        return;
-      }
-      toast.dismiss("role-update");
-
-      setActualRole(newRole);
-      toast.success("Role updated successfully");
     } catch (error) {
-      setDisplayedRole(actualRole);
-      toast.error("Failed to update role");
+      setDisplayedRole(actualRole); // Revert on any error
       console.error("Error updating role:", error);
     } finally {
+      // This now runs AFTER promise resolves
       setIsUpdating(false);
       setPendingRole(null);
     }
