@@ -61,6 +61,7 @@ export type Post = {
   excerpt?: string;
   author?: User;
   topicSlug?: Topic["slug"];
+  topic?: Topic;
   publishedAt?: string;
   postType?:
     | "text"
@@ -125,19 +126,45 @@ export type User = {
   isReported?: boolean;
   isBanned?: boolean;
   imageUrl?: string;
-  favoriteTopics?: Topic[];
   role?: "user" | "admin" | "moderator";
-
-  // Activity statistics
   postCount?: number;
   commentCount?: number;
   receivedLikes?: number;
+  mostActiveTopic?: Topic;
+  favoriteTopics?: Topic[];
 };
 
 export type Reaction = {
   user: User;
   type: "like" | "dislike" | null;
   _key: string;
+};
+
+export type Report = {
+  _id: string;
+  _type: "report";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  displayId?: string;
+  reason:
+    | "spam"
+    | "inappropriate"
+    | "harassment"
+    | "violence"
+    | "copyright"
+    | "other";
+  additionalInfo?: string;
+  reportedAt: string;
+  status: "pending" | "resolved" | "rejected";
+
+  comment?: Comment;
+  post?: Post;
+  reporter: User;
+
+  moderatedBy?: User;
+  moderationNotes?: string;
+  moderatedAt?: string;
 };
 
 export type SanityImagePaletteSwatch = {
