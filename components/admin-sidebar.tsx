@@ -15,7 +15,7 @@ import Image from "next/image";
 import { currentUser } from "@clerk/nextjs/server";
 import PixelVerse from "@/public/pixelverse.png";
 import Link from "next/link";
-import { Home, Newspaper, Settings, User } from "lucide-react";
+import { Home, Newspaper, Settings, TriangleAlert, User } from "lucide-react";
 
 const menu: {
   title: string;
@@ -35,10 +35,9 @@ const menu: {
     adminOnly: true,
   },
   {
-    title: "Posts",
-    url: "/admin/posts",
-    icon: Newspaper,
-    adminOnly: true,
+    title: "Reports",
+    url: "/admin/reports",
+    icon: TriangleAlert,
   },
   {
     title: "Settings",
