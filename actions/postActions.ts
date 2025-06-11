@@ -4,7 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { writeClient } from "@/sanity/lib/client";
 import slugify from "slugify";
 import { ensureSanityUser } from "@/lib/user-utils";
-import { Post, Reaction } from "@/sanity.types";
+import { Post, Reaction, Report } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
 
 export async function createPost(formData: FormData) {
@@ -200,9 +200,9 @@ export async function deleteComment(commentId: string) {
 }
 
 export async function reportPost(
-  postId: string,
-  reason: string,
-  additionalInfo?: string
+  postId: Post["_id"],
+  reason: Report["reason"],
+  additionalInfo?: Report["additionalInfo"]
 ) {
   try {
     const user = await currentUser();
@@ -228,6 +228,7 @@ export async function reportPost(
       additionalInfo: additionalInfo?.trim() || "",
       reason,
       reportedAt: new Date().toISOString(),
+      status: "pending",
     });
 
     return { success: true, error: null };
