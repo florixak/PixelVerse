@@ -19,9 +19,9 @@ export default async function AppLayout({
       <CommandSearch />
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
-        <main className="relative min-h-screen w-full px-4 mt-6">
+        <main className="relative min-h-screen w-full">
           <SidebarTrigger
-            className="fixed top-3 z-40 size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
+            className="fixed top-3 ml-2 z-[60] size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
             aria-label="Toggle sidebar"
           />
           {children}
