@@ -26,6 +26,13 @@ const AdminDashboard = async () => {
         />
 
         <MetricCard
+          title="Active Users"
+          value={stats?.activeUsers24h}
+          subtext="in last 24h"
+          icon={<Activity className="h-4 w-4 text-green-500" />}
+        />
+
+        <MetricCard
           title="Total Posts"
           value={stats?.totalPosts}
           change={stats?.newPosts24h}
@@ -39,13 +46,6 @@ const AdminDashboard = async () => {
           change={stats?.newReports24h}
           icon={<Flag className="h-4 w-4 text-amber-500" />}
           href="/admin/reports"
-        />
-
-        <MetricCard
-          title="Active Users"
-          value={stats?.activeUsers24h}
-          subtext="in last 24h"
-          icon={<Activity className="h-4 w-4 text-green-500" />}
         />
       </div>
 
@@ -109,8 +109,8 @@ const AdminDashboard = async () => {
 
 type MetricCardProps = {
   title: string;
-  value: string;
-  change?: string;
+  value: string | number;
+  change?: string | number;
   subtext?: string;
   icon: React.ReactNode;
   href?: string;
@@ -124,7 +124,12 @@ const MetricCard = ({
   icon,
   href,
 }: MetricCardProps) => (
-  <Card className={href ? "transition-all hover:border-primary/50" : ""}>
+  <Card
+    className={`${href ? "transition-all hover:border-primary/50" : ""} ${
+      href ? "relative" : ""
+    }`}
+    key={title}
+  >
     <CardHeader className="flex flex-row items-center justify-between pb-2">
       <CardTitle className="text-sm font-medium">{title}</CardTitle>
       {icon}
@@ -139,7 +144,7 @@ const MetricCard = ({
     {href && (
       <Link
         href={href}
-        className="absolute inset-0"
+        className="absolute inset-0 z-10"
         aria-label={`View ${title}`}
       />
     )}
