@@ -5,15 +5,26 @@ import { ArrowRight, Sparkles, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { SignInButton } from "@clerk/nextjs";
 import PopularTopics from "@/components/topic/popular-topics";
+import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
+import { cn } from "@/lib/utils";
 
 export const revalidate = 3600;
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center w-full">
-      <section className="w-full bg-gradient-to-b from-primary/10 to-background pt-16 pb-20 px-4">
-        <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+      <section className="relative w-full h-screen flex-center">
+        <div className="absolute inset-0 overflow-hidden flex items-center justify-center">
+          <InteractiveGridPattern
+            className={cn(
+              "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)] w-full h-full opacity-20"
+            )}
+            width={60}
+            height={60}
+          />
+        </div>
+        <div className="max-w-5xl mx-auto text-center relative z-10 mb-24">
+          <h1 className="font-pixel text-4xl md:text-6xl font-bold mb-6 tracking-tight">
             Welcome to <span className="text-primary">Pixel</span>Verse
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
