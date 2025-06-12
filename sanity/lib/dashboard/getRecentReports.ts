@@ -8,28 +8,39 @@ export async function getRecentReports(limit = 5) {
       reason,
       status,
       reportedAt,
-      
-      // Expand post reference
+      contentType,
       "post": post-> {
         _id,
         title,
         "slug": slug.current,
-        "topicSlug": topic->slug.current
+        "topicSlug": topic->slug.current,
+        author->{
+          _id,
+          username,
+          imageUrl,
+          clerkId,
+          role,
+          isBanned}
       },
-      
-      // Expand comment reference
       "comment": comment-> {
         _id,
         content,
         "postId": post->_id,
-        "postTitle": post->title
+        "postTitle": post->title,
+        author->{
+          _id,
+          username,
+          imageUrl,
+          clerkId,
+          role,
+          isBanned}
       },
-      
-      // Expand reporter reference
       "reporter": reporter-> {
         _id,
         username,
-        imageUrl
+        imageUrl,
+        clerkId,
+        role
       }
     }`,
     { limit: limit - 1 }
