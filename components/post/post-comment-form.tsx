@@ -135,6 +135,11 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
           ))}
         </PostCommentsWrapper>
       )}
+      {optimisticComments.length === 0 && post.commentsCount === 0 && (
+        <p className="text-muted-foreground text-sm text-center mt-4">
+          No comments yet. Be the first to comment!
+        </p>
+      )}
     </>
   );
 };

@@ -17,20 +17,18 @@ const PostComments = async ({ post }: PostCommentProps) => {
       id="comments"
       className="flex-center flex-col gap-2 border border-muted rounded-lg p-4 bg-background"
     >
-      <p className="text-muted-foreground">Comments</p>
+      <p className="text-muted-foreground">Comments ({post.commentsCount})</p>
       <PostCommentForm post={post} />
       <PostCommentsWrapper>
-        {comments && comments.length > 0 ? (
-          comments.map((comment) => (
-            <PostComment
-              key={comment._id}
-              comment={comment}
-              currentUserId={user?.id}
-            />
-          ))
-        ) : (
-          <p className="text-muted-foreground">No comments yet.</p>
-        )}
+        {comments && comments.length > 0
+          ? comments.map((comment) => (
+              <PostComment
+                key={comment._id}
+                comment={comment}
+                currentUserId={user?.id}
+              />
+            ))
+          : null}
       </PostCommentsWrapper>
     </div>
   );
