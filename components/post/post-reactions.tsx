@@ -15,6 +15,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import ReactionButton from "../reaction-button";
 import { useRouter } from "next/navigation";
+import ReportButton from "../report-button";
 
 type PostReactionsProps = {
   post: Post;
@@ -145,15 +146,6 @@ const PostReactions = ({
     }
   };
 
-  const handleReportClick = () => {
-    if (!clerk.user) {
-      toast.error("You must be logged in to report a post.");
-      clerk.openSignIn();
-      return;
-    }
-    router.push(`/report/post/${post.slug}`);
-  };
-
   return (
     <div
       className={cn(
@@ -209,14 +201,7 @@ const PostReactions = ({
           title="Share this post"
         />
 
-        <ReactionButton
-          icon={<FlagTriangleRight className="inline-block text-gray-500" />}
-          disabled={false}
-          onClick={handleReportClick}
-          showLabel={true}
-          label="Report"
-          title="Report this post"
-        />
+        <ReportButton contentType="post" content={post} />
       </div>
     </div>
   );
