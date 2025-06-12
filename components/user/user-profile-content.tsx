@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import Role from "@/components/role";
 import { Calendar, Ellipsis } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { Post, Topic, User } from "@/sanity.types";
+import { Topic, User } from "@/sanity.types";
 import LatestUserActivity from "./user-latest-activity";
-import getAllUserPosts from "@/sanity/lib/posts/getAllUserPosts";
 import { Suspense } from "react";
 import { getUserMostActiveTopic } from "@/sanity/lib/posts/getUserMostActiveTopic";
 
@@ -105,12 +104,12 @@ const UserProfileStats = async ({ user }: { user: User | null }) => {
         </p>
         <p className="text-sm text-muted-foreground">Posts</p>
       </div>
-      <div className="flex flex-col items-end">
+      {/*<div className="flex flex-col items-end">
         <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
           {user?.commentCount || 0}
         </p>
         <p className="text-sm text-muted-foreground">Comments</p>
-      </div>
+      </div>*/}
       <div className="flex flex-col items-end">
         <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
           {user?.receivedLikes || 0}
