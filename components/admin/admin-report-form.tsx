@@ -59,21 +59,23 @@ const AdminReportForm = ({
         className="min-h-[100px]"
       />
 
-      <div className="flex gap-2 justify-end">
-        <Button
-          variant="outline"
-          onClick={() => handleAction("rejected")}
-          disabled={isSubmitting}
-        >
-          Reject Report
-        </Button>
-        <Button
-          onClick={() => handleAction("resolved")}
-          disabled={isSubmitting}
-        >
-          Resolve Report
-        </Button>
-      </div>
+      {report.status === "pending" && (
+        <div className="flex gap-2 justify-end">
+          <Button
+            variant="outline"
+            onClick={() => handleAction("rejected")}
+            disabled={isSubmitting}
+          >
+            Reject Report
+          </Button>
+          <Button
+            onClick={() => handleAction("resolved")}
+            disabled={isSubmitting}
+          >
+            Resolve Report
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
