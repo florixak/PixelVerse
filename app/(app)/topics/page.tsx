@@ -38,7 +38,7 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
           topic to see related posts.
         </p>
       </div>
-      <TopicSearch order={order} />
+
       <div className="w-full flex items-start gap-10 flex-col">
         <div className="w-full flex items-start gap-2 flex-col">
           <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
@@ -67,9 +67,13 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
           </Suspense>
         </div>
         <div className="flex items-start gap-2 flex-col">
-          <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
-            All Topics
-          </h2>
+          <div className="flex items-center justify-between w-full">
+            <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
+              All Topics
+            </h2>
+            <TopicSearch order={order} />
+          </div>
+
           <Suspense fallback={<TopicsSkeleton />}>
             <Topics order={"alphabetical"} />
           </Suspense>
