@@ -1,4 +1,3 @@
-// components/admin/admin-report-details.tsx
 import { Report } from "@/sanity.types";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -160,7 +159,7 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
                 )}
                 {report.comment && (
                   <Link
-                    href={`/topics/${report.comment.post?.slug}#comment-${report.comment._id}`}
+                    href={`/topics/${report.comment.post?.topicSlug}/${report.comment.post?.slug}#comment-${report.comment._id}`}
                     className="text-sm flex items-center text-primary"
                     target="_blank"
                   >
