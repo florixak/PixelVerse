@@ -1,4 +1,4 @@
-import PostReportForm from "@/components/post/post-report-form";
+import ReportForm from "@/components/post/report-form";
 import getPostBySlug from "@/sanity/lib/posts/getPostBySlug";
 import { notFound } from "next/navigation";
 
@@ -14,7 +14,13 @@ const PostReportPage = async ({ params }: PostReportPageProps) => {
     notFound();
   }
   const post = await getPostBySlug(postSlug);
-  return <PostReportForm post={post} />;
+  return (
+    <ReportForm
+      post={post}
+      contentType="post"
+      returnUrl={`/topics/${post.topicSlug}`}
+    />
+  );
 };
 
 export default PostReportPage;
