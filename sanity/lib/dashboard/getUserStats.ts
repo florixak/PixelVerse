@@ -1,7 +1,11 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 
-export async function getUserStats() {
+export async function getUserStats(): Promise<{
+  total: number;
+  new24h: number;
+  active24h: number;
+}> {
   const now = new Date();
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
