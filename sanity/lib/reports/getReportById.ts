@@ -33,6 +33,19 @@ export async function getReportById(id: string): Promise<Report | null> {
         "postId": post->_id,
         "postTitle": post->title,
         "postSlug": post->slug.current,
+        "post": post-> {
+        _id,
+        title,
+        "slug": slug.current,
+        "topicSlug": topic->slug.current,
+        content,
+        publishedAt,
+        author->{
+          _id,
+          username,
+          imageUrl
+        }
+        },
         author->{
           _id,
           username,
