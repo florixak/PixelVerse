@@ -153,6 +153,8 @@ export async function getDashboardStats() {
       getTrendingTopics(5),
     ]);
 
+    console.log(userStats);
+
     return {
       totalUsers: userStats.total,
       newUsers24h: userStats.new24h,
@@ -194,7 +196,10 @@ export const handleReportAction = async (
       .patch(reportId)
       .set({
         status: action,
-        moderatedBy: user?._id,
+        moderatedBy: {
+          _type: "reference",
+          _ref: user?._id,
+        },
         moderationNotes: resolveMessage || "",
         moderatedAt: new Date().toISOString(),
       })
