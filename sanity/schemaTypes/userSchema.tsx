@@ -90,6 +90,38 @@ export const userSchema = defineType({
       validation: (Rule) => Rule.required(),
       description: "Determines user permissions within the platform",
     }),
+    defineField({
+      name: "followers",
+      title: "Followers",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "user" }] }],
+      description: "Users who follow this user",
+      validation: (Rule) => Rule.unique(),
+    }),
+    defineField({
+      name: "following",
+      title: "Following",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "user" }] }],
+      description: "Users this user follows",
+      validation: (Rule) => Rule.unique(),
+    }),
+    defineField({
+      name: "followerCount",
+      title: "Follower Count",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+      description: "Number of followers (cached for performance)",
+    }),
+    defineField({
+      name: "followingCount",
+      title: "Following Count",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+      description: "Number of users being followed (cached for performance)",
+    }),
   ],
   preview: {
     select: {
