@@ -140,13 +140,17 @@ export type Reaction = {
   _key: string;
 };
 
+// Update your Report type definition
 export type Report = {
   _id: string;
   _type: "report";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  displayId?: string;
+  displayId: string;
+  contentType: "post" | "comment" | "user";
+  content: { _ref: string; _type: "reference" };
+  reportedContent?: Post | Comment | User; // Populated by GROQ query
   reason:
     | "spam"
     | "inappropriate"
@@ -157,15 +161,23 @@ export type Report = {
   additionalInfo?: string;
   reportedAt: string;
   status: "pending" | "resolved" | "rejected";
-
-  comment?: Comment;
-  post?: Post;
   reporter: User;
-
   moderatedBy?: User;
   moderationNotes?: string;
   moderatedAt?: string;
 };
+
+export function isPostContent(content: any): content is Post {
+  return content?._type === "post";
+}
+
+export function isCommentContent(content: any): content is Comment {
+  return content?._type === "comment";
+}
+
+export function isUserContent(content: any): content is User {
+  return content?._type === "user";
+}
 
 export type SanityImagePaletteSwatch = {
   _type: "sanity.imagePaletteSwatch";
