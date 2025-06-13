@@ -7,9 +7,32 @@ export const reportSchema = defineType({
   type: "document",
   fields: [
     defineField({
-      name: "post",
+      name: "displayId",
+      type: "string",
+      title: "Display ID",
+      description: "Unique identifier for the report (e.g., REP-0001)",
+      readOnly: true,
+    }),
+    defineField({
+      name: "contentType",
+      type: "string",
+      title: "Content Type",
+      description: "Type of content being reported",
+      options: {
+        list: [
+          { title: "Post", value: "post" },
+          { title: "Comment", value: "comment" },
+          { title: "User", value: "user" },
+        ],
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "content",
       type: "reference",
-      to: [{ type: "post" }],
+      title: "Reported Content",
+      description: "Reference to the content being reported",
+      to: [{ type: "post" }, { type: "comment" }, { type: "user" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -22,7 +45,7 @@ export const reportSchema = defineType({
       name: "reason",
       type: "string",
       title: "Reason for Reporting",
-      description: "Please provide a reason for reporting this post.",
+      description: "Please provide a reason for reporting this content.",
       options: {
         list: REPORT_REASONS.map(({ label, value }) => ({
           title: label,
@@ -32,6 +55,7 @@ export const reportSchema = defineType({
       },
       validation: (Rule) => Rule.required().error("Reason is required"),
     }),
+    // Rest of your fields remain the same
     defineField({
       name: "additionalInfo",
       type: "text",
@@ -43,7 +67,7 @@ export const reportSchema = defineType({
       name: "reportedAt",
       type: "datetime",
       title: "Reported At",
-      description: "The date and time when the post was reported.",
+      description: "The date and time when the content was reported.",
       validation: (Rule) => Rule.required(),
       initialValue: () => new Date().toISOString(),
       readOnly: true,
@@ -83,20 +107,43 @@ export const reportSchema = defineType({
       title: "Moderated At",
       description: "The date and time when the report was moderated.",
       readOnly: true,
-      validation: (Rule) => Rule.required().error("Moderated date is required"),
-      initialValue: () => new Date().toISOString(),
     }),
   ],
   preview: {
     select: {
-      title: "post.title",
+      contentType: "contentType",
+      postTitle: "content.title",
+      commentContent: "content.content",
+      username: "content.username",
       reporterName: "reporter.username",
       reason: "reason",
+      displayId: "displayId",
     },
-    prepare({ title, reporterName, reason }) {
+    prepare({
+      contentType,
+      postTitle,
+      commentContent,
+      username,
+      reporterName,
+      reason,
+      displayId,
+    }) {
+      let title = displayId || "Report";
+
+      if (contentType === "post" && postTitle) {
+        title += ` - Post: ${postTitle}`;
+      } else if (contentType === "comment" && commentContent) {
+        const previewContent =
+          commentContent.substring(0, 30) +
+          (commentContent.length > 30 ? "..." : "");
+        title += ` - Comment: ${previewContent}`;
+      } else if (contentType === "user" && username) {
+        title += ` - User: ${username}`;
+      }
+
       return {
         title,
-        subtitle: `Reported by ${reporterName} for ${reason}`,
+        subtitle: `Reported by ${reporterName || "Unknown"} for ${reason}`,
       };
     },
   },
