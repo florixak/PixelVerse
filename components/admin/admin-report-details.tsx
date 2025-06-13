@@ -1,4 +1,9 @@
-import { Report } from "@/sanity.types";
+import {
+  Report,
+  isPostContent,
+  isCommentContent,
+  isUserContent,
+} from "@/sanity.types";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Link from "next/link";
@@ -18,9 +23,11 @@ type AdminReportDetailsProps = {
 
 const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
   const reportedAt = new Date(report.reportedAt);
-  const contentType = report.post ? "Post" : "Comment";
-  const reportedContent = report.post || report.comment;
-  const reportAuthor = reportedContent?.author;
+  const reportedContent = report.reportedContent;
+  const contentType = report.contentType;
+  const reportAuthor = isUserContent(reportedContent)
+    ? reportedContent
+    : reportedContent?.author || report.reporter;
 
   const statusConfig: {
     variant: "outline" | "default" | "destructive";
@@ -44,6 +51,49 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
     },
   }[report.status] || { variant: "default", icon: null, label: report.status };
 
+  // Create a view link based on content type
+  const ViewContentLink = () => {
+    if (!reportedContent) return null;
+
+    if (isPostContent(reportedContent)) {
+      return (
+        <Link
+          href={`/topics/${reportedContent.topicSlug}/${reportedContent.slug}`}
+          className="text-sm flex items-center text-primary"
+          target="_blank"
+        >
+          View Post <ExternalLink className="h-3 w-3 ml-1" />
+        </Link>
+      );
+    }
+
+    if (isCommentContent(reportedContent)) {
+      return (
+        <Link
+          href={`/topics/${reportedContent.post?.topicSlug}/${reportedContent.post?.slug}#comment-${reportedContent._id}`}
+          className="text-sm flex items-center text-primary"
+          target="_blank"
+        >
+          View Comment <ExternalLink className="h-3 w-3 ml-1" />
+        </Link>
+      );
+    }
+
+    if (isUserContent(reportedContent)) {
+      return (
+        <Link
+          href={`/profile/${reportedContent.username}`}
+          className="text-sm flex items-center text-primary"
+          target="_blank"
+        >
+          View User Profile <ExternalLink className="h-3 w-3 ml-1" />
+        </Link>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header with key information */}
@@ -62,8 +112,6 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
             {/*Filed {formatDistanceToNow(reportedAt, { addSuffix: true })}*/}
           </p>
         </div>
-
-        {/* Additional navigation options could go here */}
       </div>
 
       <div className="grid gap-6 md:grid-cols-5">
@@ -78,7 +126,7 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Reason
                 </h3>
-                <p className="font-medium">{report.reason}</p>
+                <p className="font-medium capitalize">{report.reason}</p>
               </div>
 
               {report.additionalInfo && (
@@ -148,24 +196,7 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
             <CardHeader>
               <CardTitle className="flex justify-between">
                 <span>Reported {contentType}</span>
-                {report.post && (
-                  <Link
-                    href={`/topics/${report.post.topicSlug}/${report.post.slug}`}
-                    className="text-sm flex items-center text-primary"
-                    target="_blank"
-                  >
-                    View Post <ExternalLink className="h-3 w-3 ml-1" />
-                  </Link>
-                )}
-                {report.comment && (
-                  <Link
-                    href={`/topics/${report.comment.post?.topicSlug}/${report.comment.post?.slug}#comment-${report.comment._id}`}
-                    className="text-sm flex items-center text-primary"
-                    target="_blank"
-                  >
-                    View Comment <ExternalLink className="h-3 w-3 ml-1" />
-                  </Link>
-                )}
+                <ViewContentLink />
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -191,30 +222,53 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
 
               {/* Content preview */}
               <div className="p-4 border rounded-md bg-muted/50">
-                {report.post && (
+                {!reportedContent && (
+                  <p className="text-muted-foreground italic">
+                    This content is no longer available or has been deleted.
+                  </p>
+                )}
+
+                {isPostContent(reportedContent) && (
                   <>
                     <h3 className="font-bold text-lg mb-2">
-                      {report.post.title}
+                      {reportedContent.title}
                     </h3>
-                    <div className="prose prose-sm max-w-none"></div>
+                    <div className="prose prose-sm max-w-none">
+                      {typeof reportedContent?.content === "string"
+                        ? reportedContent.content
+                        : typeof reportedContent?.excerpt === "string"
+                        ? reportedContent.excerpt
+                        : "No content available"}
+                    </div>
                   </>
                 )}
 
-                {report.comment && (
+                {isCommentContent(reportedContent) && (
                   <div className="prose prose-sm max-w-none">
-                    {report.comment.content}
+                    {reportedContent.content}
+                  </div>
+                )}
+
+                {isUserContent(reportedContent) && (
+                  <div>
+                    <h3 className="font-bold text-lg mb-2">
+                      User: {reportedContent.username}
+                    </h3>
+                    {reportedContent.bio && (
+                      <p className="text-sm">{reportedContent.bio}</p>
+                    )}
                   </div>
                 )}
               </div>
 
               {/* Contextual information */}
-              {report.comment && (
+              {isCommentContent(reportedContent) && (
                 <Alert>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>Comment Context</AlertTitle>
                   <AlertDescription>
                     This comment was made on the post "
-                    {report.comment?.post?.title}"
+                    {reportedContent.post?.title}"
                   </AlertDescription>
                 </Alert>
               )}

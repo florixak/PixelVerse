@@ -1,4 +1,3 @@
-// components/admin/admin-reports-table.tsx
 "use client";
 
 import {
@@ -11,10 +10,16 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, FileText, MessageSquare } from "lucide-react";
+import { ArrowUpDown, Eye, FileText, MessageSquare, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { Report, User } from "@/sanity.types";
+import {
+  Report,
+  User as UserType,
+  isPostContent,
+  isCommentContent,
+  isUserContent,
+} from "@/sanity.types";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -25,7 +30,7 @@ type AdminReportsTableProps = {
   initialReports: Report[];
   globalFilter: string;
   setGlobalFilter: (filter: string) => void;
-  currentUser: User | null;
+  currentUser: UserType | null;
 };
 
 const columnHelper = createColumnHelper<Report>();
@@ -86,53 +91,83 @@ const AdminReportsTable = ({
     }),
 
     // Content Type Column
-    columnHelper.accessor(
-      (row) => (row.post ? "Post" : row.comment ? "Comment" : "Unknown"),
-      {
-        id: "contentType",
-        header: "Content Type",
-        cell: (info) => {
-          const type = info.getValue();
-          const report = info.row.original;
-          const icon =
-            type === "Post" ? (
-              <FileText className="h-4 w-4 mr-1" />
-            ) : (
-              <MessageSquare className="h-4 w-4 mr-1" />
-            );
+    columnHelper.accessor("contentType", {
+      header: "Content Type",
+      cell: (info) => {
+        const type = info.getValue();
+        let icon;
 
-          return (
-            <div className="flex items-center">
-              {icon}
-              <span>{type}</span>
-            </div>
-          );
-        },
-      }
-    ),
+        switch (type) {
+          case "post":
+            icon = <FileText className="h-4 w-4 mr-1" />;
+            break;
+          case "comment":
+            icon = <MessageSquare className="h-4 w-4 mr-1" />;
+            break;
+          case "user":
+            icon = <User className="h-4 w-4 mr-1" />;
+            break;
+          default:
+            icon = null;
+        }
+
+        return (
+          <div className="flex items-center">
+            {icon}
+            <span className="capitalize">{type}</span>
+          </div>
+        );
+      },
+    }),
 
     // Content Title/Excerpt Column
     columnHelper.accessor(
-      (row) =>
-        row.post?.title ||
-        (row.comment?.content
-          ? `Comment: ${row.comment.content.substring(0, 30)}...`
-          : "Unknown content"),
+      (row) => {
+        const content = row.reportedContent;
+        if (!content) return "Content unavailable";
+
+        if (isPostContent(content)) {
+          return content.title;
+        } else if (isCommentContent(content)) {
+          return `Comment: ${content.content?.substring(0, 30)}...`;
+        } else if (isUserContent(content)) {
+          return `User: ${content.username}`;
+        }
+        return "Unknown content";
+      },
       {
         id: "contentTitle",
         header: "Content",
         cell: (info) => {
           const report = info.row.original;
-          const content = info.getValue();
+          const content = report.reportedContent;
+          const title = info.getValue();
+
+          if (!content) {
+            return (
+              <span className="text-muted-foreground italic">
+                Content unavailable
+              </span>
+            );
+          }
+
+          let href = "#";
+          if (isPostContent(content)) {
+            href = `/topics/${content.topicSlug}/${content.slug}`;
+          } else if (isCommentContent(content)) {
+            href = `/topics/${content.post?.topicSlug}/${content.post?.slug}#comment-${content._id}`;
+          } else if (isUserContent(content)) {
+            href = `/profile/${content.username}`;
+          }
 
           return (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href={`/topics/${report.post?.topicSlug}/${report.post?.slug}`}
+                  href={href}
                   className="text-primary hover:underline truncate block max-w-[200px]"
                 >
-                  {content}
+                  {title}
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="top">
@@ -150,7 +185,7 @@ const AdminReportsTable = ({
       cell: (info) => {
         const username = info.getValue();
         return username ? (
-          <Link href={`/user/${username}`} className="hover:underline">
+          <Link href={`/profile/${username}`} className="hover:underline">
             {username}
           </Link>
         ) : (
