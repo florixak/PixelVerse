@@ -7,19 +7,16 @@ import toast from "react-hot-toast";
 import { useClerk } from "@clerk/nextjs";
 import { Comment, Post, Report, User } from "@/sanity.types";
 
-type ReportButtonProps<T> = {
+type ReportButtonProps = {
   contentType: Report["contentType"];
   content: Post | Comment | User;
 };
 
-const ReportButton = <T extends unknown>({
-  contentType,
-  content,
-}: ReportButtonProps<T>) => {
+const ReportButton = ({ contentType, content }: ReportButtonProps) => {
   const router = useRouter();
   const { user, openSignIn } = useClerk();
 
-  const getReportUrl = () => {
+  const getReportUrl = (): string => {
     switch (contentType) {
       case "post":
         const post = content as Post;
@@ -28,28 +25,38 @@ const ReportButton = <T extends unknown>({
         const comment = content as Comment;
         return `/report/comment/${comment._id}`;
       case "user":
-        const user = content as User;
-        return `/report/user/${user.username}`;
+        const reportedUser = content as User;
+        return `/report/user/${reportedUser.username}`;
       default:
-        throw new Error("Invalid content type for reporting");
+        return "/";
     }
   };
 
   const handleReportClick = () => {
     if (!user) {
-      toast.error("You must be logged in to report a post.");
+      toast.error(`You must be logged in to report this ${contentType}.`);
       openSignIn();
       return;
     }
     router.push(getReportUrl());
   };
+
+  const getLabel = (): string => {
+    switch (contentType) {
+      case "user":
+        return "Report User";
+      default:
+        return "Report";
+    }
+  };
+
   return (
     <ReactionButton
       icon={<FlagTriangleRight className="inline-block text-gray-500" />}
       disabled={false}
       onClick={handleReportClick}
       showLabel={true}
-      label="Report"
+      label={getLabel()}
       title={`Report this ${contentType}`}
     />
   );
