@@ -1,13 +1,7 @@
-import MasonryWrapper from "@/components/masonry-wrapper";
-import PostCard from "@/components/post/post-card";
-import Role from "@/components/role";
-import { Button } from "@/components/ui/button";
 import UserProfileContent from "@/components/user/user-profile-content";
-import { formatDate } from "@/lib/utils";
-import getLatestActivityOfUser from "@/sanity/lib/featured/getLatestActivityOfUser";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
-import { Calendar, Ellipsis } from "lucide-react";
-import Image from "next/image";
+import { currentUser } from "@clerk/nextjs/server";
+
 import { notFound } from "next/navigation";
 
 type ProfilePageProps = {
@@ -19,7 +13,17 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
   if (!clerkId) {
     notFound();
   }
-  const user = await getUserByClerkId(clerkId);
+  let user = await getUserByClerkId(clerkId);
+  if (!user && clerkId !== "me") {
+    notFound();
+  }
+  if (!user && clerkId === "me") {
+    const currUser = await currentUser();
+    if (!currUser || !currUser.id) {
+      notFound();
+    }
+    user = await getUserByClerkId(currUser?.id);
+  }
 
   return <UserProfileContent user={user} />;
 };
