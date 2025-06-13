@@ -16,9 +16,9 @@ const PostReportPage = async ({ params }: PostReportPageProps) => {
   const post = await getPostBySlug(postSlug);
   return (
     <ReportForm
-      post={post}
+      content={post}
       contentType="post"
-      returnUrl={`/topics/${post.topicSlug}`}
+      returnUrl={`/topics/${post.topicSlug}/${post.slug}`}
     />
   );
 };

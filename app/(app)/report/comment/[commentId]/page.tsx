@@ -22,7 +22,7 @@ const CommentReportPage = async ({ params }: CommentReportPageProps) => {
     <ReportForm
       content={comment}
       contentType="comment"
-      returnUrl={`/topics/${comment.post?.topicSlug}/${comment.post?.slug}`}
+      returnUrl={`/topics/${comment.post.topicSlug}/${comment.post.slug}`}
     />
   );
 };
