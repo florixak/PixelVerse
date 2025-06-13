@@ -199,41 +199,101 @@ export async function deleteComment(commentId: string) {
   }
 }
 
-export async function reportPost(
-  postId: Post["_id"],
+export async function report(
+  contentId: string,
   reason: Report["reason"],
-  additionalInfo?: Report["additionalInfo"]
+  additionalInfo: string | undefined,
+  contentType: Report["contentType"]
 ) {
   try {
     const user = await currentUser();
     if (!user) {
       return {
         success: false,
-        error: "You must be logged in to report a post",
+        error: "You must be logged in to report content",
       };
     }
 
     const userId = await ensureSanityUser(user);
 
+    const contentExists = await writeClient.fetch(
+      `*[_type == $contentType && _id == $contentId][0]._id`,
+      { contentType, contentId }
+    );
+
+    if (!contentExists) {
+      return {
+        success: false,
+        error: `The ${contentType} you're trying to report doesn't exist`,
+      };
+    }
+
+    // Check if user has already reported this content
+    const existingReport = await writeClient.fetch(
+      `*[_type == "report" && content._ref == $contentId && reporter._ref == $userId][0]._id`,
+      { contentId, userId }
+    );
+
+    if (existingReport) {
+      return {
+        success: false,
+        error: `You've already reported this ${contentType}`,
+      };
+    }
+
+    const reportCount = await writeClient.fetch('count(*[_type == "report"])');
+    const displayId = `REP-${(reportCount + 1).toString().padStart(4, "0")}`;
+
     await writeClient.create({
       _type: "report",
-      post: {
+      displayId,
+      contentType,
+      content: {
         _type: "reference",
-        _ref: postId,
+        _ref: contentId,
       },
       reporter: {
         _type: "reference",
         _ref: userId,
       },
-      additionalInfo: additionalInfo?.trim() || "",
       reason,
+      additionalInfo: additionalInfo?.trim() || undefined,
       reportedAt: new Date().toISOString(),
       status: "pending",
     });
 
+    revalidatePath("/admin/reports");
+
+    if (contentType === "post") {
+      const post = await writeClient.fetch(
+        `*[_type == "post" && _id == $contentId][0]{ 
+          "slug": slug.current, 
+          "topicSlug": topic->slug.current 
+        }`,
+        { contentId }
+      );
+      if (post) {
+        revalidatePath(`/topics/${post.topicSlug}/${post.slug}`);
+      }
+    } else if (contentType === "comment") {
+      const comment = await writeClient.fetch(
+        `*[_type == "comment" && _id == $contentId][0]{ 
+          "postSlug": post->slug.current, 
+          "topicSlug": post->topic->slug.current 
+        }`,
+        { contentId }
+      );
+      if (comment) {
+        revalidatePath(`/topics/${comment.topicSlug}/${comment.postSlug}`);
+      }
+    }
+
     return { success: true, error: null };
   } catch (error) {
-    console.error("Error reporting post:", error);
-    return { error: "Failed to report post", success: false };
+    console.error(`Error reporting ${contentType}:`, error);
+    return {
+      error: `Failed to report ${contentType}. Please try again.`,
+      success: false,
+    };
   }
 }
