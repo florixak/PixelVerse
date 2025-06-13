@@ -1,4 +1,4 @@
-import { Home, Newspaper, Search, ShieldCheck } from "lucide-react";
+import { Home, Newspaper, Search, ShieldCheck, User } from "lucide-react";
 
 import {
   Sidebar,
@@ -27,6 +27,7 @@ const menu: {
   url: string;
   icon: React.ComponentType;
   adminOnly?: boolean;
+  loggedInOnly?: boolean;
 }[] = [
   {
     title: "Home",
@@ -34,13 +35,19 @@ const menu: {
     icon: Home,
   },
   {
+    title: "Profile",
+    url: "/profile/me",
+    icon: User,
+    loggedInOnly: true,
+  },
+  {
     title: "Topics",
     url: "/topics",
     icon: Newspaper,
   },
   {
-    title: "Search",
-    url: "#",
+    title: "Explore",
+    url: "/explore",
     icon: Search,
   },
   {
@@ -70,8 +77,17 @@ async function TopicsList() {
 }
 
 export async function AppSidebar() {
-  const user = await currentUser();
-  const isAdmin = user ? await canAccessDashboard(user.id) : false;
+  let user = null;
+  let isAdmin = false;
+
+  try {
+    user = await currentUser();
+    if (user) {
+      isAdmin = await canAccessDashboard(user.id);
+    }
+  } catch (error) {
+    console.log("Auth check failed, proceeding as non-admin");
+  }
 
   return (
     <Sidebar collapsible="icon" key={user?.id || "guest"}>
@@ -91,7 +107,10 @@ export async function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menu.map((item) => {
-                if (item.adminOnly && !isAdmin) {
+                if (
+                  (item.adminOnly && !isAdmin) ||
+                  (item.loggedInOnly && !user)
+                ) {
                   return null;
                 }
                 return (
