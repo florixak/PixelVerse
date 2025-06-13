@@ -1,86 +1,69 @@
-// sanity/lib/reports/getAllReports.ts
-import { groq } from "next-sanity";
+import { Report } from "@/sanity.types";
 import { client } from "../client";
-import { Report, User } from "@/sanity.types";
-import { canAccessDashboard } from "@/lib/user-utils";
+import { groq } from "next-sanity";
 
-const getAllReports = async (
-  clerkId: User["clerkId"],
-  limit: number = 50
-): Promise<Report[]> => {
-  if (!(await canAccessDashboard(clerkId))) {
-    throw new Error("Not authorized to view reports");
-  }
-
+export async function getAllReports(): Promise<Report[]> {
   return client.fetch(
-    groq`*[_type == "report"] | order(reportedAt desc) [0...$limit] {
+    groq`*[_type == "report"] | order(reportedAt desc) {
       _id,
       _type,
       _createdAt,
       _updatedAt,
-      _rev,
+      contentType,
+      displayId,
       reason,
       additionalInfo,
       reportedAt,
       status,
-      
-      // Expand post reference with nested author
-      "post": post-> {
+      "reportedContent": content-> {
         _id,
-        title,
-        "slug": slug.current,
-        "topicSlug": topic->slug.current,
-        content,
-        publishedAt,
-        postType,
-        imageUrl,
-        author->{ 
-          _id,
-          username,
-          imageUrl,
-          clerkId,
-          role,
-          isBanned
+        _type,
+        ...select(
+          _type == "post" => {
+            title,
+            "slug": slug.current,
+            "topicSlug": topic->slug.current,
+            content,
+            "author": author->{
+              _id,
+              username,
+              imageUrl
+            }
+          },
+          _type == "comment" => {
+            content,
+            publishedAt,
+            "post": post->{
+              _id,
+              title,
+              "slug": slug.current,
+              "topicSlug": topic->slug.current
+            },
+            "author": author->{
+              _id,
+              username,
+              imageUrl
+            }
+          },
+          _type == "user" => {
+            username,
+            imageUrl,
+            bio
           }
+        )
       },
-      
-      // Expand comment reference if present
-      "comment": comment-> {
-        _id,
-        content,
-        publishedAt,
-        "postId": post->_id,
-        "postTitle": post->title,
-        author->{
-          _id,
-          username,
-          imageUrl,
-          clerkId,
-          role,
-          isBanned}
-      },
-      
-      // Expand reporter reference
       "reporter": reporter-> {
         _id,
         username,
-        imageUrl,
-        clerkId,
-        role
+        imageUrl
       },
-      
-      // Moderation fields
       moderationNotes,
       moderatedAt,
       "moderatedBy": moderatedBy-> {
         _id,
         username,
-        imageUrl,
-        role
+        imageUrl
       }
-    }`,
-    { limit }
+    }`
   );
-};
-
-export default getAllReports;
+}

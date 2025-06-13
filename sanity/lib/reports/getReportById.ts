@@ -3,54 +3,59 @@ import { client } from "../client";
 import { Report } from "@/sanity.types";
 
 export async function getReportById(id: string): Promise<Report | null> {
-  const report = await client.fetch(
+  return client.fetch(
     groq`*[_type == "report" && _id == $id][0] {
       _id,
       _type,
       _createdAt,
       _updatedAt,
+      contentType,
+      displayId,
       reason,
       additionalInfo,
       reportedAt,
       status,
-      "post": post-> {
+      "reportedContent": content-> {
+        _id,
+        _type,
+        ...select(
+          _type == "post" => {
+            title,
+            "slug": slug.current,
+            "topicSlug": topic->slug.current,
+            content,
+            publishedAt,
+            "author": author->{
+              _id,
+              username,
+              imageUrl
+            }
+          },
+          _type == "comment" => {
+            content,
+            publishedAt,
+            "postId": post->_id,
+            "postTitle": post->title,
+            "postSlug": post->slug.current,
+            "topicSlug": post->topic->slug.current,
+            "author": author->{
+              _id,
+              username,
+              imageUrl
+            },
+            "post": post->{
         _id,
         title,
         "slug": slug.current,
-        "topicSlug": topic->slug.current,
-        content,
-        publishedAt,
-        author->{
-          _id,
-          username,
-          imageUrl
-        }
-      },
-      "comment": comment-> {
-        _id,
-        content,
-        publishedAt,
-        "postId": post->_id,
-        "postTitle": post->title,
-        "postSlug": post->slug.current,
-        "post": post-> {
-        _id,
-        title,
-        "slug": slug.current,
-        "topicSlug": topic->slug.current,
-        content,
-        publishedAt,
-        author->{
-          _id,
-          username,
-          imageUrl
-        }
-        },
-        author->{
-          _id,
-          username,
-          imageUrl
-        }
+        "topicSlug": topic->slug.current
+          },
+          },
+          _type == "user" => {
+            username,
+            imageUrl,
+            bio
+          }
+        )
       },
       "reporter": reporter-> {
         _id,
@@ -67,28 +72,4 @@ export async function getReportById(id: string): Promise<Report | null> {
     }`,
     { id }
   );
-
-  if (!report) return null;
-
-  const statusPrefix =
-    report.status === "pending"
-      ? "P"
-      : report.status === "resolved"
-      ? "R"
-      : "X";
-
-  const reportDate = new Date(report.reportedAt);
-  const dateComponent = reportDate.toISOString().slice(2, 10).replace(/-/g, "");
-
-  const sequentialNumber = await client.fetch(
-    groq`count(*[_type == "report" && reportedAt <= $reportedAt])`,
-    { reportedAt: report.reportedAt }
-  );
-
-  const paddedNumber = String(sequentialNumber).padStart(4, "0");
-
-  return {
-    ...report,
-    displayId: `${statusPrefix}${dateComponent}-${paddedNumber}`,
-  };
 }
