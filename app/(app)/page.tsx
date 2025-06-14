@@ -8,8 +8,6 @@ import PopularTopics from "@/components/topic/popular-topics";
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { cn } from "@/lib/utils";
 
-export const revalidate = 3600;
-
 export default function Home() {
   return (
     <div className="flex flex-col items-center w-full">
