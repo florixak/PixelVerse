@@ -27,10 +27,11 @@ const getPostBySlug = async (
     "reactions": reactions[] {
       user->{_id, username, "imageUrl": imageUrl, clerkId},
       type
-    },
-    "commentsCount": count(*[_type == "comment" && references(^._id)]),
-    tags,
-    isDeleted,
+      },
+      "commentsCount": count(*[_type == "comment" && references(^._id)]),
+      tags,
+      isDeleted,
+      content,
     ${userReactionField}
   }`;
 
