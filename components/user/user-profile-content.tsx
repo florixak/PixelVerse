@@ -1,12 +1,12 @@
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import Role from "@/components/role";
-import { Calendar, Ellipsis } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { Topic, User } from "@/sanity.types";
+import { User } from "@/sanity.types";
 import LatestUserActivity from "./user-latest-activity";
 import { Suspense } from "react";
-import { getUserMostActiveTopic } from "@/sanity/lib/posts/getUserMostActiveTopic";
+import UserActions from "./user-actions";
+import UserProfileStats from "./user-profile-stats";
 
 type UserProfileContentProps = {
   user: User | null;
@@ -20,7 +20,7 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
           <Image
             src={user?.imageUrl || "/avatar-default.svg"}
             alt={`${user?.username}'s avatar`}
-            className="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-background shadow-md"
+            className="w-36 h-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-background shadow-md"
             width={192}
             height={192}
             priority
@@ -58,18 +58,14 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
             >
               <UserProfileStats user={user} />
             </Suspense>
+            <div className="flex sm:hidden flex-col gap-6 mt-4">
+              <UserActions user={user} />
+            </div>
           </div>
         </div>
 
         <div className="hidden sm:flex flex-col gap-6 mt-0 md:mt-8">
-          <div className="flex flex-row items-center gap-4 justify-between">
-            <Button className="px-6" disabled={!user}>
-              Follow
-            </Button>
-            <Button variant="outline" size="icon">
-              <Ellipsis className="h-5 w-5" />
-            </Button>
-          </div>
+          <UserActions user={user} />
         </div>
       </div>
 
@@ -83,46 +79,6 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
         <LatestUserActivity clerkId={user?.clerkId} limit={8} />
       </div>
     </section>
-  );
-};
-
-const UserProfileStats = async ({ user }: { user: User | null }) => {
-  if (!user) {
-    return null; // Handle case where user data is not available
-  }
-
-  const mostActiveTopic: Topic | null = await getUserMostActiveTopic(
-    user.clerkId || "",
-    {}
-  );
-
-  return (
-    <div className="flex flex-row items-center justify-center sm:justify-start gap-4 mt-4">
-      <div className="flex flex-col items-end">
-        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
-          {user?.postCount || 0}
-        </p>
-        <p className="text-sm text-muted-foreground">Posts</p>
-      </div>
-      {/*<div className="flex flex-col items-end">
-        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
-          {user?.commentCount || 0}
-        </p>
-        <p className="text-sm text-muted-foreground">Comments</p>
-      </div>*/}
-      <div className="flex flex-col items-end">
-        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
-          {user?.receivedLikes || 0}
-        </p>
-        <p className="text-sm text-muted-foreground">Likes</p>
-      </div>
-      <div className="flex flex-col items-end">
-        <p className="text-xl md:text-2xl lg:text-3xl font-semibold">
-          {mostActiveTopic?.title || "None"}
-        </p>
-        <p className="text-sm text-muted-foreground">Most Active Topic</p>
-      </div>
-    </div>
   );
 };
 
