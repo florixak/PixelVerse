@@ -15,7 +15,7 @@ export async function getUserMostActiveTopic(
         _id,
         name,
         title,
-        slug
+        "slug": slug.current,
       }
     }`,
     { clerkId }
