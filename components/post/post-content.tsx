@@ -26,7 +26,7 @@ const PostContent = ({ post, userId }: PostContentProps) => {
       )}
 
       <p className="text-lg text-muted-foreground mt-4">
-        {"No content available for this post."}
+        {(post.content as string) || "No description provided."}
       </p>
 
       <PostTags tags={post.tags} />
