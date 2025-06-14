@@ -126,54 +126,6 @@ export const deleteUser = async (
   }
 };
 
-export async function getDashboardStats() {
-  try {
-    const user = await currentUser();
-    if (!user) throw new Error("Not authenticated");
-
-    const sanityUser = await getUserByClerkId(user.id);
-    const canAccess = await canAccessDashboard(sanityUser?.clerkId);
-    if (!canAccess) {
-      throw new Error("Not authorized");
-    }
-
-    const [
-      userStats,
-      postStats,
-      reportStats,
-      recentUsers,
-      recentReports,
-      trendingTopics,
-    ] = await Promise.all([
-      getUserStats(),
-      getPostStats(),
-      getReportStats(),
-      getRecentUsers(5),
-      getRecentReports(5),
-      getTrendingTopics(5),
-    ]);
-
-    console.log(userStats);
-
-    return {
-      totalUsers: userStats.total,
-      newUsers24h: userStats.new24h,
-      activeUsers24h: userStats.active24h,
-      totalPosts: postStats.total,
-      newPosts24h: postStats.new24h,
-      pendingReports: reportStats.pending,
-      newReports24h: reportStats.new24h,
-      moderationStats: reportStats.moderationMetrics,
-      recentUsers,
-      recentReports,
-      trendingTopics,
-    };
-  } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
-    throw error;
-  }
-}
-
 export const handleReportAction = async (
   reportId: Report["_id"],
   action: Pick<Report, "status" | "moderationNotes">["status"],
