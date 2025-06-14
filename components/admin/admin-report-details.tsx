@@ -16,10 +16,37 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 type AdminReportDetailsProps = {
   report: Report;
 };
+
+export function getReportStatus(report: Report): {
+  variant: "outline" | "default" | "destructive";
+  icon: React.ReactNode;
+  label: string;
+} {
+  return (
+    {
+      pending: {
+        variant: "outline" as const,
+        icon: <Clock className="h-4 w-4 mr-1" />,
+        label: "Pending",
+      },
+      resolved: {
+        variant: "default" as const,
+        icon: <CheckCircle className="h-4 w-4 mr-1" />,
+        label: "Resolved",
+      },
+      rejected: {
+        variant: "destructive" as const,
+        icon: <XCircle className="h-4 w-4 mr-1" />,
+        label: "Rejected",
+      },
+    }[report.status] || { variant: "default", icon: null, label: report.status }
+  );
+}
 
 const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
   const reportedAt = new Date(report.reportedAt);
@@ -29,29 +56,8 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
     ? reportedContent
     : reportedContent?.author || report.reporter;
 
-  const statusConfig: {
-    variant: "outline" | "default" | "destructive";
-    icon: React.ReactNode;
-    label: string;
-  } = {
-    pending: {
-      variant: "outline" as const,
-      icon: <Clock className="h-4 w-4 mr-1" />,
-      label: "Pending Review",
-    },
-    resolved: {
-      variant: "default" as const,
-      icon: <CheckCircle className="h-4 w-4 mr-1" />,
-      label: "Resolved",
-    },
-    rejected: {
-      variant: "destructive" as const,
-      icon: <XCircle className="h-4 w-4 mr-1" />,
-      label: "Rejected",
-    },
-  }[report.status] || { variant: "default", icon: null, label: report.status };
+  const statusConfig = getReportStatus(report);
 
-  // Create a view link based on content type
   const ViewContentLink = () => {
     if (!reportedContent) return null;
 
@@ -108,14 +114,11 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
               </span>
             </Badge>
           </h1>
-          <p className="text-muted-foreground">
-            {/*Filed {formatDistanceToNow(reportedAt, { addSuffix: true })}*/}
-          </p>
+          <p className="text-muted-foreground">{formatDate(reportedAt)}</p>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-5">
-        {/* Left column - Report information */}
         <div className="md:col-span-2 space-y-4">
           <Card>
             <CardHeader>
@@ -159,12 +162,7 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
                     Moderation Details
                   </h3>
                   <div className="space-y-1">
-                    <p>
-                      Moderated{" "}
-                      {/*formatDistanceToNow(new Date(report.moderatedAt), {
-                        addSuffix: true,
-                      })*/}
-                    </p>
+                    <p>Moderated {formatDate(report.moderatedAt)}</p>
                     {report.moderatedBy && (
                       <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
