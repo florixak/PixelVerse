@@ -20,6 +20,7 @@ const getAllPosts = async () => {
       dimensions,
       software,
       isDeleted,
+      content,
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
     }`
   );

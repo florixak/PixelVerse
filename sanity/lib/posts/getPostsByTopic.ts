@@ -47,6 +47,7 @@ const getPostsByTopic = async (
       "dislikes": count(reactions[type == "dislike"]),
       tags,
       isDeleted,
+      content,
       "commentsCount": count(*[_type == "comment" && references(^._id)])
     }`,
     { topicSlug }
