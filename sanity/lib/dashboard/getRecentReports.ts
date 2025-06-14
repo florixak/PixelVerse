@@ -1,7 +1,8 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
+import { Report } from "@/sanity.types";
 
-export async function getRecentReports(limit = 5) {
+export async function getRecentReports(limit = 3): Promise<Report[]> {
   return client.fetch(
     groq`*[_type == "report" && status == "pending"] | order(reportedAt desc) [0...$limit] {
       _id,
@@ -9,6 +10,7 @@ export async function getRecentReports(limit = 5) {
       status,
       reportedAt,
       contentType,
+      displayId,
       "post": post-> {
         _id,
         title,
