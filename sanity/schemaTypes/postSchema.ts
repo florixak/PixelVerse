@@ -31,8 +31,8 @@ export const postSchema = defineType({
     defineField({
       name: "content",
       title: "Content",
-      type: "array",
-      of: [{ type: "block" }],
+      type: "text",
+      rows: 10,
     }),
     defineField({
       name: "excerpt",
