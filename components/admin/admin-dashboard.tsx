@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import MetricCards from "./dashboard/metric-cards";
 import NewUsers from "./dashboard/new-users";
 import RecentReports from "./dashboard/recent-reports";
+import TrendingTopics from "./dashboard/trending-topics";
 
 const AdminDashboard = async () => {
   return (
@@ -74,7 +75,11 @@ const AdminDashboard = async () => {
               Most active topics in the past week
             </CardDescription>
           </CardHeader>
-          <CardContent></CardContent>
+          <CardContent>
+            <Suspense fallback={<div>Loading...</div>}>
+              <TrendingTopics />
+            </Suspense>
+          </CardContent>
         </Card>
 
         <Card>
