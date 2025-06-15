@@ -24,7 +24,9 @@ const TopicCard = ({ topic }: TopicCardProps) => {
         />
       )}
       <Link href={`/topics/${topic.slug}`}>
-        <h2 className="text-xl font-bold mt-2">{topic.title}</h2>
+        <h2 className={`text-xl font-bold ${topic.iconUrl ? "mt-2" : ""}`}>
+          {topic.title}
+        </h2>
       </Link>
       <p className="text-sm text-muted-foreground">{topic.description}</p>
       <p>
