@@ -7,6 +7,7 @@ import { SignInButton } from "@clerk/nextjs";
 import PopularTopics from "@/components/topic/popular-topics";
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { cn } from "@/lib/utils";
+import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
 
 export default function Home() {
   return (
@@ -15,10 +16,18 @@ export default function Home() {
         <div className="absolute inset-0 overflow-hidden flex items-center justify-center">
           <InteractiveGridPattern
             className={cn(
-              "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)] w-full h-full opacity-20"
+              "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)] w-full h-full opacity-20 hidden sm:block"
             )}
             width={60}
             height={60}
+          />
+          <AnimatedGridPattern
+            className={cn(
+              "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)] w-full h-full opacity-20 sm:hidden"
+            )}
+            width={60}
+            height={60}
+            numSquares={20}
           />
         </div>
         <div className="max-w-5xl mx-auto text-center relative z-10 mb-24">
