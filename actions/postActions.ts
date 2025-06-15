@@ -199,7 +199,7 @@ export async function deleteComment(commentId: string) {
   }
 }
 
-export async function report(
+export async function submitReport(
   contentId: string,
   reason: Report["reason"],
   additionalInfo: string | undefined,
