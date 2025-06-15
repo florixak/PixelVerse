@@ -1,22 +1,22 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
+import { REPORT_REASONS } from "@/lib/constants";
+import { Comment, Post, Report, User } from "@/sanity.types";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { submitReport } from "@/actions/postActions";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Textarea } from "../ui/textarea";
-import { Label } from "../ui/label";
-import SubmitButton from "../submit-button";
-import { toast } from "react-hot-toast";
-import { REPORT_REASONS } from "@/lib/constants";
-import { Comment, Post, Report, User } from "@/sanity.types";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { report } from "@/actions/postActions";
+} from "./ui/select";
+import SubmitButton from "./submit-button";
+import { Textarea } from "./ui/textarea";
+import { Label } from "./ui/label";
 
 type ReportFormProps = {
   content: Post | Comment | User;
@@ -95,7 +95,7 @@ const ReportForm = ({
     }
 
     try {
-      const response = await report(
+      const response = await submitReport(
         content._id,
         reasonValue as Report["reason"],
         additionalInfoValue,
