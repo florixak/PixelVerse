@@ -1,4 +1,4 @@
-import ReportForm from "@/components/post/report-form";
+import ReportForm from "@/components/report-form";
 import { getCommentById } from "@/sanity/lib/posts/getCommentById";
 import { notFound } from "next/navigation";
 
