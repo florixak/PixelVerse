@@ -1,21 +1,20 @@
-import React from "react";
-import { Label } from "../ui/label";
-import {
-  SOFTWARE_OPTIONS,
-  DIFFICULTY_LEVELS,
-  PostTypesType,
-  SoftwareOptionType,
-} from "@/lib/constants";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Switch } from "../ui/switch";
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
+  PostTypesType,
+  SoftwareOptionType,
+  SOFTWARE_OPTIONS,
+  DIFFICULTY_LEVELS,
+} from "@/lib/constants";
 
 type ConditionalFieldsProps = {
   postType: PostTypesType["value"];

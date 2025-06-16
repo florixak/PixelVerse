@@ -1,17 +1,16 @@
-import React from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Label } from "../ui/label";
+import { Label } from "@/components/ui/label";
 import { TutorialStepType } from "./create-post-form";
-import { DIFFICULTY_LEVELS, PostTypesType } from "@/lib/constants";
+import { DIFFICULTY_LEVELS } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
 
 type TutorialFieldsProps = {
   tutorialSteps: Array<TutorialStepType>;

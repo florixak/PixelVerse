@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { createPost } from "@/actions/postActions";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Topic } from "@/sanity.types";
 import TutorialFields from "./tutorial-fields";
 import ConditionalFields from "./conditional-fields";
 import BasicFields from "./basic-fields";
 import toast from "react-hot-toast";
-import SubmitButton from "../submit-button";
+import SubmitButton from "@/components/submit-button";
 
 type CreatePostFormProps = {
   topics: Topic[];
@@ -146,10 +145,7 @@ export default function CreatePostForm({ topics, topic }: CreatePostFormProps) {
         <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-        <SubmitButton
-          label="Create post"
-          submittingLabel={"Creating Post..."}
-        />
+        <SubmitButton label="Create post" submittingLabel="Creating Post..." />
       </div>
     </form>
   );
