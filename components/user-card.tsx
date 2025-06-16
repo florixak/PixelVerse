@@ -3,8 +3,8 @@
 import { SignedIn, SignOutButton, useClerk, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { LogOut, Settings } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 type UserCardProps = {
   collapsed?: boolean;
@@ -37,13 +37,16 @@ const UserCard = ({ collapsed }: UserCardProps) => {
           </div>
         )}
         <Link href={`/user/${user.username}`} className="flex-shrink-0">
-          <Image
-            src={user.imageUrl || "/avatar-default.svg"}
-            alt={user.fullName || user.username || "User Avatar"}
-            width={40}
-            height={40}
-            className="rounded-full cursor-pointer"
-          />
+          <Avatar>
+            <AvatarImage
+              src={user.imageUrl || "/avatar-default.svg"}
+              alt={user.fullName || user.username || "User Avatar"}
+              className="rounded-full cursor-pointer"
+            />
+            <AvatarFallback className="bg-gray-200 text-gray-700">
+              {user.fullName?.charAt(0) || user.username?.charAt(0) || "U"}
+            </AvatarFallback>
+          </Avatar>
         </Link>
       </div>
       <Button

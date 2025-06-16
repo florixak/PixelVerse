@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
 import Role from "../role";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type PostAuthorProps = {
   author: Post["author"];
@@ -28,19 +29,21 @@ const PostAuthor = ({
     ? `/user/${author?.username}`
     : `/profile/${author?.clerkId}`;
   return (
-    <div className={cn("flex flex-row gap-4 items-center", className)}>
+    <div className={cn("flex flex-row gap-2 items-center", className)}>
       {!hideImage && (
         <Link href={userProfile} className="hidden sm:block">
-          <Image
-            src={author?.imageUrl || "/avatar-default.svg"}
-            alt={author?.username || "Author Image"}
-            className={cn("w-12 h-12 rounded-full", imageClassName)}
-            width={48}
-            height={48}
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL={author?.imageUrl || "/avatar-default.svg"}
-          />
+          <Avatar>
+            <AvatarImage
+              src={author?.imageUrl || "/avatar-default.svg"}
+              alt={author?.fullName || author?.username || "User Avatar"}
+              className="rounded-full cursor-pointer"
+            />
+            <AvatarFallback>
+              {author?.fullName?.charAt(0) ||
+                author?.username?.charAt(0) ||
+                "U"}
+            </AvatarFallback>
+          </Avatar>
         </Link>
       )}
       <div className="flex flex-col">
