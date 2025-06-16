@@ -68,6 +68,9 @@ async function TopicsList() {
           <SidebarMenuButton asChild>
             <Link href={`/topics/${item.slug}`}>
               <span>{item.title}</span>
+              <span className="text-xs text-muted-foreground">
+                {item.postCount} posts
+              </span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
