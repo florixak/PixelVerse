@@ -1,4 +1,4 @@
-import CreatePostForm from "@/components/post-form/create-post-form";
+import CreatePostForm from "@/components/post/post-form/create-post-form";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
 
