@@ -1,24 +1,12 @@
 "use server";
 
-import {
-  canAccessDashboard,
-  checkAdminAuth,
-  isUserAdmin,
-} from "@/lib/user-utils";
+import { checkAdminAuth, isUserAdmin } from "@/lib/user-utils";
 import { Report, User } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { auth } from "@clerk/nextjs/server";
+import { groq } from "next-sanity";
 import { revalidatePath } from "next/cache";
-import { currentUser } from "@clerk/nextjs/server";
-import {
-  getUserStats,
-  getPostStats,
-  getReportStats,
-  getRecentUsers,
-  getRecentReports,
-  getTrendingTopics,
-} from "@/sanity/lib/dashboard";
 
 export const updateUserRole = async (
   userId: User["_id"],
@@ -142,6 +130,71 @@ export const handleReportAction = async (
         success: false,
         message: error,
       };
+    }
+
+    if (!reportId || !action) {
+      return {
+        success: false,
+        message: "Report ID and action are required.",
+      };
+    }
+
+    const queryReport: {
+      _id: Report["_id"];
+      reportedContent: Report["reportedContent"];
+    } = await writeClient.fetch(
+      groq`
+  *[_type == "report" && _id == $reportId][0]{
+    _id,
+    reportedContent->{
+      _id,
+      _type,
+      reportCount,
+      // Other fields you might need
+    }
+  }
+`,
+      { reportId }
+    );
+
+    if (!queryReport) {
+      return {
+        success: false,
+        message: "Report not found.",
+      };
+    }
+
+    const reportedContent = queryReport.reportedContent;
+
+    if (!reportedContent) {
+      return {
+        success: false,
+        message: "Reported content not found.",
+      };
+    }
+
+    if (action === "rejected") {
+      await writeClient
+        .patch(reportedContent?._id)
+        .setIfMissing({ reportCount: 0 })
+        .dec({ reportCount: 1 })
+        .commit();
+    } else if (action === "resolved") {
+      await writeClient
+        .patch(reportedContent?._id)
+        .setIfMissing({ reportCount: 0 })
+        .inc({ reportCount: 1 })
+        .commit();
+
+      const shouldBanUser =
+        reportedContent.reportCount && reportedContent.reportCount + 1 >= 3;
+
+      if (shouldBanUser) {
+        await writeClient
+          .patch(reportedContent?._id)
+          .set({ isBanned: true })
+          .commit();
+      }
     }
 
     const report = await writeClient
