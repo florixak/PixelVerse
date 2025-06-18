@@ -10,8 +10,19 @@ import {
 } from "./ui/select";
 import { useRouter } from "next/navigation";
 import { SortOrder } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
-const SortFilterSelect = () => {
+type SortFilterSelectProps = {
+  defaultValue?: SortOrder;
+  className?: string;
+  placeholder?: string;
+};
+
+const SortFilterSelect = ({
+  defaultValue = "latest",
+  className = "",
+  placeholder = "Sort by",
+}: SortFilterSelectProps) => {
   const router = useRouter();
 
   const handleSortChange = (value: SortOrder) => {
@@ -22,9 +33,9 @@ const SortFilterSelect = () => {
   };
 
   return (
-    <Select onValueChange={handleSortChange} defaultValue="latest">
-      <SelectTrigger className="w-full">
-        <SelectValue placeholder="Sort by" />
+    <Select onValueChange={handleSortChange} defaultValue={defaultValue}>
+      <SelectTrigger className={cn("w-48", className)}>
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="latest">Latest</SelectItem>
