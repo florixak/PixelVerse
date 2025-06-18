@@ -88,20 +88,15 @@ export async function AppSidebar() {
     if (user) {
       isAdmin = await canAccessDashboard(user.id);
     }
-  } catch (error) {
-    console.log("Auth check failed, proceeding as non-admin");
-  }
+  } catch (error) {}
 
   return (
     <Sidebar collapsible="icon" key={user?.id || "guest"}>
       <SidebarHeader>
         <Link href="/">
-          <Image
-            src={PixelVerse}
-            alt="PixelVerse Logo"
-            width={120}
-            height={120}
-          />
+          <h1 className="text-2xl font-bold overflow-hidden">
+            <span className="text-primary">Pixel</span>Verse
+          </h1>
         </Link>
       </SidebarHeader>
       <SidebarContent>
