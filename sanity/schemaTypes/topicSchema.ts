@@ -44,6 +44,15 @@ export const topicSchema = defineType({
         hotspot: true,
       },
     }),
+    defineField({
+      name: "reportCount",
+      title: "Report Count",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+      description:
+        "Number of reports against this topic (cached for performance)",
+    }),
   ],
   preview: {
     select: {

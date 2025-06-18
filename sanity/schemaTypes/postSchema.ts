@@ -195,6 +195,15 @@ export const postSchema = defineType({
       of: [{ type: "reaction" }],
       options: { layout: "grid" },
     }),
+    defineField({
+      name: "reportCount",
+      title: "Report Count",
+      type: "number",
+      initialValue: 2,
+      readOnly: true,
+      description:
+        "Number of reports against this post (cached for performance)",
+    }),
   ],
   preview: {
     select: {

@@ -122,6 +122,15 @@ export const userSchema = defineType({
       readOnly: true,
       description: "Number of users being followed (cached for performance)",
     }),
+    defineField({
+      name: "reportCount",
+      title: "Report Count",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+      description:
+        "Number of reports against this user (cached for performance)",
+    }),
   ],
   preview: {
     select: {

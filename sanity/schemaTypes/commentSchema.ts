@@ -83,6 +83,15 @@ export const commentSchema = defineType({
       description:
         "Flag to mark if comment was deleted but kept for thread continuity",
     }),
+    defineField({
+      name: "reportCount",
+      title: "Report Count",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+      description:
+        "Number of reports against this comment (cached for performance)",
+    }),
   ],
   preview: {
     select: {
