@@ -1,10 +1,9 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
-import { SortOrder } from "@/lib/types";
 import { Post } from "@/sanity.types";
 
-const getAllPosts = async () => {
-  return client.fetch(
+const getAllPosts = async (): Promise<Post[]> => {
+  return client.fetch<Post[]>(
     groq`*[_type == "post" && isDeleted != true && author->isBanned != true] | order(publishedAt desc) {
       _id,
       title,
