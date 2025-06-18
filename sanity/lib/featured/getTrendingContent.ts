@@ -17,9 +17,9 @@ type TrendingAlgorithmOptions = {
 export const getTrendingContent = async (
   limit: number = 6,
   options?: TrendingAlgorithmOptions
-): Promise<Post[]> => {
+): Promise<{ posts: Post[] }> => {
   if (limit <= 0) {
-    return [];
+    return { posts: [] };
   }
 
   const {
@@ -34,8 +34,8 @@ export const getTrendingContent = async (
   const offset = Math.floor(Math.random() * maxOffset);
   const randomFactor = Math.floor(Math.random() * randomFactorMax);
 
-  return client.fetch<Post[]>(
-    groq`*[_type == "post" && defined(slug.current) && publishedAt < now()] | order(
+  return client.fetch<{ posts: Post[] }>(
+    groq`{"posts": *[_type == "post" && defined(slug.current) && publishedAt < now()] | order(
       ((dateTime(publishedAt) > dateTime(now()) - 60*60*24*${recencyPeriod}) * ${recencyWeight} +
       coalesce(likes, 0) * ${likesWeight} + 
       coalesce(count(*[_type == "comment" && references(^._id)]), 0) * ${commentsWeight} +
@@ -59,6 +59,6 @@ export const getTrendingContent = async (
         "slug": slug.current,
         color
       }
-    }`
+  }}`
   );
 };
