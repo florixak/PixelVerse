@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.20.1",
     "@clerk/themes": "^2.2.47",
+    "@clerk/types": "^4.60.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",
