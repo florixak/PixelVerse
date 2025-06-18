@@ -1,4 +1,3 @@
-import { formatDate } from "@/lib/utils";
 import { Post } from "@/sanity.types";
 import PostAuthorButtons from "./post-author-buttons";
 import PostAuthor from "./post-author";
