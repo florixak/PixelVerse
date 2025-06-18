@@ -1,6 +1,5 @@
 import MasonryWrapper from "@/components/masonry-wrapper";
 import TopicTrendingCard from "@/components/topic/topic-trending-card";
-
 import TopicSearch from "@/components/topic/topic-search";
 import { SortOrder } from "@/lib/types";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
@@ -15,6 +14,7 @@ import {
 import TopicsSkeleton from "@/components/topic/topic-list-skeleton";
 import TrendingTopicsSkeleton from "@/components/topic/topic-trending-card-skeleton";
 import PopularTopicsSkeleton from "@/components/topic/popular-topics-skeleton";
+import TopicSuggestButton from "@/components/topic/topic-suggest-button";
 
 type TopicsPageProps = {
   searchParams: Promise<{
@@ -30,13 +30,17 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
   const { order } = await searchParams;
 
   return (
-    <section className="flex-center flex-col w-full gap-3 p-6 md:p-10">
+    <section className="flex-center flex-col w-full gap-10 p-6 md:p-10">
       <div className="flex flex-col items-center w-full gap-2 max-w-3xl">
         <h1 className="text-2xl font-bold">Explore Topics</h1>
         <p className="text-muted-foreground">
           Here you can explore various topics related to pixel art. Click on a
           topic to see related posts.
         </p>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>You can not find a topic?</span>
+          <TopicSuggestButton />
+        </div>
       </div>
 
       <div className="w-full flex items-start gap-10 flex-col">
