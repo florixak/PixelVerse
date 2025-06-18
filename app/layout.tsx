@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "PixelVerse | Share Your Pixel Art",
     description:
       "Discover the world of pixel art, share your creations, and connect with fellow artists in our growing community. Join PixelVerse today!",
-    url: "https://pixelverse.com",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://pixelverse.com",
     siteName: "PixelVerse",
     images: [
       {
