@@ -1,5 +1,7 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
+import { SortOrder } from "@/lib/types";
+import { Post } from "@/sanity.types";
 
 const getAllPosts = async () => {
   return client.fetch(
