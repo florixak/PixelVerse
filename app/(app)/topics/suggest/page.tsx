@@ -8,8 +8,9 @@ const SuggestTopicPage = () => {
         Suggest a new topic for the PixelVerse community. Moderators will review
         your suggestion.
       </p>
-
-      <TopicSuggestForm />
+      <div className="max-w-xl w-full mx-auto mt-6">
+        <TopicSuggestForm />
+      </div>
     </section>
   );
 };
