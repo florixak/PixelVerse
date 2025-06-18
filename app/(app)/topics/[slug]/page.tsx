@@ -41,15 +41,28 @@ const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
             priority
           />
         )}
-        <div className="w-full">
-          <h1 className="text-4xl font-bold">{topic.title}</h1>
+        <div className="flex items-center justify-center sm:items-start sm:justify-start flex-col w-full">
+          <div className="flex flex-col md:flex-row items-center gap-2">
+            {topic.iconUrl ? (
+              <Image
+                src={topic.iconUrl}
+                alt={`Icon for ${topic.title}`}
+                width={64}
+                height={64}
+                className="w-16 h-16 rounded-full object-cover"
+                priority
+              />
+            ) : null}
+            <h1 className="text-4xl font-bold">{topic.title}</h1>
+          </div>
+
           <p className="text-muted-foreground">
             {topic.description || "No description available for this topic."}
           </p>
           <p className="text-sm text-muted-foreground">
             <span className="font-semibold">Posts:</span> {topic.postCount || 0}
           </p>
-          <div className="flex flex-row justify-between items-center w-full mt-4">
+          <div className="max-w-xs w-full flex items-center justify-center sm:justify-start gap-2 mt-4">
             <Button variant="outline" asChild>
               <Link
                 href={`/create-post?topic=${encodeURIComponent(topic.slug)}`}
@@ -59,9 +72,7 @@ const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
                 <Plus />
               </Link>
             </Button>
-            <div className="w-64">
-              <SortFilterSelect />
-            </div>
+            <SortFilterSelect />
           </div>
         </div>
       </div>
@@ -81,8 +92,6 @@ const PostsList = async ({
   sort?: SortOrder;
 }) => {
   const posts = await getPostsByTopic(slug, sort);
-
-  console.log(sort);
 
   return <Posts posts={posts} />;
 };
