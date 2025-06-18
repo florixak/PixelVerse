@@ -2,13 +2,15 @@ import TopicSuggestForm from "@/components/topic/topic-suggest-form";
 
 const SuggestTopicPage = () => {
   return (
-    <section className="flex-center flex-col p-6 max-w-3xl mx-auto w-full">
-      <h1 className="text-2xl font-bold">Suggest a New Topic</h1>
-      <p className="text-muted-foreground">
-        Suggest a new topic for the PixelVerse community. Moderators will review
-        your suggestion.
-      </p>
-      <div className="max-w-xl w-full mx-auto mt-6">
+    <section className="flex-center flex-col gap-3 px-0 py-6 md:p-6 w-full">
+      <div className="space-y-2 text-center">
+        <h1 className="text-3xl font-bold">Suggest a New Topic</h1>
+        <p className="text-muted-foreground">
+          Suggest a new topic for the PixelVerse community. Moderators will
+          review your suggestion.
+        </p>
+      </div>
+      <div className="max-w-2xl w-full mx-auto">
         <TopicSuggestForm />
       </div>
     </section>

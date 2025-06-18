@@ -21,7 +21,9 @@ const CreatePostPage = async ({ searchParams }: CreatePostPageProps) => {
           Share your pixel art, tutorial, or question with the community
         </p>
       </div>
-      <CreatePostForm topics={topics} topic={topic} />
+      <div className="w-full max-w-2xl mx-auto">
+        <CreatePostForm topics={topics} topic={topic} />
+      </div>
     </section>
   );
 };

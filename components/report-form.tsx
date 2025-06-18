@@ -126,7 +126,7 @@ const ReportForm = ({
   }, [state]);
 
   return (
-    <div className="max-w-2xl mx-auto pt-6">
+    <div className="max-w-2xl mx-auto mt-6">
       <Link
         href={returnUrl}
         className="inline-flex items-center text-sm mb-6 hover:underline"
