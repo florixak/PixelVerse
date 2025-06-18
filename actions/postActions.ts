@@ -6,6 +6,7 @@ import slugify from "slugify";
 import { ensureSanityUser } from "@/lib/user-utils";
 import { Post, Reaction, Report } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
+import { checkReportByAI } from "@/tools/tools";
 
 export async function createPost(formData: FormData) {
   try {
@@ -15,8 +16,6 @@ export async function createPost(formData: FormData) {
     const userId = await ensureSanityUser(user);
 
     const topicId = formData.get("topic")?.toString() || "";
-
-    console.log("Creating post with topicId:", topicId);
 
     const topicExists = await writeClient.fetch(
       `*[_type == "topic" && _id == $topicId][0]._id`,
@@ -243,6 +242,12 @@ export async function submitReport(
 
     const reportCount = await writeClient.fetch('count(*[_type == "report"])');
     const displayId = `REP-${(reportCount + 1).toString().padStart(4, "0")}`;
+
+    await writeClient
+      .patch(contentId)
+      .setIfMissing({ reportCount: 0 })
+      .inc({ reportCount: 1 })
+      .commit();
 
     await writeClient.create({
       _type: "report",
