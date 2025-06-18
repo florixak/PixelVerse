@@ -11,8 +11,7 @@ type UserCardProps = {
 };
 
 const UserCard = ({ collapsed }: UserCardProps) => {
-  const { user } = useUser();
-  const { openUserProfile } = useClerk();
+  const { openUserProfile, user } = useClerk();
   if (!user) {
     return null;
   }
