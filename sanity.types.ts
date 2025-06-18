@@ -30,6 +30,7 @@ export type Comment = {
   lastEditedAt?: string;
   pixelArtUrl?: string;
   isDeleted?: boolean;
+  reportCount?: number;
 };
 
 export type Post = {
@@ -106,6 +107,7 @@ export type Post = {
   inspirationSource?: string;
   reactions?: Reaction[];
   commentsCount?: number;
+  reportCount?: number;
 };
 
 export type Topic = {
@@ -120,6 +122,7 @@ export type Topic = {
   iconUrl?: string;
   bannerUrl?: string;
   postCount?: number;
+  reportCount?: number;
 };
 
 export type User = {
@@ -142,6 +145,7 @@ export type User = {
   receivedLikes?: number;
   mostActiveTopic?: Topic;
   favoriteTopics?: Topic[];
+  reportCount?: number;
 };
 
 export type Reaction = {
