@@ -42,10 +42,7 @@ const TopicSuggestForm = () => {
     }
   };
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-8 max-w-4xl mx-auto w-full p-6"
-    >
+    <form onSubmit={handleSubmit} className="space-y-8 w-full p-6">
       <div>
         <Label htmlFor="title">
           Title <span className="text-red-500">*</span>
@@ -66,8 +63,8 @@ const TopicSuggestForm = () => {
           id="description"
           name="description"
           required
-          maxLength={200}
-          placeholder="Describe the topic in detail (max 200 characters)"
+          maxLength={150}
+          placeholder="Describe the topic in detail (max 150 characters)"
           rows={3}
           className="resize-none"
         />
