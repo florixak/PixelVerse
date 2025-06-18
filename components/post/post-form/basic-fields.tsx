@@ -1,5 +1,6 @@
 "use client";
 
+import TopicSuggestButton from "@/components/topic/topic-suggest-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,9 +54,7 @@ const BasicFields = ({ topics, setPostType, topicId }: BasicFieldsProps) => {
             ))}
           </SelectContent>
         </Select>
-        <Button type="button" variant="outline" size="sm" asChild>
-          <a href="/topics/new-topic">+</a>
-        </Button>
+        <TopicSuggestButton />
       </div>
 
       <div>
