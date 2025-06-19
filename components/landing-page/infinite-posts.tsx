@@ -6,6 +6,8 @@ import PostCard from "../post/post-card";
 import { getLatestPosts } from "@/actions/postActions";
 import { Button } from "../ui/button";
 import { LIMIT } from "./newest-posts";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
 const InfinitePosts = () => {
   const {
@@ -15,6 +17,7 @@ const InfinitePosts = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isLoading,
   } = useInfiniteQuery({
     queryKey: ["posts", "latest"],
     queryFn: async ({ pageParam = 0 }) =>
@@ -26,15 +29,34 @@ const InfinitePosts = () => {
     },
   });
 
-  const allPosts = data?.pages.flat().flat() || [];
-  const uniquePosts = Array.from(
-    new Map(allPosts.map((post) => [post._id, post])).values()
-  );
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
+  if (isLoading) {
+    return (
+      <div className="text-center text-muted-foreground mt-4">
+        No more posts to load
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center">
+        Error: {error instanceof Error ? error.message : "Something went wrong"}
+      </div>
+    );
+  }
 
   return (
     <>
       <MasonryWrapper>
-        {uniquePosts.map((post) => (
+        {data?.pages?.flat().map((post) => (
           <PostCard
             key={post._id}
             post={post}
@@ -42,28 +64,34 @@ const InfinitePosts = () => {
           />
         ))}
       </MasonryWrapper>
-      {isFetchingNextPage && <div className="text-center">Loading...</div>}
+
       {isError && (
         <div className="text-red-500 text-center">
-          Error:{" "}
-          {error instanceof Error ? error.message : "Something went wrong"}
+          Error occured while fetching posts.
         </div>
       )}
-      {hasNextPage ? (
-        <div className="flex justify-center mt-4">
-          <Button
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            className="w-full max-w-md"
-          >
-            {isFetchingNextPage ? "Loading more..." : "Load More Posts"}
-          </Button>
-        </div>
-      ) : (
-        <div className="text-center text-muted-foreground mt-4">
-          No more posts to load
-        </div>
-      )}
+
+      <div ref={ref}>
+        {hasNextPage ? (
+          isFetchingNextPage ? (
+            <div className="text-center">Loading...</div>
+          ) : (
+            <div className="flex justify-center mt-4">
+              <Button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="w-full max-w-md"
+              >
+                {isFetchingNextPage ? "Loading more..." : "Load More Posts"}
+              </Button>
+            </div>
+          )
+        ) : (
+          <div className="text-center text-muted-foreground mt-4">
+            No more posts to load
+          </div>
+        )}
+      </div>
     </>
   );
 };
