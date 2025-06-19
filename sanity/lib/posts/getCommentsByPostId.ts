@@ -9,7 +9,7 @@ export const getCommentsByPostId = async (
   offset: number = 0
 ): Promise<Comment[]> => {
   return client.fetch<Comment[]>(
-    groq`*[_type == "comment" && references($postId) && author->isBanned != true] | order(publishedAt desc) [$offset...$offset+$limit] {
+    groq`*[_type == "comment" && references($postId) && author->isBanned != true && isDeleted != true] | order(publishedAt desc) [$offset...$offset+$limit] {
       _id,
       content,
       author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
