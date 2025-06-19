@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { useInView } from "react-intersection-observer";
 
 type AnimatedImageProps = {
   src: string;
@@ -20,26 +21,22 @@ const AnimatedImage = ({
   className = "",
   placeholderSrc,
 }: AnimatedImageProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [gifSrc, setGifSrc] = useState<string | null>(null);
+  const [gifSrc, setGifSrc] = useState(src);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
+  const { ref } = useInView({
+    threshold: 0.2,
+    onChange: (inView) => {
+      if (inView) {
         setGifSrc((prev) => prev ?? `${src}?t=${Date.now()}`);
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.4, rootMargin: "100px" }
-    );
-
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [src]);
+      }
+      setIsVisible(inView);
+    },
+  });
 
   return (
-    <div ref={containerRef} className={className}>
-      {isVisible && gifSrc ? (
+    <div ref={ref} className={className}>
+      {isVisible ? (
         <img
           src={gifSrc}
           alt={alt}
