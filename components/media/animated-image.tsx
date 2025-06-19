@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";
 
@@ -22,14 +22,10 @@ const AnimatedImage = ({
   placeholderSrc,
 }: AnimatedImageProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [gifSrc, setGifSrc] = useState(src);
 
   const { ref } = useInView({
     threshold: 0.2,
     onChange: (inView) => {
-      if (inView) {
-        setGifSrc((prev) => prev ?? `${src}?t=${Date.now()}`);
-      }
       setIsVisible(inView);
     },
   });
@@ -38,7 +34,7 @@ const AnimatedImage = ({
     <div ref={ref} className={className}>
       {isVisible ? (
         <img
-          src={gifSrc}
+          src={src || placeholderSrc || "/avatar-default.svg"}
           alt={alt}
           width={width}
           height={height}
