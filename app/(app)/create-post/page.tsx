@@ -10,8 +10,10 @@ type CreatePostPageProps = {
 
 const CreatePostPage = async ({ searchParams }: CreatePostPageProps) => {
   const { topic: topicSlug } = await searchParams;
-  const topics = await getAllTopics({});
-  const topic = await getTopicBySlug(decodeURIComponent(topicSlug));
+  const [topics, topic] = await Promise.all([
+    getAllTopics({}),
+    getTopicBySlug(decodeURIComponent(topicSlug)),
+  ]);
 
   return (
     <section className="flex-center flex-col gap-3 px-0 py-6 md:p-6 w-full">
