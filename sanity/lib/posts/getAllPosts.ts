@@ -1,10 +1,34 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 import { Post } from "@/sanity.types";
+import { SortOrder } from "@/lib/types";
+import { getSanityOrderBy } from "@/lib/utils";
 
-const getAllPosts = async (): Promise<Post[]> => {
+type getAllPostsParams = {
+  limit?: number;
+  page?: number;
+  sort?: SortOrder;
+  filter?: {
+    software?: string[];
+    tags?: string[];
+    postType?: string;
+    difficulty?: "beginner" | "intermediate" | "advanced";
+    isOriginal?: boolean;
+  };
+};
+
+const getAllPosts = async ({
+  limit = 10,
+  page = 0,
+  sort = "latest",
+  filter = {},
+}: getAllPostsParams): Promise<Post[]> => {
+  const { software, tags, postType, difficulty, isOriginal } = filter;
+  const orderBy = getSanityOrderBy(sort);
+  const offset = page * limit;
+
   return client.fetch<Post[]>(
-    groq`*[_type == "post" && isDeleted != true && author->isBanned != true] | order(publishedAt desc) {
+    groq`*[_type == "post" && isDeleted != true && author->isBanned != true] {
       _id,
       title,
       "slug": slug.current,
@@ -23,7 +47,20 @@ const getAllPosts = async (): Promise<Post[]> => {
       isDeleted,
       content,
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
-    }`
+    } | order(${orderBy})[${offset}..${offset + limit - 1}] ${
+      software ? `&& software[any(_ in $software)]` : ""
+    } ${tags ? `&& tags[any(_ in $tags)]` : ""} ${
+      postType ? `&& postType == $postType` : ""
+    } ${difficulty ? `&& difficulty == $difficulty` : ""} ${
+      isOriginal !== undefined ? `&& isOriginal == $isOriginal` : ""
+    }`,
+    {
+      software: software || [],
+      tags: tags || [],
+      postType: postType || "",
+      difficulty: difficulty || "",
+      isOriginal: isOriginal !== undefined ? isOriginal : false,
+    }
   );
 };
 
