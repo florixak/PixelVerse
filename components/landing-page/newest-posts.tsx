@@ -10,13 +10,13 @@ const NewestPosts = async () => {
 
   await queryClient.prefetchInfiniteQuery({
     queryKey: ["posts", "latest"],
-    queryFn: ({ pageParam = 0 }) =>
-      getLatestPosts({ page: pageParam, limit: LIMIT }),
+    queryFn: async ({ pageParam = 0 }) =>
+      await getLatestPosts({ page: pageParam, limit: LIMIT }),
     initialPageParam: 0,
   });
 
   return (
-    <section className="w-full max-w-6xl mx-auto px-4">
+    <section className="w-full max-w-6xl mx-auto px-4 py-6 md:p-6">
       <h2 className="text-2xl md:text-3xl font-bold mb-8">Newest Posts</h2>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <InfinitePosts />
