@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { SortOrder } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -23,4 +24,23 @@ export function formatDate(
     }),
   };
   return new Date(date).toLocaleDateString("en-US", timeOptions);
+}
+
+export function getSanityOrderBy(orderBy: SortOrder): string {
+  switch (orderBy) {
+    case "latest":
+      return "publishedAt desc";
+
+    case "oldest":
+      return "publishedAt asc";
+
+    case "alphabetical":
+      return "title asc";
+
+    case "popular":
+      return "count(reactions[type == 'like']) desc";
+
+    case "trending":
+      return "count(reactions[type == 'like']) desc, publishedAt desc";
+  }
 }

@@ -2,6 +2,7 @@ import { groq } from "next-sanity";
 import { client } from "../client";
 import { Post } from "@/sanity.types";
 import { SortOrder } from "@/lib/types";
+import { getSanityOrderBy } from "@/lib/utils";
 
 const getPostsByTopic = async (
   topicSlug: string,
@@ -10,24 +11,7 @@ const getPostsByTopic = async (
   let orderBy = "publishedAt desc";
 
   if (sort) {
-    switch (sort) {
-      case "latest":
-        orderBy = "publishedAt desc";
-        break;
-      case "oldest":
-        orderBy = "publishedAt asc";
-        break;
-      case "alphabetical":
-        orderBy = "title asc";
-        break;
-      case "popular":
-        orderBy = "count(reactions[type == 'like']) desc";
-        break;
-      case "trending":
-        // Trending: combination of recency and popularity
-        orderBy = "count(reactions[type == 'like']) desc, publishedAt desc";
-        break;
-    }
+    orderBy = getSanityOrderBy(sort);
   }
 
   return client.fetch(
