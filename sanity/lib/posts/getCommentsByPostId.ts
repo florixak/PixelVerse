@@ -1,15 +1,20 @@
-// sanity/lib/posts/getCommentsByPostId.ts
 import { Comment } from "@/sanity.types";
 import { client } from "../client";
 import { groq } from "next-sanity";
 
-export const getCommentsByPostId = async (
-  postId: string,
-  limit: number = 10,
-  offset: number = 0
-): Promise<Comment[]> => {
+type GetCommentsByPostIdParams = {
+  postId: string;
+  page?: number;
+  limit?: number;
+};
+
+export const getCommentsByPostId = async ({
+  postId,
+  limit = 10,
+  page = 0,
+}: GetCommentsByPostIdParams): Promise<Comment[]> => {
   return client.fetch<Comment[]>(
-    groq`*[_type == "comment" && references($postId) && author->isBanned != true && isDeleted != true] | order(publishedAt desc) [$offset...$offset+$limit] {
+    groq`*[_type == "comment" && references($postId) && author->isBanned != true && isDeleted != true]  {
       _id,
       content,
       author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
@@ -21,7 +26,7 @@ export const getCommentsByPostId = async (
       lastEditedAt,
       pixelArtUrl,
       isDeleted
-    }`,
-    { postId, limit, offset }
+    } | order(publishedAt desc)[${page * limit}..${(page + 1) * limit - 1}]`,
+    { postId, limit }
   );
 };
