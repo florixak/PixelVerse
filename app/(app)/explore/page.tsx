@@ -51,22 +51,55 @@ const PostResults = async ({
   searchQuery: string;
   pageNumber: number;
 }) => {
-  const { results, totalResults, counts } = await getSearchResults({
+  const {
+    posts,
+    topics,
+    users,
+    totalPosts,
+    totalTopics,
+    totalUsers,
+    validationMessage,
+  } = await getSearchResults({
     query: searchQuery,
     page: pageNumber,
     limit: 12,
   });
 
-  const posts = results.filter((result) => result._resultType === "post");
-  const topics = results.filter((result) => result._resultType === "topic");
-  const users = results.filter((result) => result._resultType === "user");
+  if (validationMessage) {
+    return (
+      <div className="text-center py-8">
+        <h2 className="text-xl font-medium mb-2">No results found</h2>
+        <p className="text-muted-foreground mb-4">{validationMessage}</p>
+        <Link
+          href="/explore"
+          className="text-primary hover:underline inline-flex items-center"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to trending content
+        </Link>
+      </div>
+    );
+  }
+
+  const totalResults = totalPosts + totalTopics + totalUsers;
+
+  console.log("Search Results:", {
+    searchQuery,
+    pageNumber,
+    totalPosts,
+    totalTopics,
+    totalUsers,
+    posts,
+    topics,
+    users,
+  });
 
   if (totalResults === 0) {
     return (
       <div className="text-center py-8">
         <h2 className="text-xl font-medium mb-2">No results found</h2>
         <p className="text-muted-foreground mb-4">
-          We couldn't find any posts matching "{searchQuery}"
+          Try searching for something else.
         </p>
         <Link
           href="/explore"
@@ -78,7 +111,7 @@ const PostResults = async ({
       </div>
     );
   }
-  console.log("Search Results:", posts);
+
   return (
     <>
       <div className="flex justify-between items-center mb-4">
