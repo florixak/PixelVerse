@@ -1,49 +1,26 @@
 "use client";
 
-import { useInfiniteQuery } from "@tanstack/react-query";
 import MasonryWrapper from "../masonry-wrapper";
 import PostCard from "../post/post-card";
 import { getLatestPosts } from "@/actions/postActions";
 import { Button } from "../ui/button";
 import { LIMIT } from "./newest-posts";
-import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
+import useInfiniteScroll from "@/hooks/use-infinite-scroll";
 
 const InfinitePosts = () => {
   const {
     data,
     isError,
     error,
-    fetchNextPage,
+    ref,
     hasNextPage,
+    fetchNextPage,
     isFetchingNextPage,
-    isLoading,
-  } = useInfiniteQuery({
+  } = useInfiniteScroll({
     queryKey: ["posts", "latest"],
-    queryFn: async ({ pageParam = 0 }) =>
-      await getLatestPosts({ page: pageParam, limit: LIMIT }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage || lastPage.length < LIMIT) return undefined;
-      return allPages.length;
-    },
+    queryFn: getLatestPosts,
+    limit: LIMIT,
   });
-
-  const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView]);
-
-  if (isLoading) {
-    return (
-      <div className="text-center text-muted-foreground mt-4">
-        No more posts to load
-      </div>
-    );
-  }
 
   if (isError) {
     return (
