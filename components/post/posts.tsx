@@ -1,4 +1,3 @@
-import React from "react";
 import MasonryWrapper from "../masonry-wrapper";
 import { Post } from "@/sanity.types";
 import PostCard from "./post-card";
