@@ -30,7 +30,7 @@ const ReactionButton = ({
     {...buttonProps}
   >
     <div className={!buttonProps.disabled ? activeColor : ""}>{icon}</div>
-    <p className="text-muted-foreground">
+    <p>
       {count} {showLabel && <span className="hidden md:inline">{label}</span>}
     </p>
   </button>

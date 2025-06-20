@@ -10,9 +10,16 @@ import { Comment, Post, Report, User } from "@/sanity.types";
 type ReportButtonProps = {
   contentType: Report["contentType"];
   content: Post | Comment | User;
+  iconSize?: number;
+  className?: string;
 };
 
-const ReportButton = ({ contentType, content }: ReportButtonProps) => {
+const ReportButton = ({
+  contentType,
+  content,
+  iconSize = 24,
+  className = "",
+}: ReportButtonProps) => {
   const router = useRouter();
   const { user, openSignIn } = useClerk();
 
@@ -52,12 +59,18 @@ const ReportButton = ({ contentType, content }: ReportButtonProps) => {
 
   return (
     <ReactionButton
-      icon={<FlagTriangleRight className="inline-block text-gray-500" />}
+      icon={
+        <FlagTriangleRight
+          className="inline-block text-muted-foreground"
+          size={iconSize}
+        />
+      }
       disabled={false}
       onClick={handleReportClick}
       showLabel={true}
       label={getLabel()}
       title={`Report this ${contentType}`}
+      className={className}
     />
   );
 };
