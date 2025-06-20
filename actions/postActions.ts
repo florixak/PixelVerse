@@ -6,7 +6,6 @@ import slugify from "slugify";
 import { ensureSanityUser } from "@/lib/user-utils";
 import { Post, Reaction, Report } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
-import { checkReportByAI } from "@/tools/tools";
 import getAllPosts from "@/sanity/lib/posts/getAllPosts";
 import { LIMIT } from "@/components/landing-page/newest-posts";
 
