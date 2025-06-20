@@ -1,7 +1,7 @@
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import InfinitePosts from "./infinite-posts";
-import { getLatestPosts } from "@/actions/postActions";
+import { getLatestPosts } from "@/sanity/lib/posts/getLatestPosts";
 
 export const LIMIT = 8;
 

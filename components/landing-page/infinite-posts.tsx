@@ -1,8 +1,8 @@
 "use client";
 
+import { getLatestPosts } from "@/sanity/lib/posts/getLatestPosts";
 import MasonryWrapper from "../masonry-wrapper";
 import PostCard from "../post/post-card";
-import { getLatestPosts } from "@/actions/postActions";
 import { Button } from "../ui/button";
 import { LIMIT } from "./newest-posts";
 import useInfiniteScroll from "@/hooks/use-infinite-scroll";

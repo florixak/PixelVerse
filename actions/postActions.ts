@@ -303,12 +303,3 @@ export async function submitReport(
     };
   }
 }
-
-export async function getLatestPosts({ page = 0, limit = LIMIT }) {
-  const posts = await getAllPosts({
-    sort: "latest",
-    limit,
-    page,
-  });
-  return posts;
-}
