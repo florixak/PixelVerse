@@ -8,6 +8,7 @@ import { Post, Reaction, Report } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
 import { checkReportByAI } from "@/tools/tools";
 import getAllPosts from "@/sanity/lib/posts/getAllPosts";
+import { LIMIT } from "@/components/landing-page/newest-posts";
 
 export async function createPost(formData: FormData) {
   try {
@@ -304,7 +305,7 @@ export async function submitReport(
   }
 }
 
-export async function getLatestPosts({ page = 0, limit = 6 }) {
+export async function getLatestPosts({ page = 0, limit = LIMIT }) {
   const posts = await getAllPosts({
     sort: "latest",
     limit,
