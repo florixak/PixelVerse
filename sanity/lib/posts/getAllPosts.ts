@@ -32,6 +32,7 @@ const getAllPosts = async ({
       _id,
       title,
       "slug": slug.current,
+      "topicSlug": topic->slug.current,
       excerpt,
       publishedAt,
       updatedAt,
