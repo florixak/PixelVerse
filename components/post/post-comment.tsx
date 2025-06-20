@@ -11,6 +11,7 @@ type PostCommentProps = {
 };
 
 const PostComment = ({ comment, currentUserId }: PostCommentProps) => {
+  const isAuthor = comment.author?.clerkId === currentUserId;
   return (
     <div
       id={`comment-${comment._id}`}
@@ -18,13 +19,13 @@ const PostComment = ({ comment, currentUserId }: PostCommentProps) => {
     >
       <div className="relative flex items-center gap-2 w-full py-2 px-4 border border-muted rounded-lg bg-background">
         <div className="absolute left-0 top-0 h-full w-px bg-muted">
-          {comment.author?.clerkId === currentUserId ? (
+          {isAuthor ? (
             <div className="absolute left-[-6px] top-1/2 transform -translate-y-1/2 w-2 h-2 bg-primary rounded-full" />
           ) : (
             <div className="absolute left-[-6px] top-1/2 transform -translate-y-1/2 w-2 h-2 bg-muted rounded-full" />
           )}
         </div>
-        <Link href={`/profile/${comment.author?.clerkId || "unknown"}`}>
+        <Link href={`/user/${comment.author?.username || "unknown"}`}>
           <Image
             src={comment.author?.imageUrl || "/avatar-default.svg"}
             alt={`${comment.author?.username || "Unknown User"}'s avatar`}
@@ -48,8 +49,22 @@ const PostComment = ({ comment, currentUserId }: PostCommentProps) => {
           <p className="mt-1">{comment.content}</p>
         </div>
       </div>
-
-      <ReportButton contentType="comment" content={comment as Comment} />
+      {isAuthor && (
+        <Link
+          className="text-sm text-muted-foreground hover:text-primary"
+          href={""}
+        >
+          Edit Comment
+        </Link>
+      )}
+      {!isAuthor && (
+        <ReportButton
+          contentType="comment"
+          content={comment as Comment}
+          iconSize={20}
+          className="text-sm text-muted-foreground hover:text-primary"
+        />
+      )}
     </div>
   );
 };
