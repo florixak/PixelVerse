@@ -1,17 +1,30 @@
 import { Post } from "@/sanity.types";
 import { getCommentsByPostId } from "@/sanity/lib/posts/getCommentsByPostId";
-import PostComment from "./post-comment";
 import PostCommentForm from "./post-comment-form";
-import PostCommentsWrapper from "./post-comments-wrapper";
+import InfiniteComments from "./infinite-comments";
 import { currentUser } from "@clerk/nextjs/server";
+import { getQueryClient } from "@/lib/get-query-client";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 
 type PostCommentProps = {
   post: Post;
 };
 
+export const COMMENTS_LIMIT = 5;
+
 const PostComments = async ({ post }: PostCommentProps) => {
-  const comments = await getCommentsByPostId(post._id, 5, 0);
-  const user = await currentUser();
+  const queryClient = getQueryClient();
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: ["comments", post._id],
+    queryFn: async ({ pageParam = 0 }) =>
+      await getCommentsByPostId({
+        postId: post._id,
+        limit: COMMENTS_LIMIT,
+        page: pageParam,
+      }),
+    initialPageParam: 0,
+  });
+
   return (
     <div
       id="comments"
@@ -19,17 +32,9 @@ const PostComments = async ({ post }: PostCommentProps) => {
     >
       <p className="text-muted-foreground">Comments ({post.commentsCount})</p>
       <PostCommentForm post={post} />
-      <PostCommentsWrapper>
-        {comments && comments.length > 0
-          ? comments.map((comment) => (
-              <PostComment
-                key={comment._id}
-                comment={comment}
-                currentUserId={user?.id}
-              />
-            ))
-          : null}
-      </PostCommentsWrapper>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <InfiniteComments postId={post._id} />
+      </HydrationBoundary>
     </div>
   );
 };

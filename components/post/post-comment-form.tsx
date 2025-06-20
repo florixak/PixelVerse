@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useActionState, useEffect, useRef, useState } from "react";
 import SubmitButton from "../submit-button";
 import PostComment from "./post-comment";
-import PostCommentsWrapper from "./post-comments-wrapper";
+import InfiniteComments from "./infinite-comments";
 import AuthButtons from "../auth-buttons";
 
 type PostCommentFormProps = {
@@ -118,7 +118,7 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
         </div>
       </form>
       {optimisticComments.length > 0 && (
-        <PostCommentsWrapper>
+        <InfiniteComments>
           {optimisticComments.map((comment) => (
             <PostComment
               key={comment._id}
@@ -133,7 +133,7 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
               }}
             />
           ))}
-        </PostCommentsWrapper>
+        </InfiniteComments>
       )}
       {optimisticComments.length === 0 && post.commentsCount === 0 && (
         <p className="text-muted-foreground text-sm text-center mt-4">
