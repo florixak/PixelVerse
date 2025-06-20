@@ -4,20 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cookies } from "next/headers";
 import CommandSearch from "@/components/command-search";
-import VisitorTracker from "@/components/analytics/visitor-tracker";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Providers from "@/components/providers";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: 1,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
-  },
-});
 
 export default async function AppLayout({
   children,
@@ -31,7 +18,6 @@ export default async function AppLayout({
     <Providers>
       <Header />
       <CommandSearch />
-      <VisitorTracker />
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
         <main className="relative min-h-screen w-full">
