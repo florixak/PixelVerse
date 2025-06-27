@@ -15,7 +15,13 @@ export default async function Home() {
   return (
     <div className="flex flex-col items-center w-full">
       {!returning && <HeroSection />}
-      <NewestPosts />
+      <Suspense
+        fallback={
+          <div className="h-96 w-full bg-muted/50 animate-pulse rounded-lg"></div>
+        }
+      >
+        <NewestPosts />
+      </Suspense>
       <section className="w-full bg-muted/30 py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">
