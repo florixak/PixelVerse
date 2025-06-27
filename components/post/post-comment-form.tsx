@@ -118,7 +118,7 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
         </div>
       </form>
       {optimisticComments.length > 0 && (
-        <InfiniteComments>
+        <div>
           {optimisticComments.map((comment) => (
             <PostComment
               key={comment._id}
@@ -133,7 +133,8 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
               }}
             />
           ))}
-        </InfiniteComments>
+          <InfiniteComments postId={post._id} />
+        </div>
       )}
       {optimisticComments.length === 0 && post.commentsCount === 0 && (
         <p className="text-muted-foreground text-sm text-center mt-4">
