@@ -47,7 +47,7 @@ const AnimatedImage = ({
           width={width}
           height={height}
           placeholder="blur"
-          blurDataURL={placeholderSrc || "//avatar-default.svg"}
+          blurDataURL={placeholderSrc || "/avatar-default.svg"}
           className="object-cover w-full h-full"
         />
       )}
