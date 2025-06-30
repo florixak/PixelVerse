@@ -1,13 +1,22 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
-import { Post } from "@/sanity.types";
+import { Post, Topic } from "@/sanity.types";
 import { SortOrder } from "@/lib/types";
 import { getSanityOrderBy } from "@/lib/utils";
 
-const getPostsByTopic = async (
-  topicSlug: string,
-  sort?: SortOrder
-): Promise<Post[]> => {
+type GetPostsByTopicParams = {
+  topicSlug: Topic["slug"];
+  sort?: SortOrder;
+  page?: number;
+  limit?: number;
+};
+
+const getPostsByTopic = async ({
+  topicSlug,
+  sort,
+  page = 0,
+  limit = 50,
+}: GetPostsByTopicParams): Promise<Post[]> => {
   let orderBy = "publishedAt desc";
 
   if (sort) {
@@ -15,7 +24,9 @@ const getPostsByTopic = async (
   }
 
   return client.fetch(
-    groq`*[_type == "post" && references(*[_type == "topic" && slug.current == $topicSlug]._id) && isDeleted != true] | order(${orderBy})[0..49] {
+    groq`*[_type == "post" && references(*[_type == "topic" && slug.current == $topicSlug]._id) && isDeleted != true] | order(${orderBy})[${
+      page * limit
+    }..${(page + 1) * limit - 1}] {
       _id,
       title,
       "slug": slug.current,
@@ -34,7 +45,7 @@ const getPostsByTopic = async (
       content,
       "commentsCount": count(*[_type == "comment" && references(^._id)])
     }`,
-    { topicSlug }
+    { topicSlug, page, limit }
   );
 };
 
