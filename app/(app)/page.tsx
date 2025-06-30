@@ -7,7 +7,7 @@ import { SignInButton } from "@clerk/nextjs";
 import PopularTopics from "@/components/topic/popular-topics";
 import { isReturningVisitor } from "@/lib/visitor-detection";
 import HeroSection from "@/components/landing-page/hero-section";
-import NewestPosts from "@/components/landing-page/newest-posts";
+import NewestPosts from "@/components/post/newest-posts";
 
 export default async function Home() {
   const returning = await isReturningVisitor();
