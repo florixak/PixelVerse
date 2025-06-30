@@ -141,7 +141,7 @@ export async function updatePost(
 
     const userId = await ensureSanityUser(user);
 
-    const post = await writeClient.fetch<Post>(
+    const post = await writeClient.fetch(
       `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
       { postId, userId }
     );
@@ -191,19 +191,18 @@ export async function updatePost(
     }
 
     const postTitle = formData.get("title")?.toString() || "Untitled Post";
-    let finalSlug = post.slug || "untitled"; // Handle slug as string
+    let finalSlug = post.slug.current || "untitled";
 
-    // Only generate new slug if title changed
     if (postTitle !== post.title) {
       let baseSlug = slugify(postTitle, { lower: true, strict: true });
 
       const existingSlugs = await writeClient.fetch(
-        `*[_type == "post" && slug.current == $slug && _id != $postId][0]`,
-        { slug: baseSlug, postId }
+        `*[_type == "post" && slug.current == $slug].slug.current`,
+        { slug: baseSlug }
       );
 
       finalSlug = baseSlug;
-      if (existingSlugs) {
+      if (existingSlugs.length > 0) {
         finalSlug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
       }
     }
@@ -255,7 +254,7 @@ export async function updatePost(
     );
 
     return {
-      newSlug: finalSlug,
+      newSlug: updatedPost.slug?.current || finalSlug,
       topicSlug: topicData?.slug || "unknown",
     };
   } catch (error) {
