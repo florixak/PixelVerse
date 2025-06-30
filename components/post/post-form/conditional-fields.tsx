@@ -15,6 +15,7 @@ import {
   SOFTWARE_OPTIONS,
   DIFFICULTY_LEVELS,
 } from "@/lib/constants";
+import { Post } from "@/sanity.types";
 
 type ConditionalFieldsProps = {
   postType: PostTypesType["value"];
@@ -29,6 +30,7 @@ type ConditionalFieldsProps = {
     value: string
   ) => void;
   addColorTopalette: () => void;
+  post?: Post | null;
 };
 
 const ConditionalFields = ({
@@ -40,7 +42,12 @@ const ConditionalFields = ({
   colorPalette,
   updateColorPalette,
   addColorTopalette,
+  post,
 }: ConditionalFieldsProps) => {
+  const imageUrl = post?.imageUrl || "";
+
+  console.log(post);
+
   return (
     <div className="space-y-4 border p-4 rounded-md">
       <h2 className="text-xl font-semibold">
@@ -50,16 +57,29 @@ const ConditionalFields = ({
       <div>
         <Label htmlFor="image">Upload Image</Label>
         <Input id="image" name="image" type="file" accept="image/*" />
+        {imageUrl && <img src={imageUrl} alt="Uploaded" className="mt-2" />}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="width">Width (pixels)</Label>
-          <Input id="width" name="dimensions.width" type="number" min="1" />
+          <Input
+            id="width"
+            name="dimensions.width"
+            type="number"
+            min="1"
+            defaultValue={post?.dimensions?.width}
+          />
         </div>
         <div>
           <Label htmlFor="height">Height (pixels)</Label>
-          <Input id="height" name="dimensions.height" type="number" min="1" />
+          <Input
+            id="height"
+            name="dimensions.height"
+            type="number"
+            min="1"
+            defaultValue={post?.dimensions?.height}
+          />
         </div>
       </div>
 
@@ -113,7 +133,7 @@ const ConditionalFields = ({
 
       <div>
         <Label htmlFor="difficulty">Difficulty Level</Label>
-        <Select name="difficulty">
+        <Select name="difficulty" defaultValue={post?.difficulty}>
           <SelectTrigger>
             <SelectValue placeholder="Select difficulty" />
           </SelectTrigger>
@@ -135,6 +155,7 @@ const ConditionalFields = ({
           type="number"
           min="0"
           step="0.5"
+          defaultValue={post?.timeSpent}
         />
       </div>
 
@@ -155,6 +176,7 @@ const ConditionalFields = ({
             id="inspirationSource"
             name="inspirationSource"
             placeholder="Credit the original creator or source"
+            defaultValue={post?.inspirationSource}
           />
         </div>
       )}
