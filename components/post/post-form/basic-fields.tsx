@@ -1,7 +1,6 @@
 "use client";
 
 import TopicSuggestButton from "@/components/topic/topic-suggest-button";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -13,16 +12,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { PostTypesType, POST_TYPES } from "@/lib/constants";
-import { Topic } from "@/sanity.types";
+import { POST_TYPES } from "@/lib/constants";
+import { Post, Topic } from "@/sanity.types";
 
 type BasicFieldsProps = {
   topics: Topic[];
-  setPostType: (value: PostTypesType["value"]) => void;
+  setPostType: (value: Post["postType"]) => void;
   topicId?: string;
+  post?: Post | null;
 };
 
-const BasicFields = ({ topics, setPostType, topicId }: BasicFieldsProps) => {
+const BasicFields = ({
+  topics,
+  setPostType,
+  topicId,
+  post,
+}: BasicFieldsProps) => {
+  const defaultTitle = post?.title || "";
+  const defaultPostType = post?.postType || "text";
+  const defaultContent = (post?.content || "") as string;
+  const defaultTags = post?.tags?.join(", ") || "";
+
   return (
     <div className="space-y-4">
       <div>
@@ -35,6 +45,7 @@ const BasicFields = ({ topics, setPostType, topicId }: BasicFieldsProps) => {
           required
           maxLength={100}
           placeholder="Enter a descriptive title"
+          defaultValue={defaultTitle}
         />
       </div>
 
@@ -62,9 +73,9 @@ const BasicFields = ({ topics, setPostType, topicId }: BasicFieldsProps) => {
           Post Type <span className="text-red-500">*</span>
         </Label>
         <RadioGroup
-          defaultValue="text"
+          defaultValue={defaultPostType}
           name="postType"
-          onValueChange={setPostType}
+          onValueChange={(value) => setPostType(value as Post["postType"])}
           className="flex flex-wrap gap-4 pt-2"
         >
           {POST_TYPES.map((type) => (
@@ -86,6 +97,7 @@ const BasicFields = ({ topics, setPostType, topicId }: BasicFieldsProps) => {
           name="content"
           rows={6}
           placeholder="Write your post content here..."
+          defaultValue={defaultContent}
         />
       </div>
 
@@ -95,6 +107,7 @@ const BasicFields = ({ topics, setPostType, topicId }: BasicFieldsProps) => {
           id="tags"
           name="tags"
           placeholder="pixel, character, tutorial, etc."
+          defaultValue={defaultTags}
         />
       </div>
     </div>
