@@ -1,9 +1,12 @@
-import Posts from "@/components/post/posts";
+import InfiniteTopicPosts from "@/components/post/infinite-topic-posts";
 import SortFilterSelect from "@/components/sort-filter-select";
 import { Button } from "@/components/ui/button";
+import { getQueryClient } from "@/lib/get-query-client";
 import { SortOrder } from "@/lib/types";
+import { Topic } from "@/sanity.types";
 import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +17,8 @@ type TopicPageProps = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ sort?: SortOrder }>;
 };
+
+const LIMIT = 12;
 
 const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
   const { slug } = await params;
@@ -78,22 +83,44 @@ const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
       </div>
 
       <Suspense fallback={<div>Loading posts...</div>}>
-        <PostsList slug={slug} sort={sort} />
+        <PostsList sort={sort} topic={topic} />
       </Suspense>
     </section>
   );
 };
 
 const PostsList = async ({
-  slug,
-  sort,
+  sort = "latest",
+  topic,
 }: {
-  slug: string;
   sort?: SortOrder;
+  topic: Topic;
 }) => {
-  const posts = await getPostsByTopic(slug, sort);
+  const queryClient = getQueryClient();
 
-  return <Posts posts={posts} />;
+  try {
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: ["posts", "topic", topic.slug, sort],
+      queryFn: ({ pageParam = 0 }) =>
+        getPostsByTopic({
+          topicSlug: topic.slug || "",
+          page: pageParam,
+          limit: LIMIT,
+          sort,
+        }),
+      initialPageParam: 0,
+    });
+
+    console.log(`✅ Prefetched posts for topic: ${topic.slug}, sort: ${sort}`);
+  } catch (error) {
+    console.error("❌ Failed to prefetch posts:", error);
+  }
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <InfiniteTopicPosts topic={topic} sort={sort} />
+    </HydrationBoundary>
+  );
 };
 
 export default TopicPage;
