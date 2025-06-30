@@ -14,5 +14,5 @@ export const writeClient = createClient({
   dataset,
   apiVersion,
   token,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: false, // Set to false for writes and uploads
 });
