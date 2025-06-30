@@ -102,7 +102,85 @@ export async function createPost(formData: FormData) {
   }
 }
 
-export async function updatePost(formData: FormData, postId: string) {}
+export async function updatePost(
+  formData: FormData,
+  postId: string
+): Promise<void> {
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Must be logged in");
+
+    const userId = await ensureSanityUser(user);
+
+    const post = await writeClient.fetch<Post>(
+      `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
+      { postId, userId }
+    );
+
+    if (!post) {
+      throw new Error("You are not authorized to update this post");
+    }
+
+    const imageFile = formData.get("image") as File;
+    let imageAsset = null;
+
+    if (imageFile && imageFile.size > 0) {
+      const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+
+      imageAsset = await writeClient.assets.upload("image", imageBuffer, {
+        filename: imageFile.name,
+        contentType: imageFile.type,
+      });
+    }
+
+    const postTitle = formData.get("title")?.toString() || "Untitled Post";
+    let baseSlug = slugify(postTitle, { lower: true, strict: true });
+
+    const existingSlugs = await writeClient.fetch(
+      `*[_type == "post" && slug.current == $slug].slug.current`,
+      { slug: baseSlug }
+    );
+
+    let finalSlug = baseSlug;
+    if (existingSlugs.length > 0) {
+      finalSlug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
+    }
+
+    const updatedPost = await writeClient
+      .patch(postId)
+      .set({
+        _type: "post",
+        title: postTitle,
+        slug: {
+          _type: "slug",
+          current: finalSlug,
+        },
+        image: imageAsset
+          ? {
+              _type: "image",
+              asset: {
+                _type: "reference",
+                _ref: imageAsset._id,
+              },
+            }
+          : null,
+        content: formData.get("content")?.toString() || "",
+        excerpt: formData.get("content")?.toString().substring(0, 150) || "",
+        updatedAt: new Date().toISOString(),
+        postType: "pixelArt",
+        tags:
+          formData
+            .get("tags")
+            ?.toString()
+            .split(",")
+            .map((tag) => tag.trim()) || [],
+      })
+      .commit();
+  } catch (error) {
+    console.error("Error updating post:", error);
+    throw new Error("Failed to update post");
+  }
+}
 
 export async function deletePost(postId: string) {
   const user = await currentUser();
