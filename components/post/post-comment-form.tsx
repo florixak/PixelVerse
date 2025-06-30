@@ -44,6 +44,11 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
   const [optimisticComments, setOptimisticComments] = useState<
     OptimisticComment[]
   >([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSubmit = (formData: FormData) => {
     const content = formData.get("content") as string;
@@ -71,6 +76,9 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
     if (state.success) {
       toast.success("Comment posted successfully!");
       formRef.current?.reset();
+      setOptimisticComments((prev) =>
+        prev.filter((comment) => !comment.isOptimistic)
+      );
     }
   }, [state]);
 
@@ -93,8 +101,14 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
 
         <div className="flex flex-row items-start gap-2 w-full">
           <Image
-            src={user?.imageUrl || "/avatar-default.svg"}
-            alt={`${user?.username || "Anonymous"}'s avatar`}
+            src={
+              isMounted && user?.imageUrl
+                ? user.imageUrl
+                : "/avatar-default.svg"
+            }
+            alt={`${
+              isMounted && user?.username ? user.username : "Anonymous"
+            }'s avatar`}
             className="w-10 h-10 rounded-full object-cover mt-2"
             width={32}
             height={32}
@@ -118,7 +132,7 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
         </div>
       </form>
       {optimisticComments.length > 0 && (
-        <div>
+        <>
           {optimisticComments.map((comment) => (
             <PostComment
               key={comment._id}
@@ -134,7 +148,7 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
             />
           ))}
           <InfiniteComments postId={post._id} />
-        </div>
+        </>
       )}
       {optimisticComments.length === 0 && post.commentsCount === 0 && (
         <p className="text-muted-foreground text-sm text-center mt-4">
