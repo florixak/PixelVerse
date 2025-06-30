@@ -116,14 +116,13 @@ export default function CreatePostForm({
       }
 
       if (post) {
-        formData.set("postId", post._id);
-        await updatePost(formData, post._id);
+        const result = await updatePost(formData, post._id);
         toast.success(
           `Post updated successfully! Your post "${post.title}" has been updated.`,
           { duration: 5000 }
         );
-        onSuccess?.(); // Close dialog/sheet on success
-        router.refresh();
+        onSuccess?.();
+        router.push(`/topics/${result.topicSlug}/${result.newSlug}`);
       } else {
         const result = await createPost(formData);
         toast.success(
@@ -131,9 +130,7 @@ export default function CreatePostForm({
           { duration: 5000 }
         );
 
-        router.push(
-          `/topics/${result.topicSlug.current}/${result.slug.current}`
-        );
+        router.push(`/topics/${result.topicSlug}/${result.slug}`);
       }
     } catch (error) {
       console.error("Error creating post:", error);
