@@ -31,7 +31,6 @@ const InfiniteComments = ({ postId }: InfiniteCommentsProps) => {
   const { user } = useUser();
 
   const flatData = data?.pages?.flat() || [];
-  const totalComments = flatData.length;
 
   return (
     <div className="w-full">
@@ -63,17 +62,11 @@ const InfiniteComments = ({ postId }: InfiniteCommentsProps) => {
                 disabled={isFetchingNextPage}
                 className="w-full max-w-md"
               >
-                {isFetchingNextPage ? "Loading more..." : "Load More Posts"}
+                {isFetchingNextPage ? "Loading more..." : "Load More Comments"}
               </Button>
             </div>
           )
-        ) : (
-          totalComments > 0 && (
-            <div className="text-center text-muted-foreground">
-              No more comments
-            </div>
-          )
-        )}
+        ) : null}
       </div>
     </div>
   );
