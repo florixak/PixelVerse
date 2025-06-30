@@ -123,6 +123,8 @@ export type Topic = {
   bannerUrl?: string;
   postCount?: number;
   reportCount?: number;
+  postCountWeek?: number;
+  postCountMonth?: number;
 };
 
 export type User = {

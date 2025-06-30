@@ -68,8 +68,12 @@ async function TopicsList() {
           <SidebarMenuButton asChild>
             <Link href={`/topics/${item.slug}`}>
               <span>{item.title}</span>
-              <span className="text-xs text-muted-foreground">
-                {item.postCount} posts
+
+              <span className="text-xs text-muted-foreground flex items-center gap-4">
+                <span>{item.postCount} posts</span>
+                {item.postCountWeek !== undefined && item.postCountWeek > 0 ? (
+                  <span>+{item.postCountWeek} last week</span>
+                ) : null}
               </span>
             </Link>
           </SidebarMenuButton>
