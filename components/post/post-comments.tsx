@@ -2,7 +2,6 @@ import { Post } from "@/sanity.types";
 import { getCommentsByPostId } from "@/sanity/lib/posts/getCommentsByPostId";
 import PostCommentForm from "./post-comment-form";
 import InfiniteComments from "./infinite-comments";
-import { currentUser } from "@clerk/nextjs/server";
 import { getQueryClient } from "@/lib/get-query-client";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 

@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Post } from "@/sanity.types";
 
 type TutorialFieldsProps = {
   tutorialSteps: Array<TutorialStepType>;
