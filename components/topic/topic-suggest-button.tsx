@@ -9,7 +9,7 @@ const TopicSuggestButton = () => {
     router.push("/topics/suggest");
   };
   return (
-    <Button variant="outline" onClick={handleClick}>
+    <Button type="button" variant="outline" onClick={handleClick}>
       Suggest a Topic
     </Button>
   );
