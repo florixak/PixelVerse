@@ -1,8 +1,8 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 type SubmitButtonProps = {
   label?: string;
@@ -16,16 +16,23 @@ const SubmitButton = ({
   className,
 }: SubmitButtonProps) => {
   const { pending } = useFormStatus();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
-    <Button
+    <button
       type="submit"
-      variant="default"
-      className={cn("self-end px-4 py-2 rounded-lg", className)}
-      disabled={pending}
+      className={cn(
+        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-9 px-4 py-2 self-end cursor-pointer",
+        className
+      )}
+      disabled={isMounted ? pending : false}
     >
-      {pending ? submittingLabel : label}
-    </Button>
+      {isMounted && pending ? submittingLabel : label}
+    </button>
   );
 };
 
