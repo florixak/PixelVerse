@@ -24,6 +24,7 @@ const getPostBySlug = async (
     "likes": count(reactions[type == "like"]),
     "dislikes": count(reactions[type == "dislike"]),
     software,
+    difficulty,
     "reactions": reactions[] {
       user->{_id, username, "imageUrl": imageUrl, clerkId},
       type
