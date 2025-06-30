@@ -5,15 +5,33 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import CreatePostForm from "./post-form/create-post-form";
+import { Post, Topic } from "@/sanity.types";
+import { Input } from "../ui/input";
+import {
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+  Sheet,
+} from "../ui/sheet";
+import { Label } from "../ui/label";
 
 type PostAuthorButtonsProps = {
-  postId: string;
+  post: Post | null;
+  topic: Topic | null;
+  topics: Topic[];
 };
 
-const PostAuthorButtons = ({ postId }: PostAuthorButtonsProps) => {
+const PostAuthorButtons = ({ post, topic, topics }: PostAuthorButtonsProps) => {
   const [deleting, setDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
   const router = useRouter();
+
+  if (!post) return null;
 
   const handleEdit = async () => {};
 
@@ -24,7 +42,7 @@ const PostAuthorButtons = ({ postId }: PostAuthorButtonsProps) => {
       id: "delete-post",
     });
     try {
-      await deletePost(postId);
+      await deletePost(post._id);
       toast.success("Post deleted successfully!");
       const currentPath = window.location.pathname;
       const topic = currentPath.split("/")[2];
@@ -43,14 +61,27 @@ const PostAuthorButtons = ({ postId }: PostAuthorButtonsProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        className="text-sm"
-        onClick={handleEdit}
-        disabled={editing || deleting}
-      >
-        Edit
-      </Button>
+      <Sheet open={editing} onOpenChange={setEditing}>
+        <SheetTrigger asChild>
+          <Button variant="outline">Edit</Button>
+        </SheetTrigger>
+        <SheetContent className="w-full sm:max-w-4xl overflow-y-auto px-6 md:px-12 py-4">
+          <SheetHeader>
+            <SheetTitle>Edit Post</SheetTitle>
+            <SheetDescription>
+              Make changes to your post. All changes will be saved
+              automatically.
+            </SheetDescription>
+          </SheetHeader>
+          <CreatePostForm
+            topics={topics}
+            topic={topic}
+            post={post}
+            className="p-0 max-w-none"
+            onSuccess={() => setEditing(false)}
+          />
+        </SheetContent>
+      </Sheet>
       <Button
         variant="destructive"
         className="ml-2 text-sm"
