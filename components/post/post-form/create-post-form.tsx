@@ -1,19 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { createPost } from "@/actions/postActions";
+import { createPost, updatePost } from "@/actions/postActions";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Topic } from "@/sanity.types";
+import { Post, Topic } from "@/sanity.types";
 import TutorialFields from "./tutorial-fields";
 import ConditionalFields from "./conditional-fields";
 import BasicFields from "./basic-fields";
 import toast from "react-hot-toast";
 import SubmitButton from "@/components/submit-button";
+import { DialogClose } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 type CreatePostFormProps = {
   topics: Topic[];
   topic: Topic | null;
+  post?: Post | null;
+  className?: string;
+  onSuccess?: () => void; // Add this prop
 };
 
 export type ColorPaletteItem = {
@@ -27,12 +32,29 @@ export type TutorialStepType = {
   imageUrl: string;
 };
 
-export default function CreatePostForm({ topics, topic }: CreatePostFormProps) {
-  const [postType, setPostType] = useState("text");
-  const [isOriginal, setIsOriginal] = useState(true);
-  const [software, setSoftware] = useState<string[]>([]);
-  const [colorPalette, setColorPalette] = useState<ColorPaletteItem[]>([]);
-  const [tutorialSteps, setTutorialSteps] = useState<TutorialStepType[]>([]);
+export default function CreatePostForm({
+  topics,
+  topic,
+  post,
+  className,
+  onSuccess,
+}: CreatePostFormProps) {
+  const [postType, setPostType] = useState<Post["postType"]>(post?.postType);
+  const [isOriginal, setIsOriginal] = useState(post?.isOriginal ?? true);
+  const [software, setSoftware] = useState<string[]>(post?.software || []);
+  const [colorPalette, setColorPalette] = useState<ColorPaletteItem[]>(
+    post?.colorPalette?.map((cp) => ({
+      hex: cp.hex || "",
+      name: cp.name || "",
+    })) || []
+  );
+  const [tutorialSteps, setTutorialSteps] = useState<TutorialStepType[]>(
+    post?.tutorialSteps?.map((ts) => ({
+      title: ts.title || "",
+      description: ts.description || "",
+      imageUrl: ts.imageUrl || "",
+    })) || []
+  );
   const router = useRouter();
 
   const handleSoftwareChange = (value: string) => {
@@ -93,14 +115,26 @@ export default function CreatePostForm({ topics, topic }: CreatePostFormProps) {
         formData.set("tutorialSteps", JSON.stringify(tutorialSteps));
       }
 
-      const result = await createPost(formData);
+      if (post) {
+        formData.set("postId", post._id);
+        await updatePost(formData, post._id);
+        toast.success(
+          `Post updated successfully! Your post "${post.title}" has been updated.`,
+          { duration: 5000 }
+        );
+        onSuccess?.(); // Close dialog/sheet on success
+        router.refresh();
+      } else {
+        const result = await createPost(formData);
+        toast.success(
+          `Post created successfully! Your post "${result.title}" has been created.`,
+          { duration: 5000 }
+        );
 
-      toast.success(
-        `Post created successfully! Your post "${result.title}" has been created.`,
-        { duration: 5000 }
-      );
-
-      router.push(`/topics/${result.topicSlug.current}/${result.slug.current}`);
+        router.push(
+          `/topics/${result.topicSlug.current}/${result.slug.current}`
+        );
+      }
     } catch (error) {
       console.error("Error creating post:", error);
       toast.error("Failed to create post. Please try again.", {
@@ -112,13 +146,14 @@ export default function CreatePostForm({ topics, topic }: CreatePostFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-8 max-w-4xl mx-auto w-full p-6"
+      className={cn("space-y-8 max-w-4xl mx-auto w-full p-6", className)}
     >
       {/* Basic Fields */}
       <BasicFields
         topics={topics}
         setPostType={setPostType}
         topicId={topic?._id}
+        post={post}
       />
       {/* Conditional Fields Based on Post Type */}
       {(postType === "pixelArt" || postType === "animation") && (
@@ -131,6 +166,7 @@ export default function CreatePostForm({ topics, topic }: CreatePostFormProps) {
           colorPalette={colorPalette}
           addColorTopalette={addColorTopalette}
           updateColorPalette={updateColorPalette}
+          post={post}
         />
       )}
       {/* Tutorial-specific fields */}
@@ -142,10 +178,28 @@ export default function CreatePostForm({ topics, topic }: CreatePostFormProps) {
         />
       )}
       <div className="flex justify-end space-x-4">
-        <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
-        </Button>
-        <SubmitButton label="Create post" submittingLabel="Creating Post..." />
+        {post ? (
+          <DialogClose asChild>
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+          </DialogClose>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() =>
+              post ? router.push(`/topics/${topic?.slug}`) : router.back()
+            }
+          >
+            Cancel
+          </Button>
+        )}
+
+        <SubmitButton
+          label={post ? "Update post" : "Create post"}
+          submittingLabel={post ? "Updating..." : "Creating..."}
+        />
       </div>
     </form>
   );
