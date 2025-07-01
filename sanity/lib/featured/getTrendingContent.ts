@@ -3,13 +3,12 @@ import { client } from "../client";
 import { Post } from "@/sanity.types";
 
 type TrendingAlgorithmOptions = {
-  // Time period to consider content as "recent" (in days)
   recencyPeriod?: number;
-  // Score multipliers
   recencyWeight?: number;
   likesWeight?: number;
+  dislikesWeight?: number;
   commentsWeight?: number;
-  // Randomization settings
+  likeDislikeRatio?: boolean;
   randomFactorMax?: number;
   maxOffset?: number;
 };
@@ -25,8 +24,10 @@ export const getTrendingContent = async (
   const {
     recencyPeriod = 7, // Last 7 days considered "recent"
     recencyWeight = 10, // Recent posts get 10x boost
-    likesWeight = 2, // Each like is worth 2 points
-    commentsWeight = 3, // Each comment is worth 3 points
+    likesWeight = 3, // Each like is worth 3 points
+    dislikesWeight = -1, // Each dislike removes 1 point
+    commentsWeight = 2, // Each comment is worth 2 points (only when enabled)
+    likeDislikeRatio = true, // Consider engagement quality
     randomFactorMax = 5, // Random boost of 0-5 points
     maxOffset = 10, // Random start position in results (0-10)
   } = options || {};
@@ -35,11 +36,40 @@ export const getTrendingContent = async (
   const randomFactor = Math.floor(Math.random() * randomFactorMax);
 
   return client.fetch<{ posts: Post[] }>(
-    groq`{"posts": *[_type == "post" && defined(slug.current) && publishedAt < now()] | order(
-      ((dateTime(publishedAt) > dateTime(now()) - 60*60*24*${recencyPeriod}) * ${recencyWeight} +
-      coalesce(likes, 0) * ${likesWeight} + 
-      coalesce(count(*[_type == "comment" && references(^._id)]), 0) * ${commentsWeight} +
-      ${randomFactor}) desc
+    groq`{"posts": *[_type == "post" && defined(slug.current) && publishedAt < now() && isDeleted != true] | order(
+      (
+        // Recency boost for recent posts
+        (dateTime(publishedAt) > dateTime(now()) - 60*60*24*${recencyPeriod}) * ${recencyWeight} +
+        
+        // Likes score
+        coalesce(count(*[_type == "reaction" && references(^._id) && type == "like"]), 0) * ${likesWeight} + 
+        
+        // Dislikes penalty
+        coalesce(count(*[_type == "reaction" && references(^._id) && type == "dislike"]), 0) * ${dislikesWeight} +
+        
+        // Comments score (only when comments are enabled)
+        select(
+          disabledComments == true => 0,
+          coalesce(count(*[_type == "comment" && references(^._id)]), 0) * ${commentsWeight}
+        ) +
+        
+        // Engagement quality bonus (like ratio)
+        ${
+          likeDislikeRatio
+            ? `select(
+          (coalesce(count(*[_type == "reaction" && references(^._id) && type == "like"]), 0) + 
+           coalesce(count(*[_type == "reaction" && references(^._id) && type == "dislike"]), 0)) > 5 => 
+          (coalesce(count(*[_type == "reaction" && references(^._id) && type == "like"]), 0) / 
+           (coalesce(count(*[_type == "reaction" && references(^._id) && type == "like"]), 0) + 
+            coalesce(count(*[_type == "reaction" && references(^._id) && type == "dislike"]), 0) + 1)) * 5,
+          0
+        )`
+            : "0"
+        } +
+        
+        // Random factor for variety
+        ${randomFactor}
+      ) desc
     ) [${offset}...${offset + limit}] {
       _id,
       _type,
@@ -49,10 +79,12 @@ export const getTrendingContent = async (
       excerpt,
       mainImage,
       "imageUrl": image.asset->url,
-      "likes": coalesce(likes, 0),
+      "likes": count(*[_type == "reaction" && references(^._id) && type == "like"]),
+      "dislikes": count(*[_type == "reaction" && references(^._id) && type == "dislike"]),
       "commentCount": count(*[_type == "comment" && references(^._id)]),
       "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
       "topicSlug": topic->slug.current,
+      disabledComments,
       "topic": topic->{
         _id,
         title,
