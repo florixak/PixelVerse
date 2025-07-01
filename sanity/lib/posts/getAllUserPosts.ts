@@ -22,6 +22,7 @@ const getAllUserPosts = async (clerkId: User["clerkId"]) => {
       software,
       isDeleted,
       content,
+      disabledComments,
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
     }`,
     {

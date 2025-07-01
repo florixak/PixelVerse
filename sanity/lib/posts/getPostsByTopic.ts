@@ -43,6 +43,7 @@ const getPostsByTopic = async ({
       tags,
       isDeleted,
       content,
+      disabledComments,
       "commentsCount": count(*[_type == "comment" && references(^._id)])
     }`,
     { topicSlug, page, limit }

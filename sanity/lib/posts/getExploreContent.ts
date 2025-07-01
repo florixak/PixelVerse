@@ -63,6 +63,7 @@ export async function getExploreContent({
         "likes": coalesce(likes, 0),
         "commentCount": count(*[_type == "comment" && references(^._id)]),
         "viewCount": coalesce(viewCount, 0),
+        disabledComments,
         "author": author->{
           _id, 
           username, 

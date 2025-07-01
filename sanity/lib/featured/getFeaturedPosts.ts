@@ -25,6 +25,7 @@ export const getFeaturedPosts = async (limit: number = 6): Promise<Post[]> => {
       "dislikes": count(reactions[type == "dislike"]),
       tags,
       isDeleted,
+      disabledComments,
       "commentsCount": count(*[_type == "comment" && references(^._id) && isDeleted != true])
       } | order(likes asc)[0...${limit}]
     `

@@ -21,6 +21,7 @@ const getLatestActivityOfUser = async (
       "likes": count(reactions[type == "like"]),
       "dislikes": count(reactions[type == "dislike"]),
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
+      disabledComments,
       tags
     } | order(_createdAt desc)[0...$limit]`,
     { clerkId, limit }

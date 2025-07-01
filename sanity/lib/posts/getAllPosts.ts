@@ -47,6 +47,7 @@ const getAllPosts = async ({
       software,
       isDeleted,
       content,
+      disabledComments,
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
     } | order(${orderBy})[${offset}..${offset + limit - 1}] ${
       software ? `&& software[any(_ in $software)]` : ""
