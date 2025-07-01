@@ -182,7 +182,7 @@ const PostReactions = ({
         />
         <ReactionButton
           icon={<MessageCircle className="inline-block text-gray-500" />}
-          count={post.commentsCount || 0}
+          count={post.disabledComments ? 0 : post.commentsCount || 0}
           disabled={false}
           onClick={handleCommentClick}
           showLabel={!collapsed}
