@@ -108,6 +108,7 @@ export type Post = {
   reactions?: Reaction[];
   commentsCount?: number;
   reportCount?: number;
+  disabledComments?: boolean;
 };
 
 export type Topic = {
