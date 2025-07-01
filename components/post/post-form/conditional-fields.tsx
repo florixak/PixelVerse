@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -46,8 +47,6 @@ const ConditionalFields = ({
 }: ConditionalFieldsProps) => {
   const imageUrl = post?.imageUrl || "";
 
-  console.log(post);
-
   return (
     <div className="space-y-4 border p-4 rounded-md">
       <h2 className="text-xl font-semibold">
@@ -88,11 +87,10 @@ const ConditionalFields = ({
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
           {SOFTWARE_OPTIONS.map((option) => (
             <div key={option.value} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
+              <Checkbox
                 id={`software-${option.value}`}
                 checked={software.includes(option.value)}
-                onChange={() => handleSoftwareChange(option.value)}
+                onCheckedChange={() => handleSoftwareChange(option.value)}
                 className="rounded"
               />
               <Label htmlFor={`software-${option.value}`}>{option.title}</Label>
