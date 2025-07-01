@@ -20,7 +20,7 @@ const ExplorePage = async ({ searchParams }: ExplorePageProps) => {
   const isSearchMode = Boolean(q && q.trim().length > 0);
 
   return (
-    <section className="relative max-w-6xl mx-auto flex flex-col gap-4 py-8">
+    <section className="relative max-w-6xl mx-auto flex flex-col gap-4 py-8 px-4 md:px-0">
       <div className="text-center max-w-4xl mx-auto flex flex-col">
         <h1 className="text-2xl font-bold">
           {isSearchMode ? "Search Results" : "Explore"}
