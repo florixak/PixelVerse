@@ -4,8 +4,8 @@ const Footer = () => {
       <p>&copy; {new Date().getFullYear()} PixelVerse. All rights reserved.</p>
       <p>Made with ❤️ by Ondřej Pták.</p>
       <p>
-        PixelVerse is a demonstration and not a live service (for now). No real
-        user data is collected or stored.
+        PixelVerse is a demonstration and not a live service. No real user data
+        is collected or stored.
       </p>
     </footer>
   );
