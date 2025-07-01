@@ -12,13 +12,14 @@ import toast from "react-hot-toast";
 import SubmitButton from "@/components/submit-button";
 import { DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { SoftwareOptionType } from "@/lib/constants";
 
 type CreatePostFormProps = {
   topics: Topic[];
   topic: Topic | null;
   post?: Post | null;
   className?: string;
-  onSuccess?: () => void; // Add this prop
+  onSuccess?: () => void;
 };
 
 export type ColorPaletteItem = {
@@ -40,8 +41,15 @@ export default function CreatePostForm({
   onSuccess,
 }: CreatePostFormProps) {
   const [postType, setPostType] = useState<Post["postType"]>(post?.postType);
-  const [isOriginal, setIsOriginal] = useState(post?.isOriginal ?? true);
-  const [software, setSoftware] = useState<string[]>(post?.software || []);
+  const [isOriginal, setIsOriginal] = useState<boolean>(
+    post?.isOriginal ?? true
+  );
+  const [disabledComments, setDisabledComments] = useState<boolean>(
+    post?.disabledComments ?? false
+  );
+  const [software, setSoftware] = useState<SoftwareOptionType["value"][]>(
+    post?.software || []
+  );
   const [colorPalette, setColorPalette] = useState<ColorPaletteItem[]>(
     post?.colorPalette?.map((cp) => ({
       hex: cp.hex || "",
@@ -102,17 +110,24 @@ export default function CreatePostForm({
     try {
       const formData = new FormData(e.currentTarget);
 
-      // Add array data that's not directly in the form
-      if (software.length > 0) {
+      if (software !== undefined && software.length > 0) {
         formData.set("software", JSON.stringify(software));
       }
 
-      if (colorPalette.length > 0) {
+      if (colorPalette !== undefined && colorPalette.length > 0) {
         formData.set("colorPalette", JSON.stringify(colorPalette));
       }
 
-      if (tutorialSteps.length > 0) {
+      if (tutorialSteps !== undefined && tutorialSteps.length > 0) {
         formData.set("tutorialSteps", JSON.stringify(tutorialSteps));
+      }
+
+      if (isOriginal !== undefined) {
+        formData.set("isOriginal", String(isOriginal));
+      }
+
+      if (disabledComments !== undefined) {
+        formData.set("disabledComments", String(disabledComments));
       }
 
       if (post) {
@@ -151,6 +166,9 @@ export default function CreatePostForm({
         setPostType={setPostType}
         topicId={topic?._id}
         post={post}
+        postType={postType}
+        disabledComments={disabledComments}
+        setDisabledComments={setDisabledComments}
       />
       {/* Conditional Fields Based on Post Type */}
       {(postType === "pixelArt" || postType === "animation") && (

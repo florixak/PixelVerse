@@ -62,7 +62,12 @@ export const postSchema = defineType({
       initialValue: () => new Date().toISOString(),
       readOnly: true,
     }),
-
+    defineField({
+      name: "updatedAt",
+      title: "Updated at",
+      type: "datetime",
+      readOnly: true,
+    }),
     // Pixel Art Specific Fields
     defineField({
       name: "postType",
@@ -187,6 +192,13 @@ export const postSchema = defineType({
       type: "boolean",
       initialValue: false,
       description: "If true, this post is hidden from users but not deleted.",
+    }),
+    defineField({
+      name: "disabledComments",
+      title: "Disable Comments",
+      type: "boolean",
+      initialValue: false,
+      description: "If true, comments are disabled for this post.",
     }),
     defineField({
       name: "reactions",

@@ -12,6 +12,19 @@ type PostCommentProps = {
 export const COMMENTS_LIMIT = 5;
 
 const PostComments = async ({ post }: PostCommentProps) => {
+  if (post.disabledComments) {
+    return (
+      <div
+        id="comments"
+        className="flex-center flex-col gap-2 border border-muted rounded-lg p-4 bg-background"
+      >
+        <p className="text-center text-muted-foreground">
+          Comments are disabled for this post
+        </p>
+      </div>
+    );
+  }
+
   const queryClient = getQueryClient();
   await queryClient.prefetchInfiniteQuery({
     queryKey: ["comments", post._id],

@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { POST_TYPES } from "@/lib/constants";
 import { Post, Topic } from "@/sanity.types";
@@ -20,6 +21,9 @@ type BasicFieldsProps = {
   setPostType: (value: Post["postType"]) => void;
   topicId?: string;
   post?: Post | null;
+  postType?: Post["postType"];
+  disabledComments?: boolean;
+  setDisabledComments?: (value: boolean) => void;
 };
 
 const BasicFields = ({
@@ -27,15 +31,17 @@ const BasicFields = ({
   setPostType,
   topicId,
   post,
+  postType = "text",
+  disabledComments = false,
+  setDisabledComments = () => {},
 }: BasicFieldsProps) => {
   const defaultTitle = post?.title || "";
-  const defaultPostType = post?.postType || "text";
   const defaultContent = (post?.content || "") as string;
   const defaultTags = post?.tags?.join(", ") || "";
 
   return (
     <div className="space-y-4">
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="title">
           Title <span className="text-red-500">*</span>
         </Label>
@@ -68,12 +74,12 @@ const BasicFields = ({
         <TopicSuggestButton />
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="postType">
           Post Type <span className="text-red-500">*</span>
         </Label>
         <RadioGroup
-          defaultValue={defaultPostType}
+          defaultValue={postType}
           name="postType"
           onValueChange={(value) => setPostType(value as Post["postType"])}
           className="flex flex-wrap gap-4 pt-2"
@@ -90,7 +96,7 @@ const BasicFields = ({
         </RadioGroup>
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="content">Content</Label>
         <Textarea
           id="content"
@@ -101,7 +107,17 @@ const BasicFields = ({
         />
       </div>
 
-      <div>
+      <div className="flex items-center gap-2">
+        <Label htmlFor="disabledComments">Disable Comments</Label>
+        <Switch
+          id="disabledComments"
+          name="disabledComments"
+          defaultChecked={disabledComments}
+          onCheckedChange={(checked) => setDisabledComments(checked as boolean)}
+        />
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="tags">Tags (comma separated)</Label>
         <Input
           id="tags"

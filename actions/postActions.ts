@@ -105,6 +105,7 @@ export async function createPost(formData: FormData) {
         _type: "reference",
         _ref: userId,
       },
+      disabledComments: formData.get("disabledComments") === "true",
       publishedAt: new Date().toISOString(),
       postType: formData.get("postType")?.toString() || "pixelArt",
       tags:
@@ -209,6 +210,7 @@ export async function updatePost(
 
     const topic = formData.get("topic")?.toString();
     const postTypeValue = formData.get("postType")?.toString() || "pixelArt";
+    const disabledCommentsValue = formData.get("disabledComments") === "true";
 
     const updateData: any = {
       title: postTitle,
@@ -220,6 +222,7 @@ export async function updatePost(
       excerpt: formData.get("content")?.toString().substring(0, 150) || "",
       updatedAt: new Date().toISOString(),
       postType: postTypeValue,
+      disabledComments: disabledCommentsValue,
       topic: {
         _type: "reference",
         _ref: topic || "",
@@ -247,7 +250,6 @@ export async function updatePost(
       .set(updateData)
       .commit();
 
-    // Fetch the topic to get the slug
     const topicData = await writeClient.fetch(
       `*[_type == "topic" && _id == $topicId][0]{ "slug": slug.current }`,
       { topicId: topic }
@@ -352,6 +354,18 @@ export async function createComment(prevState: any, formData: FormData) {
 
     if (!content?.trim()) {
       return { error: "Comment cannot be empty" };
+    }
+    const post = await writeClient.fetch(
+      `*[_type == "post" && _id == $postId && (isDeleted != true)][0]`,
+      { postId }
+    );
+
+    if (!post) {
+      return { error: "Post does not exist or has been deleted" };
+    }
+
+    if (post.disabledComments) {
+      return { error: "Comments are disabled for this post" };
     }
 
     await writeClient.create({
