@@ -1,8 +1,4 @@
-import {
-  DIFFICULTY_LEVELS,
-  POST_TYPES,
-  SOFTWARE_OPTIONS,
-} from "@/lib/constants";
+import { POST_TYPES, SOFTWARE_OPTIONS, DIFFICULTY_LEVELS } from "@/constants";
 import { defineField, defineType } from "sanity";
 
 export const postSchema = defineType({
@@ -94,11 +90,8 @@ export const postSchema = defineType({
     defineField({
       name: "dimensions",
       title: "Dimensions (pixels)",
-      type: "object",
-      fields: [
-        { name: "width", type: "number", title: "Width" },
-        { name: "height", type: "number", title: "Height" },
-      ],
+      type: "string",
+      placeholder: "32x32",
       hidden: ({ document }) =>
         document?.postType !== "pixelArt" && document?.postType !== "animation",
     }),
@@ -111,7 +104,9 @@ export const postSchema = defineType({
         list: SOFTWARE_OPTIONS,
       },
       hidden: ({ document }) =>
-        document?.postType !== "pixelArt" && document?.postType !== "animation",
+        document?.postType !== "pixelArt" &&
+        document?.postType !== "animation" &&
+        document?.postType !== "tutorial",
     }),
 
     defineField({

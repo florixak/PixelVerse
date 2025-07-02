@@ -1,4 +1,4 @@
-import { REPORT_REASONS } from "@/lib/constants";
+import { REPORT_REASONS } from "@/constants";
 import { defineField, defineType } from "sanity";
 
 export const reportSchema = defineType({
