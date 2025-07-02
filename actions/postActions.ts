@@ -2,129 +2,72 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import { writeClient } from "@/sanity/lib/client";
-import slugify from "slugify";
 import { ensureSanityUser } from "@/lib/user-utils";
 import { Post, Reaction, Report } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
+import {
+  uploadImageAsset,
+  generateUniqueSlug,
+  validateTopicExists,
+  getTopicSlug,
+  parsePostFormData,
+} from "@/lib/post-utils";
 
+/**
+ * Creates a new post
+ */
 export async function createPost(formData: FormData) {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
 
     const userId = await ensureSanityUser(user);
+    const postData = parsePostFormData(formData);
 
-    const topicId = formData.get("topic")?.toString() || "";
-
-    const topicExists = await writeClient.fetch(
-      `*[_type == "topic" && _id == $topicId][0]._id`,
-      { topicId }
-    );
-
-    if (!topicExists) {
-      throw new Error(`Topic with ID "${topicId}" does not exist`);
+    // Validate topic exists
+    if (!(await validateTopicExists(postData.topicId))) {
+      throw new Error(`Topic with ID "${postData.topicId}" does not exist`);
     }
 
-    const postTitle = formData.get("title")?.toString() || "Untitled Post";
+    // Handle image upload
+    const imageAsset = await uploadImageAsset(postData.imageFile);
 
-    const imageFile = formData.get("image") as File;
-    let imageAsset = null;
+    // Generate unique slug
+    const finalSlug = await generateUniqueSlug(postData.title);
 
-    if (imageFile && imageFile.size > 0) {
-      try {
-        // Check file size (max 10MB)
-        const maxSize = 10 * 1024 * 1024; // 10MB
-        if (imageFile.size > maxSize) {
-          throw new Error("Image file too large. Maximum size is 10MB.");
-        }
-
-        const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
-
-        // Validate content type
-        const allowedTypes = [
-          "image/jpeg",
-          "image/jpg",
-          "image/png",
-          "image/gif",
-          "image/webp",
-        ];
-        if (!allowedTypes.includes(imageFile.type)) {
-          throw new Error(`Unsupported image type: ${imageFile.type}`);
-        }
-
-        // Ensure filename has proper extension
-        const filename =
-          imageFile.name ||
-          `image-${Date.now()}.${imageFile.type.split("/")[1]}`;
-
-        imageAsset = await writeClient.assets.upload("image", imageBuffer, {
-          filename,
-          contentType: imageFile.type,
-        });
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        throw new Error("Failed to upload image. Please try again.");
-      }
-    }
-
-    let baseSlug = slugify(postTitle, { lower: true, strict: true });
-
-    const existingSlugs = await writeClient.fetch(
-      `*[_type == "post" && slug.current == $slug].slug.current`,
-      { slug: baseSlug }
-    );
-
-    let finalSlug = baseSlug;
-    if (existingSlugs.length > 0) {
-      finalSlug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
-    }
-
+    // Create the post
     const newPost = await writeClient.create({
       _type: "post",
-      title: postTitle,
+      title: postData.title,
       slug: {
         _type: "slug",
         current: finalSlug,
       },
-      image: imageAsset
-        ? {
-            _type: "image",
-            asset: {
-              _type: "reference",
-              _ref: imageAsset._id,
-            },
-          }
-        : null,
-      content: formData.get("content")?.toString() || "",
-      excerpt: formData.get("content")?.toString().substring(0, 150) || "",
+      image: imageAsset,
+      content: postData.content,
+      excerpt: postData.content.substring(0, 150),
       topic: {
         _type: "reference",
-        _ref: formData.get("topic")?.toString() || "",
+        _ref: postData.topicId,
       },
       author: {
         _type: "reference",
         _ref: userId,
       },
-      disabledComments: formData.get("disabledComments") === "true",
+      disabledComments: postData.disabledComments,
       publishedAt: new Date().toISOString(),
-      postType: formData.get("postType")?.toString() || "pixelArt",
-      tags:
-        formData
-          .get("tags")
-          ?.toString()
-          .split(",")
-          .map((tag) => tag.trim()) || [],
+      postType: postData.postType,
+      dimensions: postData.dimensions,
+      software: postData.software,
+      tags: postData.tags,
     });
 
-    const topic = await writeClient.fetch(
-      `*[_type == "topic" && _id == $topicId][0]{ "slug": slug.current }`,
-      { topicId }
-    );
+    const topicSlug = await getTopicSlug(postData.topicId);
 
     return {
       ...newPost,
       slug: newPost.slug?.current || finalSlug,
-      topicSlug: topic?.slug || "unknown",
+      topicSlug,
     };
   } catch (error) {
     console.error("Error creating post:", error);
@@ -132,6 +75,9 @@ export async function createPost(formData: FormData) {
   }
 }
 
+/**
+ * Updates an existing post
+ */
 export async function updatePost(
   formData: FormData,
   postId: string
@@ -142,6 +88,7 @@ export async function updatePost(
 
     const userId = await ensureSanityUser(user);
 
+    // Verify user owns the post
     const post = await writeClient.fetch(
       `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
       { postId, userId }
@@ -151,113 +98,53 @@ export async function updatePost(
       throw new Error("You are not authorized to update this post");
     }
 
-    const imageFile = formData.get("image") as File;
-    let imageAsset = null;
+    const postData = parsePostFormData(formData);
 
-    if (imageFile && imageFile.size > 0) {
-      try {
-        // Check file size (max 10MB)
-        const maxSize = 10 * 1024 * 1024; // 10MB
-        if (imageFile.size > maxSize) {
-          throw new Error("Image file too large. Maximum size is 10MB.");
-        }
+    // Handle image upload
+    const imageAsset = await uploadImageAsset(postData.imageFile);
 
-        const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
-
-        // Validate content type
-        const allowedTypes = [
-          "image/jpeg",
-          "image/jpg",
-          "image/png",
-          "image/gif",
-          "image/webp",
-        ];
-        if (!allowedTypes.includes(imageFile.type)) {
-          throw new Error(`Unsupported image type: ${imageFile.type}`);
-        }
-
-        // Ensure filename has proper extension
-        const filename =
-          imageFile.name ||
-          `image-${Date.now()}.${imageFile.type.split("/")[1]}`;
-
-        imageAsset = await writeClient.assets.upload("image", imageBuffer, {
-          filename,
-          contentType: imageFile.type,
-        });
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        throw new Error("Failed to upload image. Please try again.");
-      }
-    }
-
-    const postTitle = formData.get("title")?.toString() || "Untitled Post";
+    // Generate new slug if title changed
     let finalSlug = post.slug.current || "untitled";
-
-    if (postTitle !== post.title) {
-      let baseSlug = slugify(postTitle, { lower: true, strict: true });
-
-      const existingSlugs = await writeClient.fetch(
-        `*[_type == "post" && slug.current == $slug].slug.current`,
-        { slug: baseSlug }
-      );
-
-      finalSlug = baseSlug;
-      if (existingSlugs.length > 0) {
-        finalSlug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
-      }
+    if (postData.title !== post.title) {
+      finalSlug = await generateUniqueSlug(postData.title);
     }
 
-    const topic = formData.get("topic")?.toString();
-    const postTypeValue = formData.get("postType")?.toString() || "pixelArt";
-    const disabledCommentsValue = formData.get("disabledComments") === "true";
-
+    // Prepare update data
     const updateData: any = {
-      title: postTitle,
+      title: postData.title,
       slug: {
         _type: "slug",
         current: finalSlug,
       },
-      content: formData.get("content")?.toString() || "",
-      excerpt: formData.get("content")?.toString().substring(0, 150) || "",
+      content: postData.content,
+      excerpt: postData.content.substring(0, 150),
       updatedAt: new Date().toISOString(),
-      postType: postTypeValue,
-      disabledComments: disabledCommentsValue,
+      postType: postData.postType,
+      disabledComments: postData.disabledComments,
       topic: {
         _type: "reference",
-        _ref: topic || "",
+        _ref: postData.topicId,
       },
-      tags:
-        formData
-          .get("tags")
-          ?.toString()
-          .split(",")
-          .map((tag) => tag.trim()) || [],
+      dimensions: postData.dimensions,
+      software: postData.software,
+      tags: postData.tags,
     };
 
     if (imageAsset) {
-      updateData.image = {
-        _type: "image",
-        asset: {
-          _type: "reference",
-          _ref: imageAsset._id,
-        },
-      };
+      updateData.image = imageAsset;
     }
 
+    // Update the post
     const updatedPost = await writeClient
       .patch(postId)
       .set(updateData)
       .commit();
 
-    const topicData = await writeClient.fetch(
-      `*[_type == "topic" && _id == $topicId][0]{ "slug": slug.current }`,
-      { topicId: topic }
-    );
+    const topicSlug = await getTopicSlug(postData.topicId);
 
     return {
       newSlug: updatedPost.slug?.current || finalSlug,
-      topicSlug: topicData?.slug || "unknown",
+      topicSlug,
     };
   } catch (error) {
     console.error("Error updating post:", error);
@@ -265,6 +152,9 @@ export async function updatePost(
   }
 }
 
+/**
+ * Soft deletes a post (sets isDeleted flag)
+ */
 export async function deletePost(postId: string) {
   const user = await currentUser();
   if (!user) throw new Error("Must be logged in");
@@ -284,6 +174,13 @@ export async function deletePost(postId: string) {
   revalidatePath(`/topics/${post.topicSlug}/${post.slug}`);
 }
 
+// ================================
+// REACTION ACTIONS
+// ================================
+
+/**
+ * Handles user reactions on posts (like/dislike)
+ */
 export async function reactOnPost(postId: string, reaction: Reaction["type"]) {
   try {
     const user = await currentUser();
@@ -332,6 +229,13 @@ export async function reactOnPost(postId: string, reaction: Reaction["type"]) {
   }
 }
 
+// ================================
+// COMMENT ACTIONS
+// ================================
+
+/**
+ * Creates a new comment on a post
+ */
 export async function createComment(prevState: any, formData: FormData) {
   try {
     const user = await currentUser();
@@ -355,6 +259,8 @@ export async function createComment(prevState: any, formData: FormData) {
     if (!content?.trim()) {
       return { error: "Comment cannot be empty" };
     }
+
+    // Verify post exists and comments are enabled
     const post = await writeClient.fetch(
       `*[_type == "post" && _id == $postId && (isDeleted != true)][0]`,
       { postId }
@@ -368,6 +274,7 @@ export async function createComment(prevState: any, formData: FormData) {
       return { error: "Comments are disabled for this post" };
     }
 
+    // Create the comment
     await writeClient.create({
       _type: "comment",
       content,
@@ -390,6 +297,9 @@ export async function createComment(prevState: any, formData: FormData) {
   }
 }
 
+/**
+ * Deletes a comment (user can only delete their own)
+ */
 export async function deleteComment(commentId: string) {
   try {
     const user = await currentUser();
@@ -399,6 +309,7 @@ export async function deleteComment(commentId: string) {
 
     const userId = await ensureSanityUser(user);
 
+    // Verify user owns the comment
     const comment = await writeClient.fetch(
       `*[_type == "comment" && _id == $commentId && author._ref == $userId][0]`,
       { commentId, userId }
@@ -416,6 +327,13 @@ export async function deleteComment(commentId: string) {
   }
 }
 
+// ================================
+// REPORTING ACTIONS
+// ================================
+
+/**
+ * Submits a report for content (posts or comments)
+ */
 export async function submitReport(
   contentId: string,
   reason: Report["reason"],
@@ -433,6 +351,7 @@ export async function submitReport(
 
     const userId = await ensureSanityUser(user);
 
+    // Verify content exists
     const contentExists = await writeClient.fetch(
       `*[_type == $contentType && _id == $contentId][0]._id`,
       { contentType, contentId }
@@ -458,15 +377,18 @@ export async function submitReport(
       };
     }
 
+    // Generate report display ID
     const reportCount = await writeClient.fetch('count(*[_type == "report"])');
     const displayId = `REP-${(reportCount + 1).toString().padStart(4, "0")}`;
 
+    // Increment report count on content
     await writeClient
       .patch(contentId)
       .setIfMissing({ reportCount: 0 })
       .inc({ reportCount: 1 })
       .commit();
 
+    // Create the report
     await writeClient.create({
       _type: "report",
       displayId,
@@ -485,6 +407,7 @@ export async function submitReport(
       status: "pending",
     });
 
+    // Revalidate relevant paths
     revalidatePath("/admin/reports");
 
     if (contentType === "post") {
