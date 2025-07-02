@@ -60,20 +60,20 @@ const ConditionalFields = ({
           <Label htmlFor="width">Width (pixels)</Label>
           <Input
             id="width"
-            name="dimensions.width"
+            name="width"
             type="number"
             min="1"
-            defaultValue={post?.dimensions?.width}
+            defaultValue={post?.dimensions?.split("x")[0] || ""}
           />
         </div>
         <div>
           <Label htmlFor="height">Height (pixels)</Label>
           <Input
             id="height"
-            name="dimensions.height"
+            name="height"
             type="number"
             min="1"
-            defaultValue={post?.dimensions?.height}
+            defaultValue={post?.dimensions?.split("x")[1] || ""}
           />
         </div>
       </div>
