@@ -82,10 +82,7 @@ export type Post = {
     | "resource"
     | "question";
   imageUrl?: string;
-  dimensions?: {
-    width?: number;
-    height?: number;
-  };
+  dimensions?: string;
   software?: Array<string>;
   colorPalette?: Array<{
     hex?: string;
