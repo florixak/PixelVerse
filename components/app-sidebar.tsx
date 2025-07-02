@@ -7,13 +7,10 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import PixelVerse from "@/public/pixelverse.png";
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -21,6 +18,7 @@ import { CollapsibleUserCard } from "./collapsible-user-card";
 import { getPopularTopics } from "@/sanity/lib/featured/getPopularTopics";
 import { currentUser } from "@clerk/nextjs/server";
 import { canAccessDashboard } from "@/lib/user-utils";
+import SidebarHeader from "./sidebar-header";
 
 const menu: {
   title: string;
@@ -96,13 +94,7 @@ export async function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" key={user?.id || "guest"}>
-      <SidebarHeader>
-        <Link href="/">
-          <h1 className="text-2xl font-bold overflow-hidden">
-            <span className="text-primary">Pixel</span>Verse
-          </h1>
-        </Link>
-      </SidebarHeader>
+      <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>

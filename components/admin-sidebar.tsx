@@ -1,6 +1,5 @@
 import { CollapsibleUserCard } from "./collapsible-user-card";
 import {
-  SidebarHeader,
   SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
@@ -11,11 +10,10 @@ import {
   SidebarFooter,
   Sidebar,
 } from "./ui/sidebar";
-import Image from "next/image";
 import { currentUser } from "@clerk/nextjs/server";
-import PixelVerse from "@/public/pixelverse.png";
 import Link from "next/link";
 import { Home, Newspaper, Settings, TriangleAlert, User } from "lucide-react";
+import SidebarHeader from "./sidebar-header";
 
 const menu: {
   title: string;
@@ -51,16 +49,7 @@ const AdminSiderbar = async () => {
 
   return (
     <Sidebar collapsible="icon" key={user?.id || "guest"}>
-      <SidebarHeader>
-        <Link href="/">
-          <Image
-            src={PixelVerse}
-            alt="PixelVerse Logo"
-            width={120}
-            height={120}
-          />
-        </Link>
-      </SidebarHeader>
+      <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
