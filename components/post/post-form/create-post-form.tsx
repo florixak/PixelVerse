@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import SubmitButton from "@/components/submit-button";
 import { DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { SoftwareOptionType } from "@/lib/constants";
+import { SoftwareOptionType } from "@/types/posts";
 
 type CreatePostFormProps = {
   topics: Topic[];

@@ -1,8 +1,8 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 import { Post } from "@/sanity.types";
-import { SortOrder } from "@/lib/types";
 import { getSanityOrderBy } from "@/lib/utils";
+import { SortOrder } from "@/types/filter";
 
 type getAllPostsParams = {
   limit?: number;

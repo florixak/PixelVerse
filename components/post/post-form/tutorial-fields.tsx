@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { TutorialStepType } from "./create-post-form";
-import { DIFFICULTY_LEVELS } from "@/lib/constants";
+import { DIFFICULTY_LEVELS } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

@@ -1,8 +1,8 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 import { Post, Topic } from "@/sanity.types";
-import { SortOrder } from "@/lib/types";
 import { getSanityOrderBy } from "@/lib/utils";
+import { SortOrder } from "@/types/filter";
 
 type GetPostsByTopicParams = {
   topicSlug: Topic["slug"];

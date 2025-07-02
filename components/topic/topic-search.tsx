@@ -1,6 +1,6 @@
 "use client";
 
-import { SortOrder } from "@/lib/types";
+import { SortOrder } from "@/types/filter";
 import { Input } from "../ui/input";
 import {
   Select,

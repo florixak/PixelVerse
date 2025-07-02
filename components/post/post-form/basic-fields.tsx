@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { POST_TYPES } from "@/lib/constants";
+import { POST_TYPES } from "@/constants";
 import { Post, Topic } from "@/sanity.types";
 
 type BasicFieldsProps = {

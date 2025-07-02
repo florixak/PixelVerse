@@ -9,8 +9,8 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useRouter } from "next/navigation";
-import { SortOrder } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { SortOrder } from "@/types/filter";
 
 type SortFilterSelectProps = {
   defaultValue?: SortOrder;

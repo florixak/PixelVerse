@@ -1,7 +1,7 @@
 import { Topic } from "@/sanity.types";
 import { client } from "../client";
 import { groq } from "next-sanity";
-import { SortOrder } from "@/lib/types";
+import { SortOrder } from "@/types/filter";
 
 type GetAllTopicsParams = {
   limit?: number;

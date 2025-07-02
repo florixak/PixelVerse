@@ -10,13 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import {
-  PostTypesType,
-  SoftwareOptionType,
-  SOFTWARE_OPTIONS,
-  DIFFICULTY_LEVELS,
-} from "@/lib/constants";
+import { SOFTWARE_OPTIONS, DIFFICULTY_LEVELS } from "@/constants";
 import { Post } from "@/sanity.types";
+import { PostTypesType, SoftwareOptionType } from "@/types/posts";
 
 type ConditionalFieldsProps = {
   postType: PostTypesType["value"];

@@ -1,19 +1,10 @@
-export type PostTypesType = {
-  title: string;
-  value: string;
-};
+import type {
+  DifficultyLevelType,
+  PostTypesType,
+  SoftwareOptionType,
+} from "@/types/posts";
 
-export type SoftwareOptionType = {
-  title: string;
-  value: string;
-};
-
-export type DifficultyLevelType = {
-  title: string;
-  value: string;
-};
-
-export const POST_TYPES: PostTypesType[] = [
+const POST_TYPES: PostTypesType[] = [
   { title: "Text Only", value: "text" },
   { title: "Pixel Art", value: "pixelArt" },
   { title: "Animation", value: "animation" },
@@ -22,7 +13,7 @@ export const POST_TYPES: PostTypesType[] = [
   { title: "Question", value: "question" },
 ];
 
-export const SOFTWARE_OPTIONS: SoftwareOptionType[] = [
+const SOFTWARE_OPTIONS: SoftwareOptionType[] = [
   { title: "Aseprite", value: "aseprite" },
   { title: "Piskel", value: "piskel" },
   { title: "Pixel Studio", value: "pixelStudio" },
@@ -31,16 +22,18 @@ export const SOFTWARE_OPTIONS: SoftwareOptionType[] = [
   { title: "Other", value: "other" },
 ];
 
-export const DIFFICULTY_LEVELS: DifficultyLevelType[] = [
+const DIFFICULTY_LEVELS: DifficultyLevelType[] = [
   { title: "Beginner", value: "beginner" },
   { title: "Intermediate", value: "intermediate" },
   { title: "Advanced", value: "advanced" },
 ];
 
-export const REPORT_REASONS = [
+const REPORT_REASONS = [
   { value: "inappropriate_content", label: "Inappropriate Content" },
   { value: "copyright", label: "Copyright Violation" },
   { value: "spam", label: "Spam" },
   { value: "harassment", label: "Harassment" },
   { value: "other", label: "Other" },
 ];
+
+export { POST_TYPES, SOFTWARE_OPTIONS, DIFFICULTY_LEVELS, REPORT_REASONS };

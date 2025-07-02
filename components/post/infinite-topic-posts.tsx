@@ -8,7 +8,7 @@ import useInfiniteScroll from "@/hooks/use-infinite-scroll";
 import { usePrefetchPerformance } from "@/hooks/use-prefetch-performance";
 import { Post, Topic } from "@/sanity.types";
 import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
-import { SortOrder } from "@/lib/types";
+import { SortOrder } from "@/types/filter";
 
 type InfiniteTopicPostsProps = {
   topic: Topic;

@@ -1,10 +1,11 @@
 import InfiniteTopicPosts from "@/components/post/infinite-topic-posts";
 import TopicHeader from "@/components/topic/topic-header";
 import { getQueryClient } from "@/lib/get-query-client";
-import { SortOrder } from "@/lib/types";
+
 import { Topic } from "@/sanity.types";
 import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
+import { SortOrder } from "@/types/filter";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
