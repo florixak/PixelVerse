@@ -34,19 +34,6 @@ const PostContent = ({ post, userId }: PostContentProps) => {
       <Separator />
 
       <PostReactions post={post} currentUserClerkId={userId} />
-
-      {post.dimensions && (
-        <div className="mt-4 text-sm text-muted-foreground">
-          {
-            <p>
-              Dimensions: {post.dimensions.width + "x" + post.dimensions.height}
-            </p>
-          }
-        </div>
-      )}
-      {post.software && (
-        <p>Created with: {post.software.map((sw) => sw).join(", ")}</p>
-      )}
     </div>
   );
 };

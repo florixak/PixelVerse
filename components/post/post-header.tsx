@@ -1,4 +1,4 @@
-import { Post, Topic } from "@/sanity.types";
+import { Post } from "@/sanity.types";
 import PostAuthorButtons from "./post-author-buttons";
 import PostAuthor from "./post-author";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
@@ -25,6 +25,16 @@ const PostHeader = async ({ post, isAuthor }: PostHeaderProps) => {
       </div>
 
       <h1 className="text-3xl font-bold">{post.title}</h1>
+      <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+        {post.dimensions && (
+          <p>
+            Dimensions: {post.dimensions.width + "x" + post.dimensions.height}
+          </p>
+        )}
+        {post.software && (
+          <p>Created with: {post.software.map((sw) => sw).join(", ")}</p>
+        )}
+      </div>
     </div>
   );
 };
