@@ -3,7 +3,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { writeClient } from "@/sanity/lib/client";
 import { ensureSanityUser } from "@/lib/user-utils";
-import { Post, Reaction, Report } from "@/sanity.types";
+import { Comment, Post, Reaction, Report } from "@/sanity.types";
 import { revalidatePath } from "next/cache";
 import {
   uploadImageAsset,
@@ -155,7 +155,7 @@ export async function updatePost(
 /**
  * Soft deletes a post (sets isDeleted flag)
  */
-export async function deletePost(postId: string) {
+export async function deletePost(postId: Post["_id"]) {
   const user = await currentUser();
   if (!user) throw new Error("Must be logged in");
 
@@ -181,7 +181,10 @@ export async function deletePost(postId: string) {
 /**
  * Handles user reactions on posts (like/dislike)
  */
-export async function reactOnPost(postId: string, reaction: Reaction["type"]) {
+export async function reactOnPost(
+  postId: Post["_id"],
+  reaction: Reaction["type"]
+) {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
@@ -300,7 +303,7 @@ export async function createComment(prevState: any, formData: FormData) {
 /**
  * Deletes a comment (user can only delete their own)
  */
-export async function deleteComment(commentId: string) {
+export async function deleteComment(commentId: Post["_id"]) {
   try {
     const user = await currentUser();
     if (!user) {
@@ -324,6 +327,42 @@ export async function deleteComment(commentId: string) {
   } catch (error) {
     console.error("Error deleting comment:", error);
     return { error: "Failed to delete comment" };
+  }
+}
+
+/**
+ * Updates a comment (user can only update their own)
+ */
+export async function updateComment(
+  commentId: Post["_id"],
+  newContent: Comment["content"]
+) {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return { error: "You must be logged in to update a comment" };
+    }
+
+    const userId = await ensureSanityUser(user);
+
+    // Verify user owns the comment
+    const comment = await writeClient.fetch(
+      `*[_type == "comment" && _id == $commentId && author._ref == $userId][0]`,
+      { commentId, userId }
+    );
+
+    if (!comment) {
+      return { error: "You are not authorized to update this comment" };
+    }
+
+    await writeClient
+      .patch(commentId)
+      .set({ isEdited: true, content: newContent })
+      .commit();
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    return { error: "Failed to update comment" };
   }
 }
 
