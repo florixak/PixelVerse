@@ -51,20 +51,20 @@ const InfiniteComments = ({ postId }: InfiniteCommentsProps) => {
         ))}
       </div>
 
-      <div className="mt-4">
+      <div className="flex justify-center mt-4">
         {hasNextPage ? (
           isFetchingNextPage ? (
-            <div className="text-center">Loading...</div>
+            <Button disabled={isFetchingNextPage} className="w-full max-w-md">
+              Loading more...
+            </Button>
           ) : (
-            <div className="flex justify-center mt-4">
-              <Button
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-                className="w-full max-w-md"
-              >
-                {isFetchingNextPage ? "Loading more..." : "Load More Comments"}
-              </Button>
-            </div>
+            <Button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="w-full max-w-md"
+            >
+              {isFetchingNextPage ? "Loading more..." : "Load More Comments"}
+            </Button>
           )
         ) : null}
       </div>
