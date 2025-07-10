@@ -30,8 +30,6 @@ const InfiniteComments = ({ postId }: InfiniteCommentsProps) => {
 
   const { user } = useUser();
 
-  const flatData = data?.pages?.flat() || [];
-
   return (
     <div className="w-full">
       {isError && (
@@ -42,7 +40,7 @@ const InfiniteComments = ({ postId }: InfiniteCommentsProps) => {
       )}
 
       <div className="flex flex-col gap-2">
-        {flatData.map((comment) => (
+        {data.map((comment) => (
           <PostComment
             key={comment._id}
             comment={comment}

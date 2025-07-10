@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
 type GetLatestPostsParams<T> = {
-  page?: number;
   limit: number;
   queryFn: (params: { page: number; limit: number }) => Promise<T>;
   queryKey: string[];
@@ -12,7 +11,6 @@ type GetLatestPostsParams<T> = {
 const useInfiniteScroll = <T>({
   queryFn,
   limit = 8,
-  page,
   queryKey,
 }: GetLatestPostsParams<T>) => {
   const {
@@ -44,7 +42,7 @@ const useInfiniteScroll = <T>({
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return {
-    data,
+    data: data?.pages?.flat() || [],
     isError,
     error,
     fetchNextPage,

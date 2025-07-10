@@ -83,7 +83,7 @@ const InfiniteTopicPosts = ({
       )}
 
       <MasonryWrapper>
-        {data?.pages?.flat().map((post) => (
+        {data.map((post) => (
           <PostCard
             key={post._id}
             post={post}
