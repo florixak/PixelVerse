@@ -3,10 +3,10 @@ import Role from "@/components/role";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { User } from "@/sanity.types";
-import LatestUserActivity from "./user-latest-activity";
 import { Suspense } from "react";
 import UserActions from "./user-actions";
 import UserProfileStats from "./user-profile-stats";
+import UserPosts from "./user-posts";
 
 type UserProfileContentProps = {
   user: User | null;
@@ -73,10 +73,9 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
       <div className="flex flex-col">
         <h2 className="text-xl sm:text-2xl font-bold mb-2">Latest Activity</h2>
         <p className="text-sm sm:text-base text-muted-foreground mb-6">
-          Here are the latest posts and comments made by{" "}
-          {user?.username || "Unknown user"}.
+          Here are the latest posts made by {user?.username || "Unknown user"}.
         </p>
-        <LatestUserActivity clerkId={user?.clerkId} limit={8} />
+        <UserPosts user={user} />
       </div>
     </section>
   );

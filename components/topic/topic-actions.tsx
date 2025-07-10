@@ -3,8 +3,7 @@ import SortFilterSelect from "@/components/sort-filter-select";
 import { Topic } from "@/sanity.types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import AuthButtons from "../auth-buttons";
+import { currentUser } from "@clerk/nextjs/server";
 import NotSignInButton from "../not-sign-in-button";
 
 type TopicActionsProps = {
@@ -19,7 +18,6 @@ const TopicActions = async ({ topic }: TopicActionsProps) => {
     <div className="max-w-xs w-full flex items-center justify-center sm:justify-start gap-2 mt-4">
       {user ? (
         <Button variant="outline" asChild disabled={!user}>
-          (
           <Link
             href={`/create-post?topic=${encodeURIComponent(topic.slug)}`}
             className="flex items-center gap-2"
@@ -28,10 +26,9 @@ const TopicActions = async ({ topic }: TopicActionsProps) => {
             <span>Create New Post</span>
             <Plus />
           </Link>
-          )
         </Button>
       ) : (
-        <NotSignInButton text="Sign in to create a post" />
+        <NotSignInButton>Sign in to create a post</NotSignInButton>
       )}
       <SortFilterSelect />
     </div>
