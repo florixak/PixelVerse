@@ -4,7 +4,7 @@ import { Post } from "@/sanity.types";
 import { getSanityOrderBy } from "@/lib/utils";
 import { SortOrder } from "@/types/filter";
 
-type getAllPostsParams = {
+export type getAllPostsParams = {
   limit?: number;
   page?: number;
   sort?: SortOrder;
