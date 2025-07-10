@@ -1,8 +1,21 @@
 import { groq } from "next-sanity";
 import { client } from "../client";
 import { User } from "@/sanity.types";
+import { getAllPostsParams } from "./getAllPosts";
+import { getSanityOrderBy } from "@/lib/utils";
 
-const getAllUserPosts = async (clerkId: User["clerkId"]) => {
+type getAllUserPostsParams = getAllPostsParams & { clerkId: User["clerkId"] };
+
+const getAllUserPosts = async ({
+  clerkId,
+  limit = 10,
+  page = 0,
+  sort = "latest",
+  filter = {},
+}: getAllUserPostsParams) => {
+  const { software, tags, postType, difficulty, isOriginal } = filter;
+  const orderBy = getSanityOrderBy(sort);
+  const offset = page * limit;
   return client.fetch(
     groq`*[_type == "post" && isDeleted != true && author->isBanned != true && author->clerkId == $clerkId] | order(publishedAt desc) {
       _id,
@@ -24,9 +37,20 @@ const getAllUserPosts = async (clerkId: User["clerkId"]) => {
       content,
       disabledComments,
       "commentsCount": count(*[_type == "comment" && references(^._id)]),
+    } | order(${orderBy})[${offset}..${offset + limit - 1}] ${
+      software ? `&& software[any(_ in $software)]` : ""
+    } ${tags ? `&& tags[any(_ in $tags)]` : ""} ${
+      postType ? `&& postType == $postType` : ""
+    } ${difficulty ? `&& difficulty == $difficulty` : ""} ${
+      isOriginal !== undefined ? `&& isOriginal == $isOriginal` : ""
     }`,
     {
       clerkId,
+      software: software || [],
+      tags: tags || [],
+      postType: postType || "",
+      difficulty: difficulty || "",
+      isOriginal: isOriginal !== undefined ? isOriginal : false,
     }
   );
 };
