@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -28,8 +28,12 @@ import { useTopics } from "@/hooks/use-topics";
 import { toast } from "react-hot-toast";
 import { useClerk, useUser } from "@clerk/nextjs";
 
-const CommandSearch = () => {
-  const [open, setOpen] = useState(false);
+type CommandSearchProps = {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const CommandSearch = ({ open, setOpen }: CommandSearchProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const { popularTopics, isLoading } = useTopics(open);
@@ -40,12 +44,14 @@ const CommandSearch = () => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        if (typeof setOpen === "function") {
+          setOpen((prev) => !prev);
+        }
       }
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, []);
+  }, [setOpen]);
 
   const handleCreatePost = () => {
     if (!user) {
@@ -71,7 +77,6 @@ const CommandSearch = () => {
     setOpen(false);
   };
 
-  // Common navigation commands available everywhere
   const commonCommands = (
     <>
       <CommandGroup heading="Navigation">
