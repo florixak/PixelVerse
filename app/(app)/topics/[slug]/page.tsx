@@ -62,8 +62,6 @@ const PostsList = async ({
         }),
       initialPageParam: 0,
     });
-
-    console.log(`✅ Prefetched posts for topic: ${topic.slug}, sort: ${sort}`);
   } catch (error) {
     console.error("❌ Failed to prefetch posts:", error);
   }
