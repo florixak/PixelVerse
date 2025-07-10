@@ -5,7 +5,7 @@ import slugify from "slugify";
  * Image upload configuration and validation
  */
 export const IMAGE_CONFIG = {
-  maxSize: 10 * 1024 * 1024, // 10MB
+  maxSize: 10 * 1024 * 1024, // 10MB is a common, reasonable maximum for web uploads
   allowedTypes: [
     "image/jpeg",
     "image/jpg",
