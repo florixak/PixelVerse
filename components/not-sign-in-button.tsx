@@ -1,14 +1,14 @@
 "use client";
+
 import { useClerk } from "@clerk/nextjs";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
 
 type NotSignInButtonProps = {
-  text?: string;
+  children?: React.ReactNode;
   className?: string;
 };
 
-const NotSignInButton = ({ text, className }: NotSignInButtonProps) => {
+const NotSignInButton = ({ children, className }: NotSignInButtonProps) => {
   const { openSignIn } = useClerk();
   return (
     <Button
@@ -17,7 +17,7 @@ const NotSignInButton = ({ text, className }: NotSignInButtonProps) => {
       className={className}
       aria-label="Sign in to create a post"
     >
-      {text}
+      {children}
     </Button>
   );
 };
