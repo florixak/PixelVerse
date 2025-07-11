@@ -15,19 +15,20 @@ import TopicsSkeleton from "@/components/topic/topic-list-skeleton";
 import TrendingTopicsSkeleton from "@/components/topic/topic-trending-card-skeleton";
 import PopularTopicsSkeleton from "@/components/topic/popular-topics-skeleton";
 import TopicSuggestButton from "@/components/topic/topic-suggest-button";
+import SortFilterSelect from "@/components/sort-filter-select";
 
 type TopicsPageProps = {
   searchParams: Promise<{
-    order?: SortOrder;
+    sort?: SortOrder;
   }>;
 };
 
 type TopicsProps = {
-  order?: SortOrder;
+  sort?: SortOrder;
 };
 
 const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
-  const { order } = await searchParams;
+  const { sort } = await searchParams;
 
   return (
     <section className="flex-center flex-col w-full gap-10 p-6 md:p-10">
@@ -75,11 +76,11 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
             <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
               All Topics
             </h2>
-            <TopicSearch order={order} />
+            <SortFilterSelect />
           </div>
 
           <Suspense fallback={<TopicsSkeleton />}>
-            <Topics order={"alphabetical"} />
+            <Topics sort={sort} />
           </Suspense>
         </div>
       </div>
@@ -87,10 +88,10 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
   );
 };
 
-const Topics = async ({ order }: TopicsProps) => {
+const Topics = async ({ sort }: TopicsProps) => {
   const topics = await getAllTopics({
     limit: 10,
-    order: order === "latest" ? "latest" : "alphabetical",
+    sort,
     from: 0,
   });
   return (
@@ -105,7 +106,7 @@ const Topics = async ({ order }: TopicsProps) => {
 const TrendingTopics = async () => {
   const topics = await getAllTopics({
     limit: 5,
-    order: "trending",
+    sort: "trending",
     from: 0,
   });
   return (
@@ -120,7 +121,7 @@ const TrendingTopics = async () => {
 const PopularTopics = async () => {
   const topics = await getAllTopics({
     limit: 10,
-    order: "popular",
+    sort: "popular",
     from: 0,
   });
   return (

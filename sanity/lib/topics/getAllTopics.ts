@@ -5,18 +5,18 @@ import { SortOrder } from "@/types/filter";
 
 type GetAllTopicsParams = {
   limit?: number;
-  order?: SortOrder;
+  sort?: SortOrder;
   from?: number;
 };
 
 const getAllTopics = async ({
   limit = 10,
-  order = "alphabetical",
+  sort = "latest",
   from = 0,
 }: GetAllTopicsParams): Promise<Topic[]> => {
   let sortCriteria = "";
 
-  switch (order) {
+  switch (sort) {
     case "alphabetical":
       sortCriteria = "order(title asc)";
       break;
