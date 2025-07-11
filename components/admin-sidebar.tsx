@@ -12,7 +12,14 @@ import {
 } from "./ui/sidebar";
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { Home, Newspaper, Settings, TriangleAlert, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Home,
+  Newspaper,
+  Settings,
+  TriangleAlert,
+  User,
+} from "lucide-react";
 import SidebarHeader from "./sidebar-header";
 
 const menu: {
@@ -21,6 +28,11 @@ const menu: {
   icon: React.ComponentType;
   adminOnly?: boolean;
 }[] = [
+  {
+    title: "Return to Site",
+    url: "/",
+    icon: ArrowLeft,
+  },
   {
     title: "Dashboard",
     url: "/admin/",
