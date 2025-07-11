@@ -2,8 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { REPORT_REASONS } from "@/lib/constants";
-import { Comment, Post, Report, User } from "@/sanity.types";
+import { Comment, Post, Report, Topic, User } from "@/sanity.types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { submitReport } from "@/actions/postActions";
@@ -17,9 +16,10 @@ import {
 import SubmitButton from "./submit-button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
+import { REPORT_REASONS } from "@/constants";
 
 type ReportFormProps = {
-  content: Post | Comment | User;
+  content: Post | Comment | User | Topic;
   contentType: Report["contentType"];
   returnUrl?: string;
 };
@@ -65,6 +65,12 @@ const ReportForm = ({
           title: `User: ${user.username}`,
           preview: user.bio || "User profile",
           author: user.username,
+        };
+      case "topic":
+        const topic = content as Topic;
+        return {
+          title: `Topic: ${topic.title}`,
+          preview: topic.description || "No description available",
         };
       default:
         return { title: "Unknown content", preview: "", author: "" };
@@ -143,9 +149,11 @@ const ReportForm = ({
 
         {/* Content preview */}
         <div className="p-4 bg-muted rounded border">
-          <div className="text-sm text-muted-foreground mb-2">
-            By {contentDetails.author}
-          </div>
+          {contentDetails.author ? (
+            <div className="text-sm text-muted-foreground mb-2">
+              By {contentDetails.author}
+            </div>
+          ) : null}
           <div className="text-sm">{contentDetails.preview}</div>
         </div>
 
