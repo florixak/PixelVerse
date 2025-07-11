@@ -141,16 +141,19 @@ export const handleReportAction = async (
 
     const queryReport: {
       _id: Report["_id"];
-      reportedContent: Report["reportedContent"];
+      reportedContent?: {
+        _id: string;
+        _type: string;
+        reportCount?: number;
+      } | null;
     } = await writeClient.fetch(
       groq`
   *[_type == "report" && _id == $reportId][0]{
     _id,
-    reportedContent->{
+    "reportedContent": content->{
       _id,
       _type,
-      reportCount,
-      // Other fields you might need
+      reportCount
     }
   }
 `,
@@ -166,10 +169,10 @@ export const handleReportAction = async (
 
     const reportedContent = queryReport.reportedContent;
 
-    if (!reportedContent) {
+    if (!reportedContent || !reportedContent._id) {
       return {
         success: false,
-        message: "Reported content not found.",
+        message: "Reported content not found or reference is broken.",
       };
     }
 
