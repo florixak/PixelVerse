@@ -17,7 +17,6 @@ export default async function AppLayout({
   return (
     <Providers>
       <Header />
-      <CommandSearch />
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
         <main className="relative min-h-screen w-full">
