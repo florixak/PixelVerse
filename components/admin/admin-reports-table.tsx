@@ -87,7 +87,9 @@ const AdminReportsTable = ({
           <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       ),
-      cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+      cell: (info) => (
+        <span className="capitalize">{info.getValue().replace("_", " ")}</span>
+      ),
     }),
 
     // Content Type Column
@@ -122,7 +124,7 @@ const AdminReportsTable = ({
 
     // Content Title/Excerpt Column
     columnHelper.accessor(
-      (row) => {
+      (row: Report) => {
         const content = row.reportedContent;
         if (!content) return "Content unavailable";
 
@@ -157,7 +159,7 @@ const AdminReportsTable = ({
           } else if (isCommentContent(content)) {
             href = `/topics/${content.post?.topicSlug}/${content.post?.slug}#comment-${content._id}`;
           } else if (isUserContent(content)) {
-            href = `/profile/${content.username}`;
+            href = `/user/${content.username}`;
           }
 
           return (
@@ -238,41 +240,11 @@ const AdminReportsTable = ({
               </TooltipTrigger>
               <TooltipContent>View Details</TooltipContent>
             </Tooltip>
-
-            {isPending && (
-              <>
-                <Button
-                  size="sm"
-                  variant="default"
-                  className="bg-green-600 hover:bg-green-700"
-                  onClick={() => handleReportAction(report._id, "resolved")}
-                >
-                  Resolve
-                </Button>
-
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => handleReportAction(report._id, "rejected")}
-                >
-                  Reject
-                </Button>
-              </>
-            )}
           </div>
         );
       },
     }),
   ];
-
-  const handleReportAction = async (
-    reportId: string,
-    status: "resolved" | "rejected"
-  ) => {
-    // Here you would call your server action to update the report status
-    console.log(`Updating report ${reportId} to ${status}`);
-    // Implement the actual action call
-  };
 
   const table = useReactTable({
     data: initialReports,
