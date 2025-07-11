@@ -11,8 +11,14 @@ import MetricCards from "./dashboard/metric-cards";
 import NewUsers from "./dashboard/new-users";
 import RecentReports from "./dashboard/recent-reports";
 import TrendingTopics from "./dashboard/trending-topics";
+import { currentUser } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
 
 const AdminDashboard = async () => {
+  const user = await currentUser();
+  if (!user) {
+    notFound();
+  }
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
