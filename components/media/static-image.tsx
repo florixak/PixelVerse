@@ -7,6 +7,8 @@ type StaticImageProps = {
   height: number;
   className?: string;
   priority?: boolean;
+  placeholderSrc?: string;
+  blurDataURL?: string;
 };
 const StaticImage = ({
   src,
@@ -15,6 +17,8 @@ const StaticImage = ({
   height,
   className = "",
   priority = false,
+  placeholderSrc = "",
+  blurDataURL = "",
 }: StaticImageProps) => {
   return (
     <Image
@@ -23,8 +27,8 @@ const StaticImage = ({
       width={width}
       height={height}
       className={`object-cover ${className}`}
-      placeholder="blur"
-      blurDataURL={src}
+      placeholder={placeholderSrc ? "blur" : undefined}
+      blurDataURL={blurDataURL || undefined}
       priority={priority}
     />
   );
