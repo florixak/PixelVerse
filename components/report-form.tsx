@@ -66,12 +66,6 @@ const ReportForm = ({
           preview: user.bio || "User profile",
           author: user.username,
         };
-      case "topic":
-        const topic = content as Topic;
-        return {
-          title: `Topic: ${topic.title}`,
-          preview: topic.description || "No description available",
-        };
       default:
         return { title: "Unknown content", preview: "", author: "" };
     }

@@ -162,7 +162,7 @@ export type Report = {
   _updatedAt: string;
   _rev: string;
   displayId: string;
-  contentType: "post" | "comment" | "user" | "topic";
+  contentType: "post" | "comment" | "user";
   content: { _ref: string; _type: "reference" };
   reportedContent?: Post | Comment | User; // Populated by GROQ query
   reason:
