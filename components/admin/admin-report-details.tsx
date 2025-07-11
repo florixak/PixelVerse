@@ -206,16 +206,7 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
                     {reportAuthor?.username?.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <div className="font-medium">{reportAuthor?.username}</div>
-                  <div className="text-sm text-muted-foreground">
-                    Posted{" "}
-                    {/*formatDistanceToNow(
-                      new Date(reportedContent?.publishedAt || reportedAt),
-                      { addSuffix: true }
-                    )*/}
-                  </div>
-                </div>
+                <div className="font-medium">{reportAuthor?.username}</div>
               </div>
 
               {/* Content preview */}
