@@ -10,7 +10,7 @@ const ReportsPage = async () => {
     return <div>You must be logged in to view this page.</div>;
   }
   const sanityUser = await getUserByClerkId(user.id);
-  return <AdminReportsClient initialReports={reports} user={sanityUser} />;
+  return <AdminReportsClient initialReports={reports} />;
 };
 
 export default ReportsPage;

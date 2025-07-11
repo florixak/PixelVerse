@@ -30,7 +30,6 @@ type AdminReportsTableProps = {
   initialReports: Report[];
   globalFilter: string;
   setGlobalFilter: (filter: string) => void;
-  currentUser: UserType | null;
 };
 
 const columnHelper = createColumnHelper<Report>();
@@ -39,7 +38,6 @@ const AdminReportsTable = ({
   initialReports,
   globalFilter,
   setGlobalFilter,
-  currentUser,
 }: AdminReportsTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const router = useRouter();

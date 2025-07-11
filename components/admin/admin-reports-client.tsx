@@ -7,12 +7,10 @@ import AdminReportsTable from "./admin-reports-table";
 
 type AdminReportsClientProps = {
   initialReports: Report[];
-  user: User | null;
 };
 
 export default function AdminReportsClient({
   initialReports,
-  user,
 }: AdminReportsClientProps) {
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -32,7 +30,6 @@ export default function AdminReportsClient({
         initialReports={initialReports}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        currentUser={user}
       />
     </>
   );
