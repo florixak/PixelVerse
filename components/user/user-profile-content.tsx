@@ -17,7 +17,7 @@ type UserProfileContentProps = {
 
 const UserProfileContent = ({ user, sort }: UserProfileContentProps) => {
   return (
-    <section className="flex flex-col w-full max-w-[70rem] mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 gap-12">
+    <section className="flex flex-col w-full max-w-[70rem] mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 gap-6 md:gap-12">
       <div className="flex flex-row w-full items-start justify-center sm:justify-between">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
           <Image
@@ -73,7 +73,7 @@ const UserProfileContent = ({ user, sort }: UserProfileContentProps) => {
       </div>
 
       {/* Latest Activity Section */}
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-6">
         <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-3 md:gap-0">
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-xl sm:text-2xl font-bold">Latest Activity</h2>
