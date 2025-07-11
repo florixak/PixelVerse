@@ -10,7 +10,7 @@ const HeaderSearch = () => {
 
   return (
     <>
-      <div className="relative w-full max-w-2xs md:max-w-xs">
+      <div className="relative w-full max-w-[16rem] md:max-w-xs">
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
           <SearchIcon
             className="w-4 h-4 cursor-pointer"
