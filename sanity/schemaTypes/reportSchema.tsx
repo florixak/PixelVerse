@@ -1,4 +1,5 @@
 import { REPORT_REASONS } from "@/constants";
+import { Check, Clock, X } from "lucide-react";
 import { defineField, defineType } from "sanity";
 
 export const reportSchema = defineType({
@@ -118,6 +119,7 @@ export const reportSchema = defineType({
       reporterName: "reporter.username",
       reason: "reason",
       displayId: "displayId",
+      status: "status",
     },
     prepare({
       contentType,
@@ -127,6 +129,7 @@ export const reportSchema = defineType({
       reporterName,
       reason,
       displayId,
+      status,
     }) {
       let title = displayId || "Report";
 
@@ -144,6 +147,14 @@ export const reportSchema = defineType({
       return {
         title,
         subtitle: `Reported by ${reporterName || "Unknown"} for ${reason}`,
+        media:
+          status === "resolved" ? (
+            <Check color="lime" />
+          ) : status === "rejected" ? (
+            <X color="red" />
+          ) : (
+            <Clock color="orange" />
+          ),
       };
     },
   },
