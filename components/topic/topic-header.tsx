@@ -1,9 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Topic } from "@/sanity.types";
-import { Plus } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import SortFilterSelect from "../sort-filter-select";
 import TopicActions from "./topic-actions";
 
 type TopicHeaderProps = {
