@@ -1,14 +1,16 @@
 import UserProfileContent from "@/components/user/user-profile-content";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
+import { SortOrder } from "@/types/filter";
 import { currentUser } from "@clerk/nextjs/server";
 
 import { notFound } from "next/navigation";
 
 type ProfilePageProps = {
   params: Promise<{ clerkId: string }>;
+  searchParams: Promise<{ sort?: SortOrder }>;
 };
 
-const ProfilePage = async ({ params }: ProfilePageProps) => {
+const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
   const { clerkId } = await params;
   if (!clerkId) {
     notFound();
@@ -25,7 +27,9 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
     user = await getUserByClerkId(currUser?.id);
   }
 
-  return <UserProfileContent user={user} />;
+  const { sort = "latest" } = await searchParams;
+
+  return <UserProfileContent user={user} sort={sort} />;
 };
 
 export default ProfilePage;

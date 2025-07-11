@@ -7,12 +7,15 @@ import { Suspense } from "react";
 import UserActions from "./user-actions";
 import UserProfileStats from "./user-profile-stats";
 import UserPosts from "./user-posts";
+import { SortOrder } from "@/types/filter";
+import SortFilterSelect from "../sort-filter-select";
 
 type UserProfileContentProps = {
   user: User | null;
+  sort: SortOrder;
 };
 
-const UserProfileContent = ({ user }: UserProfileContentProps) => {
+const UserProfileContent = ({ user, sort }: UserProfileContentProps) => {
   return (
     <section className="flex flex-col w-full max-w-[70rem] mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 gap-12">
       <div className="flex flex-row w-full items-start justify-center sm:justify-between">
@@ -71,11 +74,19 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
 
       {/* Latest Activity Section */}
       <div className="flex flex-col">
-        <h2 className="text-xl sm:text-2xl font-bold mb-2">Latest Activity</h2>
-        <p className="text-sm sm:text-base text-muted-foreground mb-6">
-          Here are the latest posts made by {user?.username || "Unknown user"}.
-        </p>
-        <UserPosts user={user} />
+        <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-3 md:gap-0">
+          <div className="flex flex-col items-center md:items-start">
+            <h2 className="text-xl sm:text-2xl font-bold">Latest Activity</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Here are the latest posts made by{" "}
+              {user?.username || "Unknown user"}.
+            </p>
+          </div>
+
+          <SortFilterSelect />
+        </div>
+
+        <UserPosts user={user} sort={sort} />
       </div>
     </section>
   );

@@ -6,12 +6,17 @@ import useInfiniteScroll from "@/hooks/use-infinite-scroll";
 import getAllUserPosts from "@/sanity/lib/posts/getAllUserPosts";
 import PostCard from "../post/post-card";
 import { Button } from "../ui/button";
+import { SortOrder } from "@/types/filter";
 
 type UserInfinitePostsProps = {
   user: User;
+  sort?: SortOrder;
 };
 
-const UserInfinitePosts = ({ user }: UserInfinitePostsProps) => {
+const UserInfinitePosts = ({
+  user,
+  sort = "latest",
+}: UserInfinitePostsProps) => {
   const {
     data,
     isError,
@@ -22,12 +27,13 @@ const UserInfinitePosts = ({ user }: UserInfinitePostsProps) => {
     isFetchingNextPage,
     isLoading,
   } = useInfiniteScroll<Post[]>({
-    queryKey: ["posts", "user", user.clerkId!],
+    queryKey: ["posts", "user", user.clerkId!, sort],
     queryFn: ({ page = 0 }) =>
       getAllUserPosts({
         clerkId: user.clerkId,
         page: page,
         limit: 3,
+        sort,
       }),
     limit: 3,
   });
