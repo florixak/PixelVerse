@@ -25,20 +25,20 @@ const UserActions = ({ user }: UserActionsProps) => {
           {
             label: "Report User",
             value: "report",
-            onSelect: () => router.push(`/report/${user.username}`),
+            onSelect: () => router.push(`/report/user/${user.username}`),
           },
           {
-            label: "Send Message",
+            label: "Send Message (Coming Soon)",
             value: "message",
             onSelect: () => console.log("Send Message"),
           },
           {
-            label: "Add Friend",
+            label: "Add Friend (Coming Soon)",
             value: "add-friend",
             onSelect: () => console.log("Add Friend"),
           },
           {
-            label: "Mute User",
+            label: "Mute User (Coming Soon)",
             value: "mute",
             onSelect: () => console.log("Mute User"),
           },
