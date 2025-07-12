@@ -9,13 +9,16 @@ import UserProfileStats from "./user-profile-stats";
 import UserPosts from "./user-posts";
 import { SortOrder } from "@/types/filter";
 import SortFilterSelect from "../sort-filter-select";
+import { currentUser } from "@clerk/nextjs/server";
 
 type UserProfileContentProps = {
   user: User | null;
   sort: SortOrder;
 };
 
-const UserProfileContent = ({ user, sort }: UserProfileContentProps) => {
+const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
+  const currUser = await currentUser();
+
   return (
     <section className="flex flex-col w-full max-w-[70rem] mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 gap-6 md:gap-12">
       <div className="flex flex-row w-full items-start justify-center sm:justify-between">
@@ -62,13 +65,19 @@ const UserProfileContent = ({ user, sort }: UserProfileContentProps) => {
               <UserProfileStats user={user} />
             </Suspense>
             <div className="flex sm:hidden flex-col gap-6 mt-4">
-              <UserActions user={user} />
+              <UserActions
+                user={user}
+                isUsersProfile={user?.clerkId === currUser?.id}
+              />
             </div>
           </div>
         </div>
 
         <div className="hidden sm:flex flex-col gap-6 mt-0 md:mt-8">
-          <UserActions user={user} />
+          <UserActions
+            user={user}
+            isUsersProfile={user?.clerkId === currUser?.id}
+          />
         </div>
       </div>
 
