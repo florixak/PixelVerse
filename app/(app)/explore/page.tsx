@@ -6,7 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import UserSearchCard from "@/components/user/user-search-card";
 import { getTrendingContent } from "@/sanity/lib/featured/getTrendingContent";
 import { getSearchResults } from "@/sanity/lib/search/getSearchResults";
-import { currentUser, User } from "@clerk/nextjs/server";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
