@@ -15,6 +15,7 @@ export const getUserByClerkId = async (
       clerkId,
       imageUrl,
       isBanned,
+      bio,
       role,
       "favoriteTopics": favoriteTopics[]-> {
         _id,

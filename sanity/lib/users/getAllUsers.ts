@@ -27,6 +27,7 @@ const getAllUsers = async (limit: number = 15): Promise<User[]> => {
       imageUrl,
       isBanned,
       role,
+      bio,
       "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
       "commentCount": count(*[_type == "comment" && references(^._id) && isDeleted != true]),
       isReported
