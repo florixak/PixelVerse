@@ -88,7 +88,7 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
     if (isUserContent(reportedContent)) {
       return (
         <Link
-          href={`/profile/${reportedContent.username}`}
+          href={`/user/${reportedContent.username}`}
           className="text-sm flex items-center text-primary"
           target="_blank"
         >
