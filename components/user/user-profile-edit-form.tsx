@@ -150,7 +150,7 @@ const UserProfileEditForm = ({
 
       {/* Username */}
       <div className="space-y-2">
-        <Label htmlFor="username">Username *</Label>
+        <Label htmlFor="username">Username</Label>
         <Input
           id="username"
           type="text"
