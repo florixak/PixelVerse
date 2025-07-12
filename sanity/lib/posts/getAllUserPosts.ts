@@ -28,6 +28,7 @@ const getAllUserPosts = async ({
       "imageUrl": image.asset->url,
       "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
       "topic": topic->{_id, title, "slug": slug.current},
+      "topicSlug": topic->slug.current,
       "likes": count(reactions[type == "like"]),
       "dislikes": count(reactions[type == "dislike"]),
       tags,
