@@ -12,14 +12,7 @@ import {
 } from "./ui/sidebar";
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Home,
-  Newspaper,
-  Settings,
-  TriangleAlert,
-  User,
-} from "lucide-react";
+import { ArrowLeft, Home, Settings, TriangleAlert, User } from "lucide-react";
 import SidebarHeader from "./sidebar-header";
 
 const menu: {
