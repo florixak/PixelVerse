@@ -87,7 +87,7 @@ const SearchBar = ({
             placeholder={placeholder}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="pl-10 pr-10 w-full"
+            className="pl-10 pr-10 w-full [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
           />
           {searchValue && (
             <button
