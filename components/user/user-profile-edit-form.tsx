@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { User } from "@/sanity.types";
+import { updateProfile } from "@/actions/profileActions";
 
 type UserProfileEditFormProps = {
   user: User;
@@ -16,10 +17,10 @@ type UserProfileEditFormProps = {
   onCancel?: () => void;
 };
 
-type FormData = {
-  fullName: string;
-  username: string;
-  bio: string;
+export type FormData = {
+  fullName: User["fullName"];
+  username: User["username"];
+  bio: User["bio"];
 };
 
 type FormErrors = {
@@ -75,7 +76,6 @@ const UserProfileEditForm = ({
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -92,15 +92,19 @@ const UserProfileEditForm = ({
       setIsLoading(true);
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await updateProfile(formData);
 
-      toast.success("Profile updated successfully!");
+      if (!response.success) {
+        throw new Error(response.message || "Failed to update profile");
+      }
+
+      toast.success(response.message || "Profile updated successfully");
 
       if (onSave) {
         onSave(formData);
       }
-    } catch (error) {
-      toast.error("Failed to update profile. Please try again.");
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred while updating profile");
       console.error("Error updating profile:", error);
     } finally {
       setIsLoading(false);
