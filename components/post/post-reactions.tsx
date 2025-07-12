@@ -129,7 +129,7 @@ const PostReactions = ({
           "name" in error &&
           (error as { name?: string }).name === "AbortError"
         ) {
-          console.log("User canceled share operation");
+          //console.log("User canceled share operation");
           return;
         }
 

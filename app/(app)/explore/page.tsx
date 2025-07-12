@@ -83,7 +83,7 @@ const PostResults = async ({
 
   const totalResults = totalPosts + totalTopics + totalUsers;
 
-  console.log("Search Results:", {
+  /*console.log("Search Results:", {
     searchQuery,
     pageNumber,
     totalPosts,
@@ -92,7 +92,7 @@ const PostResults = async ({
     posts,
     topics,
     users,
-  });
+  });*/
 
   if (totalResults === 0) {
     return (
