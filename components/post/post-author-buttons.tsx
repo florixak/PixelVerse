@@ -68,10 +68,7 @@ const PostAuthorButtons = ({ post, topic, topics }: PostAuthorButtonsProps) => {
         <SheetContent className="w-full sm:max-w-4xl overflow-y-auto px-6 md:px-12 py-4">
           <SheetHeader>
             <SheetTitle>Edit Post</SheetTitle>
-            <SheetDescription>
-              Make changes to your post. All changes will be saved
-              automatically.
-            </SheetDescription>
+            <SheetDescription>Make changes to your post.</SheetDescription>
           </SheetHeader>
           <CreatePostForm
             topics={topics}

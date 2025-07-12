@@ -39,11 +39,8 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
         </SheetTrigger>
         <SheetContent className="w-full max-w-xl md:max-w-2xl overflow-y-auto px-6 md:px-12 py-4">
           <SheetHeader>
-            <SheetTitle>Edit Post</SheetTitle>
-            <SheetDescription>
-              Make changes to your post. All changes will be saved
-              automatically.
-            </SheetDescription>
+            <SheetTitle>Edit Profile</SheetTitle>
+            <SheetDescription>Make changes to your profile.</SheetDescription>
           </SheetHeader>
           <UserProfileEditForm user={user} onCancel={() => setEditing(false)} />
         </SheetContent>

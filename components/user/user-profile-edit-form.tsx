@@ -128,93 +128,84 @@ const UserProfileEditForm = ({
     });
 
   return (
-    <Card className="w-full mx-auto max-w-4xl">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Edit Profile</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Full Name */}
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input
-              id="fullName"
-              type="text"
-              placeholder="Enter your full name"
-              value={formData.fullName}
-              onChange={(e) => handleInputChange("fullName", e.target.value)}
-              className={errors.fullName ? "border-red-500" : ""}
-            />
-            {errors.fullName && (
-              <p className="text-sm text-red-500">{errors.fullName}</p>
-            )}
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Full Name */}
+      <div className="space-y-2">
+        <Label htmlFor="fullName">Full Name</Label>
+        <Input
+          id="fullName"
+          type="text"
+          placeholder="Enter your full name"
+          value={formData.fullName}
+          onChange={(e) => handleInputChange("fullName", e.target.value)}
+          className={errors.fullName ? "border-red-500" : ""}
+        />
+        {errors.fullName && (
+          <p className="text-sm text-red-500">{errors.fullName}</p>
+        )}
+      </div>
 
-          {/* Username */}
-          <div className="space-y-2">
-            <Label htmlFor="username">Username *</Label>
-            <Input
-              id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={formData.username}
-              onChange={(e) => handleInputChange("username", e.target.value)}
-              className={errors.username ? "border-red-500" : ""}
-            />
-            {errors.username && (
-              <p className="text-sm text-red-500">{errors.username}</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Only letters, numbers, hyphens, and underscores allowed
-            </p>
-          </div>
+      {/* Username */}
+      <div className="space-y-2">
+        <Label htmlFor="username">Username *</Label>
+        <Input
+          id="username"
+          type="text"
+          placeholder="Enter your username"
+          value={formData.username}
+          onChange={(e) => handleInputChange("username", e.target.value)}
+          className={errors.username ? "border-red-500" : ""}
+        />
+        {errors.username && (
+          <p className="text-sm text-red-500">{errors.username}</p>
+        )}
+        <p className="text-xs text-muted-foreground">
+          Only letters, numbers, hyphens, and underscores allowed
+        </p>
+      </div>
 
-          {/* Bio */}
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              placeholder="Tell us about yourself..."
-              rows={4}
-              value={formData.bio}
-              onChange={(e) => handleInputChange("bio", e.target.value)}
-              className={errors.bio ? "border-red-500" : ""}
-            />
-            {errors.bio && <p className="text-sm text-red-500">{errors.bio}</p>}
-            <p className="text-xs text-muted-foreground">
-              Maximum 500 characters
-            </p>
-          </div>
+      {/* Bio */}
+      <div className="space-y-2">
+        <Label htmlFor="bio">Bio</Label>
+        <Textarea
+          id="bio"
+          placeholder="Tell us about yourself..."
+          rows={4}
+          value={formData.bio}
+          onChange={(e) => handleInputChange("bio", e.target.value)}
+          className={errors.bio ? "border-red-500" : ""}
+        />
+        {errors.bio && <p className="text-sm text-red-500">{errors.bio}</p>}
+        <p className="text-xs text-muted-foreground">Maximum 500 characters</p>
+      </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isLoading}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isLoading || !hasChanges}
-              className="flex-1"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Update Profile"
-              )}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      {/* Action Buttons */}
+      <div className="flex gap-3 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleCancel}
+          disabled={isLoading}
+          className="flex-1"
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          disabled={isLoading || !hasChanges}
+          className="flex-1"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Update Profile"
+          )}
+        </Button>
+      </div>
+    </form>
   );
 };
 
