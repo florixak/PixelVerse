@@ -5,7 +5,13 @@ import { client } from "../client";
 import { groq } from "next-sanity";
 import { User } from "@/sanity.types";
 
-const getAllUsers = async (limit: number = 15): Promise<User[]> => {
+type GetAllUsersParams = {
+  limit?: number;
+};
+
+const getAllUsers = async ({
+  limit = 15,
+}: GetAllUsersParams): Promise<User[]> => {
   const user = await currentUser();
   if (!user) throw new Error("User not authenticated");
 
