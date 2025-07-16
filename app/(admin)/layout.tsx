@@ -1,4 +1,5 @@
 import AdminSidebar from "@/components/admin-sidebar";
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { canAccessDashboard } from "@/lib/user-utils";
@@ -35,6 +36,7 @@ export default async function AdminLayout({
           {children}
         </main>
       </SidebarProvider>
+      <Footer />
     </>
   );
 }
