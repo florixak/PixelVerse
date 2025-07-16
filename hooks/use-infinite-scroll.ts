@@ -41,8 +41,10 @@ const useInfiniteScroll = <T>({
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const dataPages = data?.pages.flat() || [];
+
   return {
-    data: data?.pages?.flat() || [],
+    data: dataPages,
     isError,
     error,
     fetchNextPage,
