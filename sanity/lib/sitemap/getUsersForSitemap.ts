@@ -2,9 +2,9 @@ import { client } from "../client";
 import { groq } from "next-sanity";
 import { User } from "@/sanity.types";
 
-const getUsersForSitemap = async (): Promise<
-  Pick<User, "createdAt" | "username">[]
-> => {
+export type getUsersForSitemapReturn = Pick<User, "createdAt" | "username">[];
+
+const getUsersForSitemap = async (): Promise<getUsersForSitemapReturn> => {
   return client.fetch(
     groq`*[_type == "user" && isBanned != true] {
       createdAt,

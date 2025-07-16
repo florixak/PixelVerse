@@ -2,9 +2,12 @@ import { groq } from "next-sanity";
 import { client } from "../client";
 import { Post } from "@/sanity.types";
 
-const getPostsForSitemap = async (): Promise<
-  Pick<Post, "slug" | "topicSlug" | "publishedAt" | "_updatedAt">[]
-> => {
+export type getPostsForSitemapReturn = Pick<
+  Post,
+  "slug" | "topicSlug" | "publishedAt" | "_updatedAt"
+>[];
+
+const getPostsForSitemap = async (): Promise<getPostsForSitemapReturn> => {
   return client.fetch<Post[]>(
     groq`*[_type == "post" && isDeleted != true && author->isBanned != true] {
       "slug": slug.current,

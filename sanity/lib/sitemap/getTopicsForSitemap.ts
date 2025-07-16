@@ -2,7 +2,9 @@ import { Topic } from "@/sanity.types";
 import { client } from "../client";
 import { groq } from "next-sanity";
 
-const getTopicsForSitemap = async (): Promise<Topic[]> => {
+export type getTopicsForSitemapReturn = Pick<Topic, "slug" | "_updatedAt">[];
+
+const getTopicsForSitemap = async (): Promise<getTopicsForSitemapReturn> => {
   return client.fetch(
     groq`*[
       _type == "topic" && 
