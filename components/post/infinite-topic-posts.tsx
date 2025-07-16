@@ -68,20 +68,6 @@ const InfiniteTopicPosts = ({
 
   return (
     <>
-      {process.env.NODE_ENV === "development" && (
-        <div
-          className={`text-xs mb-2 text-center p-2 rounded ${
-            wasPrefeched
-              ? "bg-green-100 text-green-800 border border-green-200"
-              : "bg-yellow-100 text-yellow-800 border border-yellow-200"
-          }`}
-        >
-          {wasPrefeched
-            ? "✅ Posts loaded from server cache (prefetched)"
-            : "🔄 Posts loaded from network (not prefetched)"}
-        </div>
-      )}
-
       <MasonryWrapper>
         {data.map((post) => (
           <PostCard
