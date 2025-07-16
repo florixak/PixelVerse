@@ -1,17 +1,17 @@
 import type { MetadataRoute } from "next";
-import getPostsForSitemap from "@/sanity/lib/sitemap/getPostsForSitemap";
-import getUsersForSitemap from "@/sanity/lib/sitemap/getUsersForSitemap";
-import getTopicsForSitemap from "@/sanity/lib/sitemap/getTopicsForSitemap";
+import getPostsForSitemap, {
+  getPostsForSitemapReturn,
+} from "@/sanity/lib/sitemap/getPostsForSitemap";
+import getUsersForSitemap, {
+  getUsersForSitemapReturn,
+} from "@/sanity/lib/sitemap/getUsersForSitemap";
+import getTopicsForSitemap, {
+  getTopicsForSitemapReturn,
+} from "@/sanity/lib/sitemap/getTopicsForSitemap";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL!;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, topics, users] = await Promise.all([
-    getPostsForSitemap(),
-    getTopicsForSitemap(),
-    getUsersForSitemap(),
-  ]);
-
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
@@ -38,6 +38,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
   ];
+
+  let posts: getPostsForSitemapReturn = [];
+  let topics: getTopicsForSitemapReturn = [];
+  let users: getUsersForSitemapReturn = [];
+
+  try {
+    posts = await getPostsForSitemap();
+  } catch (error) {
+    console.error("Failed to fetch posts for sitemap:", error);
+  }
+
+  try {
+    topics = await getTopicsForSitemap();
+  } catch (error) {
+    console.error("Failed to fetch topics for sitemap:", error);
+  }
+
+  try {
+    users = await getUsersForSitemap();
+  } catch (error) {
+    console.error("Failed to fetch users for sitemap:", error);
+  }
 
   const postPages: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${BASE_URL}/topics/${post.topicSlug}/${post.slug}`,
