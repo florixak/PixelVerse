@@ -6,7 +6,7 @@ const getUsersForSitemap = async (): Promise<
   Pick<User, "createdAt" | "username">[]
 > => {
   return client.fetch(
-    groq`*[_type == "user" && "isBanned != true"] {
+    groq`*[_type == "user" && isBanned != true] {
       createdAt,
       username,
     } | order(count(*[_type == "post" && author._ref == ^._id]) desc) [0...200]`
