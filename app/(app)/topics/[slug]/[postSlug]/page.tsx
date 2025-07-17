@@ -7,7 +7,16 @@ import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 
 const getCachedPostBySlug = cache(async (postSlug: string, userId?: string) => {
-  return await getPostBySlug(postSlug, userId);
+  if (!postSlug) {
+    notFound();
+  }
+  const post = await getPostBySlug(decodeURIComponent(postSlug), userId);
+
+  if (!post) {
+    notFound();
+  }
+
+  return post;
 });
 
 export const generateMetadata = async ({
@@ -31,7 +40,8 @@ export const generateMetadata = async ({
     openGraph: {
       title: `${post.title} - PixelVerse`,
       description:
-        post.content || `Discover this amazing pixel art: ${post.title}`,
+        post.content ||
+        `Discover this amazing pixel art: ${post.title} by ${post.author?.fullName}`,
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/topics/${post.topicSlug}/${post.slug}`,
       images: post.imageUrl
         ? [
@@ -65,10 +75,6 @@ const PostPage = async ({
     decodeURIComponent(postSlug),
     user?.id
   );
-
-  if (!post) {
-    notFound();
-  }
 
   return (
     <section className="relative max-w-4xl mx-auto flex flex-col gap-4">
