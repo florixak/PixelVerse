@@ -44,6 +44,13 @@ export const generateMetadata = async ({
           ]
         : undefined,
     },
+    twitter: {
+      title: post.title,
+      description:
+        post.content || `Check out this amazing pixel art: ${post.title}`,
+      card: "summary_large_image",
+      images: post.imageUrl ? [post.imageUrl] : undefined,
+    },
   };
 };
 
