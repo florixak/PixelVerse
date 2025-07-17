@@ -63,6 +63,7 @@ export default function CreatePostForm({
       imageUrl: ts.imageUrl || "",
     })) || []
   );
+  const [tags, setTags] = useState<Post["tags"]>(post?.tags || []);
   const router = useRouter();
 
   const handleSoftwareChange = (value: string) => {
@@ -130,6 +131,10 @@ export default function CreatePostForm({
         formData.set("disabledComments", String(disabledComments));
       }
 
+      if (tags !== undefined && tags.length > 0) {
+        formData.set("tags", JSON.stringify(tags));
+      }
+
       if (post) {
         const result = await updatePost(formData, post._id);
         toast.success(
@@ -166,6 +171,8 @@ export default function CreatePostForm({
         setPostType={setPostType}
         topicId={topic?._id}
         post={post}
+        tags={tags}
+        setTags={setTags}
         postType={postType}
         disabledComments={disabledComments}
         setDisabledComments={setDisabledComments}

@@ -1,5 +1,6 @@
 "use client";
 
+import TagInput from "@/components/tag-input";
 import TopicSuggestButton from "@/components/topic/topic-suggest-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { POST_TYPES } from "@/constants";
 import { Post, Topic } from "@/sanity.types";
+import { useState } from "react";
 
 type BasicFieldsProps = {
   topics: Topic[];
@@ -23,6 +25,8 @@ type BasicFieldsProps = {
   post?: Post | null;
   postType?: Post["postType"];
   disabledComments?: boolean;
+  setTags?: (tags: string[]) => void;
+  tags?: string[];
   setDisabledComments?: (value: boolean) => void;
 };
 
@@ -31,13 +35,14 @@ const BasicFields = ({
   setPostType,
   topicId,
   post,
+  tags = [],
+  setTags = () => {},
   postType = "text",
   disabledComments = false,
   setDisabledComments = () => {},
 }: BasicFieldsProps) => {
   const defaultTitle = post?.title || "";
   const defaultContent = (post?.content || "") as string;
-  const defaultTags = post?.tags?.join(", ") || "";
 
   return (
     <div className="space-y-4">
@@ -118,13 +123,8 @@ const BasicFields = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="tags">Tags (comma separated)</Label>
-        <Input
-          id="tags"
-          name="tags"
-          placeholder="pixel, character, tutorial, etc."
-          defaultValue={defaultTags}
-        />
+        <Label htmlFor="tags">Tags</Label>
+        <TagInput value={tags} onChange={setTags} />
       </div>
     </div>
   );
