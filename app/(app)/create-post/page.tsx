@@ -8,6 +8,25 @@ type CreatePostPageProps = {
   }>;
 };
 
+export const generateMetadata = () => {
+  return {
+    title: "Create a New Post",
+    description:
+      "Share your pixel art, tutorial, or question with the community",
+    openGraph: {
+      title: "Create a New Post",
+      description:
+        "Share your pixel art, tutorial, or question with the community",
+      url: "/create-post",
+    },
+    twitter: {
+      title: "Create a New Post",
+      description:
+        "Share your pixel art, tutorial, or question with the community",
+    },
+  };
+};
+
 const CreatePostPage = async ({ searchParams }: CreatePostPageProps) => {
   const { topic: topicSlug } = await searchParams;
   const [topics, topic] = await Promise.all([
