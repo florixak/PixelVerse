@@ -37,6 +37,11 @@ export const generateMetadata = () => {
         "Discover and explore various topics related to pixel art. Click on a topic to see related posts.",
       url: "/topics",
     },
+    twitter: {
+      title: "Explore Topics",
+      description:
+        "Discover and explore various topics related to pixel art. Click on a topic to see related posts.",
+    },
   };
 };
 
