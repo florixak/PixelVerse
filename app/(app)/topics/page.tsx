@@ -1,9 +1,8 @@
 import MasonryWrapper from "@/components/masonry-wrapper";
 import TopicTrendingCard from "@/components/topic/topic-trending-card";
-import TopicSearch from "@/components/topic/topic-search";
 import { SortOrder } from "@/types/filter";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
-import { Info, Sparkles, Star, TrendingUp } from "lucide-react";
+import { Info, Sparkles, TrendingUp } from "lucide-react";
 import React, { Suspense } from "react";
 import TopicCard from "@/components/topic/topic-card";
 import {
