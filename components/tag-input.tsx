@@ -16,7 +16,7 @@ const TagInput = ({
   onChange,
   placeholder = "Add a tag",
 }: TagInputProps) => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState<string>("");
 
   const addTag = (tag: string) => {
     const newTag = tag.trim();
@@ -55,10 +55,14 @@ const TagInput = ({
           className="flex items-center gap-1 px-2 py-1 text-sm rounded-lg"
         >
           {tag}
-          <X
-            className="w-4 h-4 cursor-pointer text-muted-foreground hover:text-destructive"
+          <button
+            type="button"
             onClick={() => removeTag(index)}
-          />
+            className="ml-1 text-muted-foreground hover:text-destructive transition-colors focus:outline-none"
+            aria-label={`Remove ${tag} tag`}
+          >
+            <X className="w-3 h-3" />
+          </button>
         </Badge>
       ))}
       <Input
