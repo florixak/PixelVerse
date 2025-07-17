@@ -27,6 +27,14 @@ type TopicsProps = {
   sort?: SortOrder;
 };
 
+export const generateMetadata = () => {
+  return {
+    title: "Explore Topics",
+    description:
+      "Discover and explore various topics related to pixel art. Click on a topic to see related posts.",
+  };
+};
+
 const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
   const { sort } = await searchParams;
 

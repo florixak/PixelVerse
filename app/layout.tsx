@@ -14,7 +14,10 @@ export const pixelFont = VT323({
 });
 
 export const metadata: Metadata = {
-  title: "PixelVerse | Share Your Pixel Art",
+  title: {
+    default: "PixelVerse - Share Your Pixel Art",
+    template: "%s - PixelVerse",
+  },
   description:
     "Discover the world of pixel art, share your creations, and connect with fellow artists in our growing community. Join PixelVerse today!",
   keywords: [
@@ -37,7 +40,10 @@ export const metadata: Metadata = {
   authors: [{ name: "Ondřej Pták", url: "https://ondrejptak.dev" }],
   creator: "Ondřej Pták",
   openGraph: {
-    title: "PixelVerse | Share Your Pixel Art",
+    title: {
+      default: "PixelVerse - Share Your Pixel Art",
+      template: "%s - PixelVerse",
+    },
     description:
       "Discover the world of pixel art, share your creations, and connect with fellow artists in our growing community. Join PixelVerse today!",
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://pixelverse.com",
@@ -55,7 +61,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PixelVerse | Share Your Pixel Art",
+    title: {
+      default: "PixelVerse - Share Your Pixel Art",
+      template: "%s - PixelVerse",
+    },
     description:
       "Discover the world of pixel art, share your creations, and connect with fellow artists in our growing community. Join PixelVerse today!",
     images: ["https://pixelverse.com/og-image.png"],

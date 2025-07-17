@@ -4,7 +4,48 @@ import PostHeader from "@/components/post/post-header";
 import getPostBySlug from "@/sanity/lib/posts/getPostBySlug";
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
+
+const getCachedPostBySlug = cache(async (postSlug: string, userId?: string) => {
+  return await getPostBySlug(postSlug, userId);
+});
+
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ postSlug: string }>;
+}) => {
+  const { postSlug } = await params;
+
+  const user = await currentUser();
+  const post = await getCachedPostBySlug(
+    decodeURIComponent(postSlug),
+    user?.id
+  );
+
+  return {
+    title: post.title,
+    description:
+      post.content ||
+      `Check out "${post.title}" on PixelVerse - a pixel art community.`,
+    openGraph: {
+      title: `${post.title} - PixelVerse`,
+      description:
+        post.content || `Discover this amazing pixel art: ${post.title}`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/topics/${post.topicSlug}/${post.slug}`,
+      images: post.imageUrl
+        ? [
+            {
+              url: post.imageUrl,
+              width: 800,
+              height: 600,
+              alt: post.title,
+            },
+          ]
+        : undefined,
+    },
+  };
+};
 
 const PostPage = async ({
   params,
@@ -13,7 +54,10 @@ const PostPage = async ({
 }) => {
   const { postSlug } = await params;
   const user = await currentUser();
-  const post = await getPostBySlug(postSlug, user?.id);
+  const post = await getCachedPostBySlug(
+    decodeURIComponent(postSlug),
+    user?.id
+  );
 
   if (!post) {
     notFound();

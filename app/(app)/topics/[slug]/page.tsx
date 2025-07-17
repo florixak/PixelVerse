@@ -7,8 +7,9 @@ import getPostsByTopic from "@/sanity/lib/posts/getPostsByTopic";
 import getTopicBySlug from "@/sanity/lib/topics/getTopicBySlug";
 import { SortOrder } from "@/types/filter";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import React, { Suspense } from "react";
+import React, { cache, Suspense } from "react";
 
 type TopicPageProps = {
   params: Promise<{ slug: string }>;
@@ -16,6 +17,65 @@ type TopicPageProps = {
 };
 
 const LIMIT = 12;
+
+const getCachedTopicBySlug = cache(async (slug: string) => {
+  return await getTopicBySlug(slug);
+});
+
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> => {
+  const { slug } = await params;
+
+  try {
+    const topic = await getCachedTopicBySlug(decodeURIComponent(slug));
+
+    if (!topic) {
+      return {
+        title: "Topic Not Found",
+        description: "The requested topic could not be found.",
+      };
+    }
+
+    return {
+      title: topic.title,
+      description:
+        topic.description ||
+        `Explore ${topic.title} pixel art and related posts.`,
+      openGraph: {
+        title: `${topic.title} - PixelVerse`,
+        description:
+          topic.description || `Discover amazing ${topic.title} pixel art`,
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/topics/${topic.slug}`,
+        images: topic.bannerUrl
+          ? [
+              {
+                url: topic.bannerUrl,
+                width: 800,
+                height: 600,
+                alt: topic.title,
+              },
+            ]
+          : undefined,
+      },
+      twitter: {
+        title: `${topic.title} - PixelVerse`,
+        description:
+          topic.description || `Explore ${topic.title} pixel art and posts.`,
+        card: "summary_large_image",
+        images: [topic.bannerUrl || ""],
+      },
+    };
+  } catch (error) {
+    console.error("Failed to generate metadata:", error);
+    return {
+      title: "Explore Topics",
+      description: "Discover and explore various topics related to pixel art.",
+    };
+  }
+};
 
 const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
   const { slug } = await params;
@@ -25,7 +85,7 @@ const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
 
   const { sort } = await searchParams;
 
-  const topic = await getTopicBySlug(decodeURIComponent(slug));
+  const topic = await getCachedTopicBySlug(decodeURIComponent(slug));
   if (!topic || !topic.slug) {
     notFound();
   }
