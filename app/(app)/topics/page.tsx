@@ -32,6 +32,12 @@ export const generateMetadata = () => {
     title: "Explore Topics",
     description:
       "Discover and explore various topics related to pixel art. Click on a topic to see related posts.",
+    openGraph: {
+      title: "Explore Topics",
+      description:
+        "Discover and explore various topics related to pixel art. Click on a topic to see related posts.",
+      url: "/topics",
+    },
   };
 };
 
