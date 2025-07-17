@@ -4,7 +4,7 @@ import Header from "@/components/header";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { canAccessDashboard } from "@/lib/user-utils";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 
 export default async function AdminLayout({
@@ -12,14 +12,23 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Auth checks
-  const user = await currentUser();
-  const sanityUser = await getUserByClerkId(user?.id || "");
-  if (!user || !sanityUser || sanityUser.isBanned || !sanityUser.clerkId) {
-    notFound();
-  }
-  const isAllowed = await canAccessDashboard(sanityUser.clerkId);
-  if (!isAllowed) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      notFound();
+    }
+
+    const sanityUser = await getUserByClerkId(userId);
+    if (!sanityUser || sanityUser.isBanned || !sanityUser.clerkId) {
+      notFound();
+    }
+
+    const isAllowed = await canAccessDashboard(sanityUser.clerkId);
+    if (!isAllowed) {
+      notFound();
+    }
+  } catch (error) {
+    console.log("Auth check failed, redirecting:", error);
     notFound();
   }
 
