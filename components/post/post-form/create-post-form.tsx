@@ -132,7 +132,7 @@ export default function CreatePostForm({
       }
 
       if (tags !== undefined && tags.length > 0) {
-        formData.set("tags", JSON.stringify(tags));
+        formData.set("tags", tags.join(","));
       }
 
       if (post) {
