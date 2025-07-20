@@ -115,20 +115,13 @@ export function parsePostFormData(formData: FormData) {
     postType: formData.get("postType")?.toString() || "pixelArt",
     disabledComments: formData.get("disabledComments") === "true",
     dimensions: `${width}x${height}`,
-    software:
-      formData
-        .get("tags")
-        ?.toString()
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean) || [],
+    software: formData.get("software")?.toString(),
     tags:
       formData
         .get("tags")
         ?.toString()
         .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean) || [],
+        .map((tag) => tag.trim()) || [],
     imageFile: formData.get("image") as File,
   };
 }
