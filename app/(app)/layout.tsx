@@ -24,7 +24,6 @@ export default async function AppLayout({
             className="fixed top-3 ml-2 z-[60] size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
             aria-label="Toggle sidebar"
           />
-
           {children}
         </main>
       </SidebarProvider>
