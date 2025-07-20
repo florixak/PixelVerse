@@ -4,7 +4,7 @@ import Header from "@/components/header";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { canAccessDashboard } from "@/lib/user-utils";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 
 export default async function AdminLayout({
