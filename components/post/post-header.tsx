@@ -15,6 +15,9 @@ const PostHeader = async ({ post, isAuthor }: PostHeaderProps) => {
     getAllTopics({}),
   ]);
 
+  const displayDimensions =
+    post.dimensions && post.postType !== "text" && post.postType !== "question";
+
   return (
     <div className="flex flex-col gap-2 mb-6">
       <div className="flex items-center justify-between mb-2">
@@ -26,7 +29,7 @@ const PostHeader = async ({ post, isAuthor }: PostHeaderProps) => {
 
       <h1 className="text-3xl font-bold">{post.title}</h1>
       <div className="flex flex-col gap-1 text-sm text-muted-foreground">
-        {post.dimensions && <p>Dimensions: {post.dimensions}</p>}
+        {displayDimensions ? <p>Dimensions: {post.dimensions}</p> : null}
         {/* {post.software && (
           <p>Created with: {post.software?.map((sw) => sw).join(", ")}</p>
         )} */}
