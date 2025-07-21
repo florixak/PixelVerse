@@ -390,7 +390,6 @@ export async function submitReport(
 
     const userId = await ensureSanityUser(user);
 
-    // Verify content exists
     const contentExists = await writeClient.fetch(
       `*[_type == $contentType && _id == $contentId][0]._id`,
       { contentType, contentId }
@@ -403,7 +402,6 @@ export async function submitReport(
       };
     }
 
-    // Check if user has already reported this content
     const existingReport = await writeClient.fetch(
       `*[_type == "report" && content._ref == $contentId && reporter._ref == $userId][0]._id`,
       { contentId, userId }
@@ -416,18 +414,15 @@ export async function submitReport(
       };
     }
 
-    // Generate report display ID
     const reportCount = await writeClient.fetch('count(*[_type == "report"])');
     const displayId = `REP-${(reportCount + 1).toString().padStart(4, "0")}`;
 
-    // Increment report count on content
     await writeClient
       .patch(contentId)
       .setIfMissing({ reportCount: 0 })
       .inc({ reportCount: 1 })
       .commit();
 
-    // Create the report
     await writeClient.create({
       _type: "report",
       displayId,
@@ -446,7 +441,6 @@ export async function submitReport(
       status: "pending",
     });
 
-    // Revalidate relevant paths
     revalidatePath("/admin/reports");
 
     if (contentType === "post") {
