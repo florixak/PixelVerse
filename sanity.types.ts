@@ -12,6 +12,8 @@
  * ---------------------------------------------------------------------------------
  */
 
+import { AIReportResult } from "./actions/ai-moderation";
+
 // Source: schema.json
 export type Comment = {
   _id: string;
@@ -179,6 +181,7 @@ export type Report = {
   moderatedBy?: User;
   moderationNotes?: string;
   moderatedAt?: string;
+  aiCheckResult?: AIReportResult & { _type: "aiCheckResult" };
 };
 
 export function isPostContent(content: any): content is Post {

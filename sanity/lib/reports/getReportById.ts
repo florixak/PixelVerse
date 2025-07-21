@@ -15,6 +15,7 @@ export async function getReportById(id: string): Promise<Report | null> {
       additionalInfo,
       reportedAt,
       status,
+      aiCheckResult,
       "reportedContent": content-> {
         _id,
         _type,

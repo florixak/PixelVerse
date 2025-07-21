@@ -109,6 +109,34 @@ export const reportSchema = defineType({
       description: "The date and time when the report was moderated.",
       readOnly: true,
     }),
+    defineField({
+      name: "aiCheckResult",
+      type: "object",
+      title: "AI Check Result",
+      fields: [
+        {
+          name: "isViolating",
+          type: "boolean",
+          title: "Is Violating",
+          description: "Whether the content violates community guidelines.",
+          initialValue: false,
+        },
+        {
+          name: "reason",
+          type: "string",
+          title: "Reason",
+          description: "Reason for the AI's decision, if applicable.",
+        },
+        {
+          name: "confidence",
+          type: "number",
+          title: "Confidence Score",
+          description:
+            "Confidence score of the AI's decision (0 to 1, where 1 is most confident).",
+          validation: (Rule) => Rule.min(0).max(1),
+        },
+      ],
+    }),
   ],
   preview: {
     select: {
