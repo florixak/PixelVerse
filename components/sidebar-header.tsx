@@ -9,11 +9,12 @@ import Image from "next/image";
 
 const SidebarHeader = () => {
   const { open, isMobile } = useSidebar();
+  const isCollapsed = open || isMobile;
   return (
     <SidebarHead className="flex items-center justify-center gap-2 p-4 overflow-hidden">
       <Link
         href="/"
-        className={open || isMobile ? "flex items-center gap-2" : "scale-200"}
+        className={isCollapsed ? "flex items-center gap-2" : "scale-200"}
         aria-label="PixelVerse Home"
       >
         <Image
@@ -22,7 +23,7 @@ const SidebarHeader = () => {
           width={56}
           height={56}
         />
-        {(open || isMobile) && (
+        {isCollapsed && (
           <h1 className="text-4xl font-bold overflow-hidden font-pixel">
             <span className="text-primary">Pixel</span>Verse
           </h1>
