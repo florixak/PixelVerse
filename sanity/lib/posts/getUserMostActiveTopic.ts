@@ -10,7 +10,7 @@ export async function getUserMostActiveTopic(
 ): Promise<Topic | null> {
   const { limit = 100 } = options;
   const posts = await client.fetch<Post[]>(
-    groq`*[_type == "post" && author->clerkId == $clerkId && defined(topic)] | order(_createdAt desc)[0...${limit}] {
+    groq`*[_type == "post" && author->clerkId == $clerkId && defined(topic) && isDeleted != true && isBanned != true] | order(_createdAt desc)[0...${limit}] {
       "topic": topic->{
         _id,
         name,

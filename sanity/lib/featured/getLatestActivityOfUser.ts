@@ -7,7 +7,7 @@ const getLatestActivityOfUser = async (
   limit: number = 10
 ): Promise<Post[]> => {
   return client.fetch(
-    groq`*[_type == "post" && author->clerkId == $clerkId && isDeleted != true && author->isBanned != true] {
+    groq`*[_type == "post" && author->clerkId == $clerkId && isDeleted != true && isBanned != true && author->isBanned != true] {
       _id,
       title,
       "slug": slug.current,

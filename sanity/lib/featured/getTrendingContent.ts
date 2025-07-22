@@ -36,7 +36,7 @@ export const getTrendingContent = async (
   const randomFactor = Math.floor(Math.random() * randomFactorMax);
 
   return client.fetch<{ posts: Post[] }>(
-    groq`{"posts": *[_type == "post" && defined(slug.current) && publishedAt < now() && isDeleted != true] | order(
+    groq`{"posts": *[_type == "post" && defined(slug.current) && publishedAt < now() && isDeleted != true && isBanned != true] | order(
       (
         // Recency boost for recent posts
         (dateTime(publishedAt) > dateTime(now()) - 60*60*24*${recencyPeriod}) * ${recencyWeight} +

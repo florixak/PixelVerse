@@ -24,7 +24,7 @@ const getPostsByTopic = async ({
   }
 
   return client.fetch(
-    groq`*[_type == "post" && references(*[_type == "topic" && slug.current == $topicSlug]._id) && isDeleted != true] | order(${orderBy})[${
+    groq`*[_type == "post" && references(*[_type == "topic" && slug.current == $topicSlug]._id) && isDeleted != true && isBanned != true] | order(${orderBy})[${
       page * limit
     }..${(page + 1) * limit - 1}] {
       _id,
@@ -44,7 +44,7 @@ const getPostsByTopic = async ({
       isDeleted,
       content,
       disabledComments,
-      "commentsCount": count(*[_type == "comment" && references(^._id)])
+      "commentsCount": count(*[_type == "comment" && references(^._id) && isBanned != true && isDeleted != true]),
     }`,
     { topicSlug, page, limit }
   );

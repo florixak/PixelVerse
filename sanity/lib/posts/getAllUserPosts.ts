@@ -17,7 +17,7 @@ const getAllUserPosts = async ({
   const orderBy = getSanityOrderBy(sort);
   const offset = page * limit;
   return client.fetch(
-    groq`*[_type == "post" && isDeleted != true && author->isBanned != true && author->clerkId == $clerkId] | order(publishedAt desc) {
+    groq`*[_type == "post" && isDeleted != true && isBanned != true && author->isBanned != true && author->clerkId == $clerkId] | order(publishedAt desc) {
       _id,
       title,
       "slug": slug.current,
@@ -37,7 +37,7 @@ const getAllUserPosts = async ({
       isDeleted,
       content,
       disabledComments,
-      "commentsCount": count(*[_type == "comment" && references(^._id)]),
+      "commentsCount": count(*[_type == "comment" && references(^._id) && isDeleted != true && isBanned != true]),
     } | order(${orderBy})[${offset}..${offset + limit - 1}] ${
       software ? `&& software[any(_ in $software)]` : ""
     } ${tags ? `&& tags[any(_ in $tags)]` : ""} ${

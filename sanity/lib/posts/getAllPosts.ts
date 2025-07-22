@@ -28,7 +28,7 @@ const getAllPosts = async ({
   const offset = page * limit;
 
   return client.fetch<Post[]>(
-    groq`*[_type == "post" && isDeleted != true && author->isBanned != true] {
+    groq`*[_type == "post" && isDeleted != true && isBanned != true && author->isBanned != true] {
       _id,
       title,
       "slug": slug.current,
@@ -48,7 +48,7 @@ const getAllPosts = async ({
       isDeleted,
       content,
       disabledComments,
-      "commentsCount": count(*[_type == "comment" && references(^._id)]),
+      "commentsCount": count(*[_type == "comment" && references(^._id) && isBanned != true]),
     } | order(${orderBy})[${offset}..${offset + limit - 1}] ${
       software ? `&& software[any(_ in $software)]` : ""
     } ${tags ? `&& tags[any(_ in $tags)]` : ""} ${

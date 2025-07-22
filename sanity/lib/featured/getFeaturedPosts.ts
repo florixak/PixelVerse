@@ -9,7 +9,7 @@ export const getFeaturedPosts = async (limit: number = 6): Promise<Post[]> => {
 
   return client.fetch<Post[]>(
     groq`
-      *[_type == "post" && isDeleted != true && author->isBanned != true] {
+      *[_type == "post" && isDeleted != true && isBanned != true && author->isBanned != true] {
         _id,
       title,
       "slug": slug.current,

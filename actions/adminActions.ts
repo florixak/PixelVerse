@@ -180,24 +180,20 @@ export const handleReportAction = async (
       await writeClient
         .patch(reportedContent?._id)
         .setIfMissing({ reportCount: 0 })
-        .dec({ reportCount: 1 })
+        .set({ reportCount: 0 })
         .commit();
     } else if (action === "resolved") {
       await writeClient
         .patch(reportedContent?._id)
-        .setIfMissing({ reportCount: 0 })
-        .inc({ reportCount: 1 })
+        .setIfMissing({ isBanned: false })
+        .set({
+          reportCount: 0,
+          isBanned: true,
+          bannedBy: { _type: "reference", _ref: user?._id },
+          bannedAt: new Date().toISOString(),
+          bannedReason: resolveMessage || "Content banned by admin",
+        })
         .commit();
-
-      const shouldBanUser =
-        reportedContent.reportCount && reportedContent.reportCount + 1 >= 3;
-
-      if (shouldBanUser) {
-        await writeClient
-          .patch(reportedContent?._id)
-          .set({ isBanned: true })
-          .commit();
-      }
     }
 
     const report = await writeClient
@@ -214,6 +210,7 @@ export const handleReportAction = async (
       .commit();
 
     revalidatePath("/admin/reports");
+    revalidatePath(`/admin/reports/${reportId}`);
 
     return {
       success: true,

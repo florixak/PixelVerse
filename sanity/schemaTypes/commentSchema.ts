@@ -92,6 +92,41 @@ export const commentSchema = defineType({
       description:
         "Number of reports against this comment (cached for performance)",
     }),
+    defineField({
+      name: "isBanned",
+      title: "Is Banned",
+      type: "boolean",
+      initialValue: false,
+      //readOnly: true,
+      description:
+        "If true, this comment is banned and will not be shown to users.",
+    }),
+    defineField({
+      name: "bannedBy",
+      title: "Banned By",
+      type: "reference",
+      to: { type: "user" },
+      readOnly: true,
+      description: "User who banned this comment",
+      hidden: ({ document }) => !document?.isBanned,
+    }),
+    defineField({
+      name: "bannedReason",
+      title: "Banned Reason",
+      type: "string",
+      initialValue: "",
+      readOnly: true,
+      description: "Reason for banning this comment, set by the admin",
+      hidden: ({ document }) => !document?.isBanned,
+    }),
+    defineField({
+      name: "bannedAt",
+      title: "Banned At",
+      type: "datetime",
+      readOnly: true,
+      description: "Date when this comment was banned",
+      hidden: ({ document }) => !document?.isBanned,
+    }),
   ],
   preview: {
     select: {

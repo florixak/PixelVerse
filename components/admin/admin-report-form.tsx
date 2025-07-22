@@ -49,6 +49,9 @@ const AdminReportForm = ({
           isViolating ? "Violation detected" : "No violation"
         }`
       );
+      if (reason && isViolating && !notes.trim()) {
+        setNotes(`AI Analysis: ${reason}\n\nAdmin Review: `);
+      }
     } catch (error) {
       toast.error(
         `Error processing AI moderation check: ${

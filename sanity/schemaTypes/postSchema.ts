@@ -211,6 +211,41 @@ export const postSchema = defineType({
       description:
         "Number of reports against this post (cached for performance)",
     }),
+    defineField({
+      name: "isBanned",
+      title: "Is Banned",
+      type: "boolean",
+      initialValue: false,
+      readOnly: true,
+      description:
+        "If true, this post is banned and will not be shown to users.",
+    }),
+    defineField({
+      name: "bannedBy",
+      title: "Banned By",
+      type: "reference",
+      to: { type: "user" },
+      readOnly: true,
+      description: "User who banned this post",
+      hidden: ({ document }) => !document?.isBanned,
+    }),
+    defineField({
+      name: "bannedReason",
+      title: "Banned Reason",
+      type: "string",
+      initialValue: "",
+      readOnly: true,
+      description: "Banned reason for this post, set by the user who banned it",
+      hidden: ({ document }) => !document?.isBanned,
+    }),
+    defineField({
+      name: "bannedAt",
+      title: "Banned At",
+      type: "datetime",
+      readOnly: true,
+      description: "Date when this post was banned",
+      hidden: ({ document }) => !document?.isBanned,
+    }),
   ],
   preview: {
     select: {

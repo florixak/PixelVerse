@@ -10,7 +10,7 @@ const getPostBySlug = async (
     ? `"userReaction": reactions[user->clerkId == "${clerkId}"][0].type,`
     : "";
 
-  const query = groq`*[_type == "post" && slug.current == $postSlug && isDeleted != true && author->isBanned != true][0] {
+  const query = groq`*[_type == "post" && slug.current == $postSlug && isDeleted != true && isBanned != true && author->isBanned != true][0] {
     _id,
     title,
     "slug": slug.current,
@@ -39,11 +39,11 @@ const getPostBySlug = async (
     },
     "inspirationSource": inspirationSource,
     disabledComments,
+    "commentsCount": count(*[_type == "comment" && references(^._id) && isBanned != true && isDeleted != true]),
     "reactions": reactions[] {
       user->{_id, username, "imageUrl": imageUrl, clerkId},
       type
       },
-      "commentsCount": count(*[_type == "comment" && references(^._id)]),
       tags,
       isDeleted,
       content,

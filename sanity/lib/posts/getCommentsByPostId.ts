@@ -14,7 +14,7 @@ export const getCommentsByPostId = async ({
   page = 0,
 }: GetCommentsByPostIdParams): Promise<Comment[]> => {
   return client.fetch<Comment[]>(
-    groq`*[_type == "comment" && references($postId) && author->isBanned != true && isDeleted != true]  {
+    groq`*[_type == "comment" && references($postId) && author->isBanned != true && isDeleted != true && isBanned != true]  {
       _id,
       content,
       author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},

@@ -17,11 +17,9 @@ export async function getExploreContent({
   limit = 12,
   page = 1,
 }: ExplorePostsParams = {}): Promise<{ posts: Post[]; total: number }> {
-  // Calculate pagination offsets
   const start = (page - 1) * limit;
   const end = start + limit;
 
-  // Sort configuration
   let sortConfig = "order(publishedAt desc)";
   if (sortBy === "popular") {
     sortConfig =
@@ -32,7 +30,6 @@ export async function getExploreContent({
     sortConfig = "order(coalesce(likes, 0) desc)";
   }
 
-  // Safely escape any special characters in search
   const safeSearch = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 
   const result = await client.fetch(
@@ -41,7 +38,8 @@ export async function getExploreContent({
         _type == "post" && 
         defined(slug.current) && 
         publishedAt < now() && 
-        !isDeleted
+        isDeleted != true && isBanned != true &&
+        author->isBanned != true &&
         ${topicSlug ? `&& topic->slug.current == "${topicSlug}"` : ""}
         ${
           search
@@ -61,7 +59,7 @@ export async function getExploreContent({
         excerpt,
         "imageUrl": mainImage.asset->url,
         "likes": coalesce(likes, 0),
-        "commentCount": count(*[_type == "comment" && references(^._id)]),
+        "commentCount": count(*[_type == "comment" && references(^._id) && isBanned != true && isDeleted != true]),
         "viewCount": coalesce(viewCount, 0),
         disabledComments,
         "author": author->{
@@ -81,7 +79,7 @@ export async function getExploreContent({
         _type == "post" && 
         defined(slug.current) && 
         publishedAt < now() && 
-        !isDeleted
+        isDeleted != true && isBanned != true && author->isBanned != true &&
         ${topicSlug ? `&& topic->slug.current == "${topicSlug}"` : ""}
         ${
           search
