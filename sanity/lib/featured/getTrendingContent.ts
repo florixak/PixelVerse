@@ -81,7 +81,7 @@ export const getTrendingContent = async (
       "imageUrl": image.asset->url,
       "likes": count(*[_type == "reaction" && references(^._id) && type == "like"]),
       "dislikes": count(*[_type == "reaction" && references(^._id) && type == "dislike"]),
-      "commentsCount": count(*[_type == "comment" && references(^._id)]),
+      "commentsCount": count(*[_type == "comment" && references(^._id) && isBanned != true && isDeleted != true]),
       "author": author->{_id, username, "imageUrl": imageUrl, clerkId, role, isBanned},
       "topicSlug": topic->slug.current,
       disabledComments,
