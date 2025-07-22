@@ -97,7 +97,7 @@ export const commentSchema = defineType({
       title: "Is Banned",
       type: "boolean",
       initialValue: false,
-      //readOnly: true,
+      readOnly: true,
       description:
         "If true, this comment is banned and will not be shown to users.",
     }),
