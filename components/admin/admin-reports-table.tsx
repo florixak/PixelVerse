@@ -24,7 +24,7 @@ import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Badge } from "../ui/badge";
 import { useRouter } from "next/navigation";
-import AdminReportsTablePagination from "./admin-reports-table-pagination";
+import TablePagination from "../table-pagination";
 
 type AdminReportsTableProps = {
   initialReports: Report[];
@@ -317,7 +317,7 @@ const AdminReportsTable = ({
           </tbody>
         </table>
       </div>
-      <AdminReportsTablePagination table={table} />
+      <TablePagination table={table} />
     </>
   );
 };

@@ -15,11 +15,11 @@ import { Button } from "../ui/button";
 import AdminRoleSelect from "./admin-role-select";
 import { useState } from "react";
 import { User } from "@/sanity.types";
-import AdminUsersTablePagination from "./admin-users-table-pagination";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import AdminModifyButtons from "./admin-modify-buttons";
+import TablePagination from "../table-pagination";
 
 type AdminUsersTableProps = {
   initialUsers: User[];
@@ -227,7 +227,7 @@ const AdminUsersTable = ({
         </table>
       </div>
 
-      <AdminUsersTablePagination table={table} />
+      <TablePagination table={table} />
     </>
   );
 };

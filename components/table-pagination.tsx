@@ -1,14 +1,14 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { Table } from "@tanstack/react-table";
 
-type AdminTablePaginationProps<T> = {
+type TablePaginationProps<T> = {
   table: Table<T>;
 };
 
-const AdminTablePagination = <T,>({ table }: AdminTablePaginationProps<T>) => {
+const TablePagination = <T,>({ table }: TablePaginationProps<T>) => {
   return (
     <div className="flex items-center justify-between space-x-2 py-4">
       <div className="text-sm text-muted-foreground">
@@ -46,4 +46,4 @@ const AdminTablePagination = <T,>({ table }: AdminTablePaginationProps<T>) => {
   );
 };
 
-export default AdminTablePagination;
+export default TablePagination;
