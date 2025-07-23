@@ -1,4 +1,11 @@
-import { Home, Newspaper, Search, ShieldCheck, User } from "lucide-react";
+import {
+  Home,
+  Newspaper,
+  Search,
+  ShieldCheck,
+  TriangleAlert,
+  User,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -47,6 +54,12 @@ const menu: {
     title: "Explore",
     url: "/explore",
     icon: Search,
+  },
+  {
+    title: "My Reports",
+    url: "/my-reports",
+    icon: TriangleAlert,
+    loggedInOnly: true,
   },
   {
     title: "Admin",
