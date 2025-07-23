@@ -9,6 +9,7 @@ type TableProps<T> = {
 };
 
 const Table = <T,>({ table, columnsLength }: TableProps<T>) => {
+  const rows = table.getRowModel().rows || [];
   return (
     <>
       <div className="rounded-md border">
@@ -33,8 +34,8 @@ const Table = <T,>({ table, columnsLength }: TableProps<T>) => {
             ))}
           </thead>
           <tbody className="divide-y divide-border bg-background">
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
+            {rows.length ? (
+              rows.map((row) => (
                 <tr key={row.id} className="hover:bg-muted/50">
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3 text-sm">

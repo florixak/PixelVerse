@@ -4,11 +4,11 @@ import {
   isCommentContent,
   isUserContent,
 } from "@/sanity.types";
-import { Badge } from "../ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "./ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import {
   ExternalLink,
   AlertTriangle,
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
-type AdminReportDetailsProps = {
+type ReportDetailsProps = {
   report: Report;
 };
 
@@ -48,7 +48,7 @@ export function getReportStatus(report: Report): {
   );
 }
 
-const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
+const ReportDetails = ({ report }: ReportDetailsProps) => {
   const reportedAt = new Date(report.reportedAt);
   const reportedContent = report.reportedContent;
   const contentType = report.contentType;
@@ -271,4 +271,4 @@ const AdminReportDetails = ({ report }: AdminReportDetailsProps) => {
   );
 };
 
-export default AdminReportDetails;
+export default ReportDetails;

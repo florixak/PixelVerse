@@ -1,4 +1,4 @@
-import AdminReportDetails from "@/components/admin/admin-report-details";
+import ReportDetails from "@/components/report-details";
 import AdminReportForm from "@/components/admin/admin-report-form";
 import { Report } from "@/sanity.types";
 import { getReportById } from "@/sanity/lib/reports/getReportById";
@@ -21,7 +21,7 @@ const ReportDetailsPage = async ({ params }: ReportDetailsPageProps) => {
   }
   return (
     <section className="flex flex-col gap-8 w-full max-w-4xl mx-auto p-6">
-      <AdminReportDetails report={report} />
+      <ReportDetails report={report} />
       <AdminReportForm report={report} userId={userId} />
     </section>
   );

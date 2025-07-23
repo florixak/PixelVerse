@@ -65,6 +65,7 @@ const menu: {
     title: "Admin",
     url: "/admin",
     icon: ShieldCheck,
+    loggedInOnly: true,
     adminOnly: true,
   },
 ];
@@ -114,10 +115,9 @@ export async function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menu.map((item) => {
-                if (
-                  (item.adminOnly && !isAdmin) ||
-                  (item.loggedInOnly && !user)
-                ) {
+                const adminOnly = item.adminOnly || false;
+                const loggedInOnly = item.loggedInOnly || false;
+                if ((adminOnly && !isAdmin) || (loggedInOnly && !user)) {
                   return null;
                 }
                 return (
