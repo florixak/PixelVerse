@@ -15,6 +15,7 @@ import TrendingTopicsSkeleton from "@/components/topic/topic-trending-card-skele
 import PopularTopicsSkeleton from "@/components/topic/popular-topics-skeleton";
 import TopicSuggestButton from "@/components/topic/topic-suggest-button";
 import SortFilterSelect from "@/components/sort-filter-select";
+import NoContent from "@/components/no-content";
 
 type TopicsPageProps = {
   searchParams: Promise<{
@@ -81,7 +82,7 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
             <PopularTopics />
           </Suspense>
         </div>
-        <div className="flex items-start gap-2 flex-col">
+        <div className="flex items-start gap-2 flex-col w-full">
           <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
             <TrendingUp color="lime" /> Trending Topics
           </h2>
@@ -89,7 +90,7 @@ const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
             <TrendingTopics />
           </Suspense>
         </div>
-        <div className="flex items-start gap-2 flex-col">
+        <div className="flex items-start gap-2 flex-col w-full">
           <div className="flex items-center justify-between w-full">
             <h2 className="text-2xl font-semibold flex flex-row items-center gap-2">
               All Topics
@@ -112,6 +113,13 @@ const Topics = async ({ sort }: TopicsProps) => {
     sort,
     from: 0,
   });
+
+  if (!topics || topics.length === 0) {
+    return (
+      <NoContent message="There are no topics available." contentType="topic" />
+    );
+  }
+
   return (
     <MasonryWrapper>
       {topics.map((topic) => (
@@ -127,6 +135,11 @@ const TrendingTopics = async () => {
     sort: "trending",
     from: 0,
   });
+  if (!topics || topics.length === 0) {
+    return (
+      <NoContent message="No trending topics found." contentType="topic" />
+    );
+  }
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {topics.map((topic) => (
@@ -142,6 +155,9 @@ const PopularTopics = async () => {
     sort: "popular",
     from: 0,
   });
+  if (!topics || topics.length === 0) {
+    return <NoContent message="No popular topics found." contentType="topic" />;
+  }
   return (
     <MasonryWrapper>
       {topics.map((topic) => (
