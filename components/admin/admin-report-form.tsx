@@ -14,12 +14,17 @@ import {
 } from "@/actions/ai-moderation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Info } from "lucide-react";
+import { z } from "zod";
 
 type AdminReportFormProps = {
   report: Report;
   onActionComplete?: () => void;
   userId?: User["clerkId"];
 };
+
+const notesSchema = z.object({
+  notes: z.string().min(0).max(5, "Notes must be 5 characters or less"),
+});
 
 const AdminReportForm = ({
   report,
@@ -33,8 +38,12 @@ const AdminReportForm = ({
   );
   const form = useForm({
     defaultValues: { notes: "" } as { notes: string },
+    validators: {
+      onChange: notesSchema,
+    },
     onSubmit: async ({ value }) => {
       try {
+        setIsSubmitting(true);
         const result = await handleReportAction(
           report._id,
           currentAction,
@@ -111,12 +120,22 @@ const AdminReportForm = ({
         <>
           <form.Field name="notes">
             {(field) => (
-              <Textarea
-                placeholder="Add notes explaining your decision (visible to other moderators)"
-                className="min-h-[100px]"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
+              <div>
+                <Textarea
+                  placeholder="Add notes explaining your decision (visible to other moderators)"
+                  className="min-h-[100px]"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+
+                {field.state.meta.errors.length > 0 && (
+                  <div className="text-sm text-red-500 mt-1">
+                    {field.state.meta.errors.map((error, index) => (
+                      <div key={index}>{error?.message}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </form.Field>
           <div className="flex gap-2 justify-end items-center flex-col sm:flex-row">
