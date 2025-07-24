@@ -28,7 +28,6 @@ const addUser = async ({
     email,
     imageUrl,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
     role: "user",
   });
 };
