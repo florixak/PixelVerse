@@ -2,7 +2,6 @@
 
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -24,7 +23,7 @@ import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Badge } from "../ui/badge";
 import { useRouter } from "next/navigation";
-import TablePagination from "../table-pagination";
+import Table from "../table";
 
 type AdminReportsTableProps = {
   initialReports: Report[];
@@ -270,56 +269,7 @@ const AdminReportsTable = ({
     },
   });
 
-  return (
-    <>
-      <div className="rounded-md border">
-        <table className="min-w-full divide-y divide-border">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="px-4 py-3 text-left text-sm font-medium"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="divide-y divide-border bg-background">
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-muted/50">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3 text-sm">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={columns.length} className="h-24 text-center">
-                  No reports found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <TablePagination table={table} />
-    </>
-  );
+  return <Table table={table} columnsLength={columns.length} />;
 };
 
 export default AdminReportsTable;
