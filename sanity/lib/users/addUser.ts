@@ -18,14 +18,18 @@ const addUser = async ({
     throw new Error("clerkId, username, and email are required");
   }
 
+  const uniqueUsername = await ensureUniqueUsername(username);
+
   return writeClient.create({
     _type: "user",
     clerkId,
-    username: await ensureUniqueUsername(username),
+    username: uniqueUsername,
     fullName,
     email,
     imageUrl,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    role: "user",
   });
 };
 
