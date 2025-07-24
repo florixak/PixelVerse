@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { handleReportAction } from "@/actions/adminActions";
+import { handleReportAction, ReportAction } from "@/actions/adminActions";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Report, User } from "@/sanity.types";
 import toast from "react-hot-toast";
+import { useForm } from "@tanstack/react-form";
 import {
   AIReportResult,
   checkReportByAI,
@@ -26,10 +27,42 @@ const AdminReportForm = ({
   userId,
 }: AdminReportFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notes, setNotes] = useState("");
+  const [currentAction, setCurrentAction] = useState<ReportAction>(null);
   const [aiResult, setAIResult] = useState<AIReportResult | null>(
     report.aiCheckResult || null
   );
+  const form = useForm({
+    defaultValues: { notes: "" } as { notes: string },
+    onSubmit: async ({ value }) => {
+      try {
+        const result = await handleReportAction(
+          report._id,
+          currentAction,
+          value.notes || undefined
+        );
+
+        if (result.success) {
+          toast.success(
+            `Report ${
+              currentAction === "resolved" ? "resolved" : "rejected"
+            } successfully`
+          );
+          if (onActionComplete) onActionComplete();
+        } else {
+          toast.error(result.message || "Failed to process report action");
+        }
+      } catch (error) {
+        toast.error(
+          `Error processing report action: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
+      } finally {
+        setIsSubmitting(false);
+        setCurrentAction(null);
+      }
+    },
+  });
 
   if (!report) return null;
 
@@ -49,9 +82,6 @@ const AdminReportForm = ({
           isViolating ? "Violation detected" : "No violation"
         }`
       );
-      if (reason && isViolating && !notes.trim()) {
-        setNotes(`AI Analysis: ${reason}\n\nAdmin Review: `);
-      }
     } catch (error) {
       toast.error(
         `Error processing AI moderation check: ${
@@ -63,73 +93,68 @@ const AdminReportForm = ({
     }
   };
 
-  const handleAction = async (action: "resolved" | "rejected") => {
-    setIsSubmitting(true);
+  const handleResolveAction = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentAction("resolved");
+    form.handleSubmit();
+  };
 
-    try {
-      const result = await handleReportAction(
-        report._id,
-        action,
-        notes || undefined
-      );
-
-      if (result.success) {
-        toast.success(
-          action === "resolved"
-            ? "Report resolved successfully"
-            : "Report rejected successfully"
-        );
-        if (onActionComplete) onActionComplete();
-      } else {
-        toast.error(result.message || "Failed to process report action");
-      }
-    } catch (error) {
-      toast.error(
-        `Error processing report action: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleRejectAction = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentAction("rejected");
+    form.handleSubmit();
   };
 
   return (
     <div className="space-y-4">
-      <Textarea
-        placeholder="Optional: Add notes explaining your decision (visible to other moderators)"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="min-h-[100px]"
-      />
-
       {report.status === "pending" && (
-        <div className="flex gap-2 justify-end items-center flex-col sm:flex-row">
-          <div className="flex items-center gap-2 flex-col sm:flex-row">
-            <AIReportInfo aiResult={aiResult} />
+        <>
+          <form.Field name="notes">
+            {(field) => (
+              <Textarea
+                placeholder="Add notes explaining your decision (visible to other moderators)"
+                className="min-h-[100px]"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
+          <div className="flex gap-2 justify-end items-center flex-col sm:flex-row">
+            <div className="flex items-center gap-2 flex-col sm:flex-row">
+              <AIReportInfo aiResult={aiResult} />
+              <Button
+                variant="secondary"
+                onClick={handleAIAction}
+                disabled={isSubmitting}
+              >
+                Check with AI
+              </Button>
+            </div>
+
             <Button
-              variant="secondary"
-              onClick={handleAIAction}
+              id="reject-report"
+              variant="outline"
+              onClick={handleRejectAction}
               disabled={isSubmitting}
+              type="button"
             >
-              Check with AI
+              {isSubmitting && currentAction === "rejected"
+                ? "Rejecting..."
+                : "Reject Report"}
+            </Button>
+
+            <Button
+              id="resolve-report"
+              onClick={handleResolveAction}
+              disabled={isSubmitting}
+              type="button"
+            >
+              {isSubmitting && currentAction === "resolved"
+                ? "Resolving..."
+                : "Resolve Report"}
             </Button>
           </div>
-
-          <Button
-            variant="outline"
-            onClick={() => handleAction("rejected")}
-            disabled={isSubmitting}
-          >
-            Reject Report
-          </Button>
-          <Button
-            onClick={() => handleAction("resolved")}
-            disabled={isSubmitting}
-          >
-            Resolve Report
-          </Button>
-        </div>
+        </>
       )}
     </div>
   );
