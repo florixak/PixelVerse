@@ -73,6 +73,14 @@ const menu: {
 async function TopicsList() {
   const popularTopics = await getPopularTopics();
 
+  if (!popularTopics || popularTopics.length === 0) {
+    return (
+      <p className="pl-2 text-sm text-muted-foreground">
+        No popular topics found.
+      </p>
+    );
+  }
+
   return (
     <>
       {popularTopics.map((item) => (

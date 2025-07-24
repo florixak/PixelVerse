@@ -1,4 +1,5 @@
 import SearchBar from "@/components/explore/search-bar";
+import GlobalEmptyContentState from "@/components/global-empty-content-state";
 import MasonryWrapper from "@/components/masonry-wrapper";
 import PostCard from "@/components/post/post-card";
 import TopicCard from "@/components/topic/topic-card";
@@ -6,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import UserSearchCard from "@/components/user/user-search-card";
 import { getTrendingContent } from "@/sanity/lib/featured/getTrendingContent";
 import { getSearchResults } from "@/sanity/lib/search/getSearchResults";
+import getAllTopics from "@/sanity/lib/topics/getAllTopics";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -16,11 +18,15 @@ type ExplorePageProps = {
 
 const ExplorePage = async ({ searchParams }: ExplorePageProps) => {
   const { q, page } = await searchParams;
+
   const isSearchMode = Boolean(q && q.trim().length > 0);
+
+  const allTopicsCount = await getAllTopics({ limit: 1, from: 0 });
+  const hasAnyTopics = allTopicsCount && allTopicsCount.length > 0;
 
   return (
     <section className="relative max-w-6xl mx-auto flex flex-col gap-4 py-8 px-4 md:px-0">
-      <div className="text-center max-w-4xl mx-auto flex flex-col">
+      <div className="text-center max-w-4xl mx-auto flex flex-col gap-2">
         <h1 className="text-2xl font-bold">
           {isSearchMode ? "Search Results" : "Explore"}
         </h1>
@@ -29,9 +35,10 @@ const ExplorePage = async ({ searchParams }: ExplorePageProps) => {
             ? `Results for "${q}"`
             : "Discover trending posts and topics from the community."}
         </p>
+
         <SearchBar />
       </div>
-
+      {!hasAnyTopics && !isSearchMode && <GlobalEmptyContentState />}
       <Suspense fallback={<PostsLoadingSkeleton />}>
         {isSearchMode ? (
           <PostResults searchQuery={q || ""} pageNumber={Number(page) || 1} />
@@ -81,17 +88,6 @@ const PostResults = async ({
   }
 
   const totalResults = totalPosts + totalTopics + totalUsers;
-
-  /*console.log("Search Results:", {
-    searchQuery,
-    pageNumber,
-    totalPosts,
-    totalTopics,
-    totalUsers,
-    posts,
-    topics,
-    users,
-  });*/
 
   if (totalResults === 0) {
     return (

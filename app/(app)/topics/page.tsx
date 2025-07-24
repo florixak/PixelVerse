@@ -16,6 +16,7 @@ import PopularTopicsSkeleton from "@/components/topic/popular-topics-skeleton";
 import TopicSuggestButton from "@/components/topic/topic-suggest-button";
 import SortFilterSelect from "@/components/sort-filter-select";
 import NoContent from "@/components/no-content";
+import GlobalEmptyContentState from "@/components/global-empty-content-state";
 
 type TopicsPageProps = {
   searchParams: Promise<{
@@ -48,6 +49,24 @@ export const generateMetadata = () => {
 
 const TopicsPage = async ({ searchParams }: TopicsPageProps) => {
   const { sort } = await searchParams;
+
+  const allTopicsCount = await getAllTopics({ limit: 1, from: 0 });
+  const hasAnyTopics = allTopicsCount && allTopicsCount.length > 0;
+
+  if (!hasAnyTopics) {
+    return (
+      <section className="flex-center flex-col w-full gap-10 p-6 md:p-10">
+        <div className="flex flex-col items-center w-full gap-2 max-w-3xl">
+          <h1 className="text-2xl font-bold">Explore Topics</h1>
+          <p className="text-muted-foreground">
+            Here you can explore various topics related to pixel art.
+          </p>
+        </div>
+
+        <GlobalEmptyContentState />
+      </section>
+    );
+  }
 
   return (
     <section className="flex-center flex-col w-full gap-10 p-6 md:p-10">
