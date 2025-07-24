@@ -4,16 +4,20 @@ import { getUserByClerkId } from "../users/getUserByClerkId";
 import { getPostStats } from "./getPostStats";
 import { getReportStats } from "./getReportStats";
 import { getUserStats } from "./getUserStats";
+import { notFound } from "next/navigation";
 
 export const getDashboardMetrics = async () => {
   try {
     const user = await currentUser();
-    if (!user) throw new Error("Not authenticated");
+    if (!user) return {};
 
     const sanityUser = await getUserByClerkId(user.id);
+    if (!sanityUser) {
+      return {};
+    }
     const canAccess = await canAccessDashboard(sanityUser?.clerkId);
     if (!canAccess) {
-      throw new Error("Not authorized");
+      return {};
     }
 
     const [userStats, postStats, reportStats] = await Promise.all([
