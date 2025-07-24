@@ -5,7 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { canAccessDashboard } from "@/lib/user-utils";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { auth } from "@clerk/nextjs/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,
@@ -15,21 +15,21 @@ export default async function AdminLayout({
   try {
     const { userId } = await auth();
     if (!userId) {
-      notFound();
+      redirect("/");
     }
 
     const sanityUser = await getUserByClerkId(userId);
     if (!sanityUser || sanityUser.isBanned || !sanityUser.clerkId) {
-      notFound();
+      redirect("/");
     }
 
     const isAllowed = await canAccessDashboard(sanityUser.clerkId);
     if (!isAllowed) {
-      notFound();
+      redirect("/");
     }
   } catch (error) {
     console.log("Auth check failed, redirecting:", error);
-    notFound();
+    redirect("/");
   }
 
   return (
