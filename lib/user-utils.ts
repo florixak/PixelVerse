@@ -2,26 +2,36 @@ import { User as UserType } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import addUser from "@/sanity/lib/users/addUser";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
-import { auth, User } from "@clerk/nextjs/server";
+import { auth, clerkClient, User } from "@clerk/nextjs/server";
 
-export async function ensureSanityUser(user: User): Promise<UserType["_id"]> {
-  if (!user) throw new Error("No user provided");
+export async function ensureSanityUser(
+  userId: string
+): Promise<UserType["_id"]> {
+  if (!userId) throw new Error("No user ID provided");
 
-  const existingUser = await writeClient.fetch(
+  const sanityUser = await writeClient.fetch(
     `*[_type == "user" && clerkId == $clerkId][0]`,
-    { clerkId: user.id }
+    { clerkId: userId }
   );
 
-  if (existingUser) {
-    return existingUser._id;
+  if (sanityUser) {
+    return sanityUser;
   }
+
+  const clerk = await clerkClient();
+  const user = await clerk.users.getUser(userId);
+
+  if (!user) throw new Error("No user provided");
 
   const newUser = await addUser({
     clerkId: user.id,
-    username: user.username || user.firstName || "Anonymous",
-    fullName: user.fullName || "",
-    email: user.emailAddresses[0]?.emailAddress || "",
-    imageUrl: user.imageUrl || "",
+    username:
+      user.username ||
+      user.emailAddresses[0]?.emailAddress.split("@")[0] ||
+      `user_${userId.slice(-6)}`,
+    fullName: user.fullName || user.firstName || "New User",
+    email: user.emailAddresses[0]?.emailAddress,
+    imageUrl: user.imageUrl,
   });
 
   return newUser._id;
