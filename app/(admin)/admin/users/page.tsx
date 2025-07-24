@@ -4,7 +4,7 @@ import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { currentUser } from "@clerk/nextjs/server";
 
 const AdminUsersPage = async () => {
-  const users = await getAllUsers({ withBanned: true });
+  const users = await getAllUsers({});
   const user = await currentUser();
   if (!user) {
     return <div>You must be logged in to view this page.</div>;
