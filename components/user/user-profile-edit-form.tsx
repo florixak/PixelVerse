@@ -45,8 +45,6 @@ const UserProfileEditForm = ({
   onSave,
   onCancel,
 }: UserProfileEditFormProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const originalValues: ProfileData = {
     fullName: user.fullName,
     username: user.username,
@@ -60,7 +58,6 @@ const UserProfileEditForm = ({
     },
     onSubmit: async ({ value }) => {
       try {
-        setIsLoading(true);
         const response = await updateProfile(value);
 
         if (!response.success) {
@@ -77,8 +74,6 @@ const UserProfileEditForm = ({
           error.message || "An error occurred while updating profile"
         );
         console.error("Error updating profile:", error);
-      } finally {
-        setIsLoading(false);
       }
     },
   });
@@ -87,15 +82,6 @@ const UserProfileEditForm = ({
     if (onCancel) {
       onCancel();
     }
-  };
-
-  const hasChanges = () => {
-    const currentValues = form.state.values;
-    return (
-      currentValues.fullName !== originalValues.fullName ||
-      currentValues.username !== originalValues.username ||
-      currentValues.bio !== originalValues.bio
-    );
   };
 
   return (
@@ -173,43 +159,46 @@ const UserProfileEditForm = ({
       </form.Field>
 
       <div className="flex gap-3 pt-4">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={handleCancel}
-          disabled={isLoading}
-          className="flex-1"
-        >
-          Cancel
-        </Button>
         <form.Subscribe
           selector={(state) => ({
             values: state.values,
+            isSubmitting: state.isSubmitting,
           })}
         >
-          {({ values }) => {
+          {({ values, isSubmitting }) => {
             const hasChanges =
               values.fullName !== originalValues.fullName ||
               values.username !== originalValues.username ||
               values.bio !== originalValues.bio;
 
             return (
-              <Button
-                type="submit"
-                disabled={isLoading || !hasChanges}
-                className="flex-1"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : hasChanges ? (
-                  "Update Profile"
-                ) : (
-                  "No Changes"
-                )}
-              </Button>
+              <>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleCancel}
+                  className="flex-1"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || !hasChanges}
+                  className="flex-1"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : hasChanges ? (
+                    "Update Profile"
+                  ) : (
+                    "No Changes"
+                  )}
+                </Button>
+              </>
             );
           }}
         </form.Subscribe>
