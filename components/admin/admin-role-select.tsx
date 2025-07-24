@@ -63,28 +63,22 @@ const AdminRoleSelect = ({
       setIsUpdating(true);
       setDisplayedRole(newRole);
 
-      const updatePromise = updateUserRole(targetUser._id, newRole);
+      const updatePromise = await updateUserRole(targetUser._id, newRole);
 
-      const result = await toast.promise(updatePromise, {
-        loading: `Updating role to ${newRole}...`,
-        success: (data) => {
-          if (data.success) {
-            return `Role updated to ${newRole}.`;
-          } else {
-            return `Failed: ${data.message || "Unknown error"}`;
-          }
-        },
-        error: (error) => {
-          return `Failed to update role: ${
-            error instanceof Error ? error.message : "Unknown error"
-          }`;
-        },
-      });
+      if (updatePromise.success) {
+        setActualRole(newRole);
+        setPendingRole(null);
+        setShowConfirm(false);
+        setDisplayedRole(newRole);
+        toast.success(`User role updated to ${newRole}`);
+      } else {
+        toast.error("Failed to update user role");
+        setDisplayedRole(actualRole);
+      }
     } catch (error) {
       setDisplayedRole(actualRole); // Revert on any error
       console.error("Error updating role:", error);
     } finally {
-      // This now runs AFTER promise resolves
       setIsUpdating(false);
       setPendingRole(null);
     }
@@ -111,7 +105,7 @@ const AdminRoleSelect = ({
       <Tooltip>
         <TooltipTrigger asChild>
           <div>
-            <Select disabled value="admin">
+            <Select disabled>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Admin" />
               </SelectTrigger>
@@ -121,7 +115,7 @@ const AdminRoleSelect = ({
             </Select>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="top">
+        <TooltipContent side="top" className="bg-muted text-muted-foreground">
           Admin roles cannot be modified by other admins
         </TooltipContent>
       </Tooltip>
@@ -133,15 +127,21 @@ const AdminRoleSelect = ({
       <Select
         value={displayedRole}
         onValueChange={handleValueChange}
-        disabled={isUpdating}
+        disabled={isUpdating || currentUser.role !== "admin"}
       >
         <SelectTrigger className="w-32">
           <SelectValue placeholder={displayedRole} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="admin">Admin</SelectItem>
-          <SelectItem value="moderator">Moderator</SelectItem>
-          <SelectItem value="user">User</SelectItem>
+          <SelectItem value="admin" disabled={actualRole === "admin"}>
+            Admin
+          </SelectItem>
+          <SelectItem value="moderator" disabled={actualRole === "moderator"}>
+            Moderator
+          </SelectItem>
+          <SelectItem value="user" disabled={actualRole === "user"}>
+            User
+          </SelectItem>
         </SelectContent>
       </Select>
 
