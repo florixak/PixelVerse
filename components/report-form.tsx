@@ -254,10 +254,11 @@ const ReportForm = ({ content, contentType }: ReportFormProps) => {
           <form.Subscribe
             selector={(state) => ({
               isSubmitting: state.isSubmitting,
+              isValid: state.isValid,
             })}
           >
-            {({ isSubmitting }) => (
-              <Button type="submit" disabled={isSubmitting}>
+            {({ isSubmitting, isValid }) => (
+              <Button type="submit" disabled={isSubmitting || !isValid}>
                 {isSubmitting ? "Submitting..." : "Submit Report"}
               </Button>
             )}
