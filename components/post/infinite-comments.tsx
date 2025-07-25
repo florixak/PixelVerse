@@ -17,7 +17,6 @@ const InfiniteComments = ({ postId }: InfiniteCommentsProps) => {
     data,
     isError,
     error,
-    ref,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
