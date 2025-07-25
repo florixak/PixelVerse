@@ -34,7 +34,7 @@ type PostCommentFormData = {
 };
 
 const postContentSchema = z.object({
-  content: z.string().min(2).max(5).trim(),
+  content: z.string().min(2).max(500).trim(),
 });
 
 const PostCommentForm = ({ post }: PostCommentFormProps) => {

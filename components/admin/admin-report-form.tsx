@@ -23,7 +23,7 @@ type AdminReportFormProps = {
 };
 
 const notesSchema = z.object({
-  notes: z.string().min(0).max(5, "Notes must be 5 characters or less"),
+  notes: z.string().min(0).max(1000, "Notes must be 1000 characters or less"),
 });
 
 const AdminReportForm = ({
