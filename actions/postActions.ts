@@ -239,7 +239,13 @@ export async function reactOnPost(
 /**
  * Creates a new comment on a post
  */
-export async function createComment(prevState: any, formData: FormData) {
+export async function createComment({
+  postId,
+  content,
+}: {
+  postId: Post["_id"];
+  content: Comment["content"];
+}) {
   try {
     const user = await currentUser();
     if (!user) {
@@ -247,25 +253,13 @@ export async function createComment(prevState: any, formData: FormData) {
     }
 
     const userId = await ensureSanityUser(user.id);
-    const postInformation = formData.get("postInformation") as string;
-    const {
-      postId,
-      topicSlug,
-      postSlug,
-    }: {
-      postId: Post["_id"];
-      topicSlug: Post["topicSlug"];
-      postSlug: Post["slug"];
-    } = JSON.parse(postInformation);
-    const content = formData.get("content") as string;
 
     if (!content?.trim()) {
       return { error: "Comment cannot be empty" };
     }
 
-    // Verify post exists and comments are enabled
     const post = await writeClient.fetch(
-      `*[_type == "post" && _id == $postId && (isDeleted != true)][0]`,
+      `*[_type == "post" && _id == $postId && isDeleted != true && isBanned != true][0]`,
       { postId }
     );
 
@@ -292,7 +286,7 @@ export async function createComment(prevState: any, formData: FormData) {
       publishedAt: new Date().toISOString(),
     });
 
-    revalidatePath(`/topics/${topicSlug}/${postSlug}`);
+    revalidatePath(`/topics/${post.topicSlug}/${post.slug}`);
     return { success: true };
   } catch (error) {
     console.error("Error creating comment:", error);
