@@ -3,14 +3,15 @@
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { Textarea } from "../ui/textarea";
-import { createComment } from "@/actions/postActions";
 import { Comment, Post } from "@/sanity.types";
-import toast from "react-hot-toast";
-import { useActionState, useEffect, useRef, useState } from "react";
-import SubmitButton from "../submit-button";
-import PostComment from "./post-comment";
-import InfiniteComments from "./infinite-comments";
 import AuthButtons from "../auth-buttons";
+import { toast } from "react-hot-toast";
+import { useForm } from "@tanstack/react-form";
+import z from "zod";
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { createComment } from "@/actions/postActions";
+import PostOptimisticComments from "./post-optimistic-commets";
 
 type PostCommentFormProps = {
   post: Post;
@@ -28,65 +29,73 @@ export type OptimisticComment = Pick<
   };
 };
 
-type CommentFormState =
-  | { success: boolean; error?: undefined }
-  | { error: string; success?: undefined };
-
-const initialState: CommentFormState = {
-  success: false,
-  error: undefined,
+type PostCommentFormData = {
+  content: Comment["content"];
 };
+
+const postContentSchema = z.object({
+  content: z.string().min(2).max(5).trim(),
+});
 
 const PostCommentForm = ({ post }: PostCommentFormProps) => {
   const { user } = useUser();
-  const formRef = useRef<HTMLFormElement>(null);
-  const [state, formAction] = useActionState(createComment, initialState);
   const [optimisticComments, setOptimisticComments] = useState<
     OptimisticComment[]
   >([]);
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const form = useForm({
+    defaultValues: { content: "" } as PostCommentFormData,
+    validators: { onChange: postContentSchema },
+    onSubmit: async ({ value }) => {
+      if (!value.content) {
+        return toast.error("Please enter a comment.");
+      }
+      const content = value?.content.trim();
+      if (!content) {
+        return toast.error("Comment content cannot be empty.");
+      }
 
-  const handleSubmit = (formData: FormData) => {
-    const content = formData.get("content") as string;
+      const tempId = `temp-${Date.now()}`;
+      const optimisticComment: OptimisticComment = {
+        _id: tempId,
+        content,
+        publishedAt: new Date().toISOString(),
+        isOptimistic: true,
+      };
+      if (user) {
+        setOptimisticComments((prev) => [optimisticComment, ...prev]);
+      }
 
-    if (content && user) {
-      setOptimisticComments([
-        {
-          _id: `temp-${Date.now()}`,
+      try {
+        const comment = await createComment({
+          postId: post._id,
           content,
-          publishedAt: new Date().toISOString(),
-          isOptimistic: true,
-        },
-        ...optimisticComments,
-      ]);
+        });
 
-      formAction(formData);
-    }
-  };
+        if (!comment) {
+          setOptimisticComments((prev) => prev.filter((c) => c._id !== tempId));
+          return toast.error("Failed to create comment. Please try again.");
+        }
 
-  useEffect(() => {
-    if (state.error) {
-      toast.error(state.error);
-    }
+        setOptimisticComments((prev) => prev.filter((c) => c._id !== tempId));
 
-    if (state.success) {
-      toast.success("Comment posted successfully!");
-      formRef.current?.reset();
-      setOptimisticComments((prev) =>
-        prev.filter((comment) => !comment.isOptimistic)
-      );
-    }
-  }, [state]);
+        form.reset();
+
+        toast.success("Comment posted!");
+      } catch (error) {
+        setOptimisticComments((prev) => prev.filter((c) => c._id !== tempId));
+        toast.error("Failed to create comment. Please try again.");
+      }
+    },
+  });
 
   return (
     <>
       <form
-        ref={formRef}
-        action={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
         className="flex flex-col gap-2 p-4 border border-muted rounded-lg bg-background w-full"
       >
         <input
@@ -101,60 +110,68 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
 
         <div className="flex flex-row items-start gap-2 w-full">
           <Image
-            src={
-              isMounted && user?.imageUrl
-                ? user.imageUrl
-                : "/avatar-default.svg"
-            }
-            alt={`${
-              isMounted && user?.username ? user.username : "Anonymous"
-            }'s avatar`}
+            src={user?.imageUrl ? user.imageUrl : "/avatar-default.svg"}
+            alt={`${user?.username ? user.username : "Anonymous"}'s avatar`}
             className="w-10 h-10 rounded-full object-cover mt-2"
             width={32}
             height={32}
             loading="lazy"
             blurDataURL="/avatar-default.svg"
           />
-          <Textarea
-            name="content"
-            className="w-full p-2 border border-muted rounded-lg min-h-[80px] max-h-[200px]"
-            placeholder="Write a comment..."
-            rows={3}
-            required
-          />
+          <form.Field name="content">
+            {(field) => (
+              <Textarea
+                className="w-full p-2 border border-muted rounded-lg min-h-[80px] max-h-[200px]"
+                placeholder="Write a comment..."
+                rows={3}
+                required
+                value={field.state.value}
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                }}
+              />
+            )}
+          </form.Field>
         </div>
         <div className="flex justify-end items-center gap-2">
           {!user ? (
             <AuthButtons />
           ) : (
-            <SubmitButton label="Post Comment" submittingLabel="Posting..." />
+            <form.Subscribe
+              selector={(state) => {
+                return {
+                  isSubmitting: state.isSubmitting,
+                  isValid: state.isValid,
+                  isDirty: state.isDirty,
+                };
+              }}
+            >
+              {(field) => (
+                <Button
+                  type="submit"
+                  className="w-full sm:w-auto"
+                  disabled={
+                    optimisticComments.length > 0 ||
+                    !field.isValid ||
+                    !field.isDirty
+                  }
+                >
+                  {field.isSubmitting ? "Submitting..." : "Submit Comment"}
+                </Button>
+              )}
+            </form.Subscribe>
           )}
         </div>
       </form>
-      {optimisticComments.length > 0 && (
-        <>
-          {optimisticComments.map((comment) => (
-            <PostComment
-              key={comment._id}
-              currentUserId={user?.id}
-              comment={{
-                ...comment,
-                author: {
-                  username: user?.username || "Anonymous",
-                  imageUrl: user?.imageUrl || "/avatar-default.svg",
-                  clerkId: user?.id,
-                },
-              }}
-            />
-          ))}
-          <InfiniteComments postId={post._id} />
-        </>
-      )}
-      {optimisticComments.length === 0 && post.commentsCount === 0 && (
-        <p className="text-muted-foreground text-sm text-center mt-4">
-          No comments yet. Be the first to comment!
-        </p>
-      )}
+      <p className="text-muted-foreground text-sm mt-2">
+        Comments are visible to everyone. Please be respectful and follow our
+        community guidelines.
+      </p>
+      <PostOptimisticComments
+        optimisticComments={optimisticComments}
+        user={user}
+        post={post}
+      />
     </>
   );
 };
