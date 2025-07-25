@@ -31,7 +31,6 @@ const AdminReportForm = ({
   onActionComplete,
   userId,
 }: AdminReportFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentAction, setCurrentAction] = useState<ReportAction>(null);
   const [aiResult, setAIResult] = useState<AIReportResult | null>(
     report.aiCheckResult || null
@@ -43,7 +42,6 @@ const AdminReportForm = ({
     },
     onSubmit: async ({ value }) => {
       try {
-        setIsSubmitting(true);
         const result = await handleReportAction(
           report._id,
           currentAction,
@@ -66,9 +64,6 @@ const AdminReportForm = ({
             error instanceof Error ? error.message : "Unknown error"
           }`
         );
-      } finally {
-        setIsSubmitting(false);
-        setCurrentAction(null);
       }
     },
   });
@@ -76,8 +71,12 @@ const AdminReportForm = ({
   if (!report) return null;
 
   const handleAIAction = async () => {
-    setIsSubmitting(true);
     try {
+      if (!userId) {
+        toast.error("User ID is required for AI moderation check.");
+        return;
+      }
+      setCurrentAction("aiChecking");
       const { isViolating, reason, confidence } = await checkReportByAI(
         report,
         userId
@@ -98,7 +97,7 @@ const AdminReportForm = ({
         }`
       );
     } finally {
-      setIsSubmitting(false);
+      setCurrentAction(null);
     }
   };
 
@@ -114,30 +113,45 @@ const AdminReportForm = ({
     form.handleSubmit();
   };
 
-  return (
-    <div className="space-y-4">
-      {report.status === "pending" && (
-        <>
-          <form.Field name="notes">
-            {(field) => (
-              <div>
-                <Textarea
-                  placeholder="Add notes explaining your decision (visible to other moderators)"
-                  className="min-h-[100px]"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
+  if (!report) return null;
+  if (report.status !== "pending") return null;
 
-                {field.state.meta.errors.length > 0 && (
-                  <div className="text-sm text-red-500 mt-1">
-                    {field.state.meta.errors.map((error, index) => (
-                      <div key={index}>{error?.message}</div>
-                    ))}
-                  </div>
-                )}
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.handleSubmit();
+      }}
+      className="space-y-6"
+    >
+      <form.Field name="notes">
+        {(field) => (
+          <div>
+            <Textarea
+              placeholder="Add notes explaining your decision (visible to other moderators)"
+              className="min-h-[100px]"
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+
+            {field.state.meta.errors.length > 0 && (
+              <div className="text-sm text-red-500 mt-1">
+                {field.state.meta.errors.map((error, index) => (
+                  <div key={index}>{error?.message}</div>
+                ))}
               </div>
             )}
-          </form.Field>
+          </div>
+        )}
+      </form.Field>
+      <form.Subscribe
+        selector={(state) => ({
+          isSubmitting: state.isSubmitting,
+          values: state.values,
+          isValid: state.isValid,
+        })}
+      >
+        {({ isSubmitting, isValid }) => (
           <div className="flex gap-2 justify-end items-center flex-col sm:flex-row">
             <div className="flex items-center gap-2 flex-col sm:flex-row">
               <AIReportInfo aiResult={aiResult} />
@@ -146,7 +160,9 @@ const AdminReportForm = ({
                 onClick={handleAIAction}
                 disabled={isSubmitting}
               >
-                Check with AI
+                {isSubmitting && currentAction === "aiChecking"
+                  ? "Checking with AI..."
+                  : "Check with AI"}
               </Button>
             </div>
 
@@ -154,7 +170,9 @@ const AdminReportForm = ({
               id="reject-report"
               variant="outline"
               onClick={handleRejectAction}
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting || currentAction === "resolved" || !isValid
+              }
               type="button"
             >
               {isSubmitting && currentAction === "rejected"
@@ -165,7 +183,9 @@ const AdminReportForm = ({
             <Button
               id="resolve-report"
               onClick={handleResolveAction}
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting || currentAction === "rejected" || !isValid
+              }
               type="button"
             >
               {isSubmitting && currentAction === "resolved"
@@ -173,9 +193,9 @@ const AdminReportForm = ({
                 : "Resolve Report"}
             </Button>
           </div>
-        </>
-      )}
-    </div>
+        )}
+      </form.Subscribe>
+    </form>
   );
 };
 

@@ -114,7 +114,7 @@ export const deleteUser = async (
   }
 };
 
-export type ReportAction = "resolved" | "rejected" | null;
+export type ReportAction = "resolved" | "rejected" | "aiChecking" | null;
 
 export const handleReportAction = async (
   reportId: Report["_id"],
