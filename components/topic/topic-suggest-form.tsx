@@ -179,9 +179,10 @@ const TopicSuggestForm = () => {
         <form.Subscribe
           selector={(state) => ({
             isSubmitting: state.isSubmitting,
+            isValid: state.isValid,
           })}
         >
-          {({ isSubmitting }) => {
+          {({ isSubmitting, isValid }) => {
             return (
               <>
                 <Button
@@ -192,7 +193,7 @@ const TopicSuggestForm = () => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="submit" disabled={isSubmitting || !isValid}>
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

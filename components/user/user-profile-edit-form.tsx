@@ -163,9 +163,10 @@ const UserProfileEditForm = ({
           selector={(state) => ({
             values: state.values,
             isSubmitting: state.isSubmitting,
+            isValid: state.isValid,
           })}
         >
-          {({ values, isSubmitting }) => {
+          {({ values, isSubmitting, isValid }) => {
             const hasChanges =
               values.fullName !== originalValues.fullName ||
               values.username !== originalValues.username ||
@@ -184,7 +185,7 @@ const UserProfileEditForm = ({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={isSubmitting || !hasChanges}
+                  disabled={isSubmitting || !hasChanges || !isValid}
                   className="flex-1"
                 >
                   {isSubmitting ? (
