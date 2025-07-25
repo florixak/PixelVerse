@@ -1,12 +1,12 @@
 "use server";
 
-import { FormData } from "@/components/user/user-profile-edit-form";
+import { ProfileData } from "@/components/user/user-profile-edit-form";
 import { writeClient } from "@/sanity/lib/client";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-export const updateProfile = async (formData: FormData) => {
+export const updateProfile = async (formData: ProfileData) => {
   try {
     const { fullName, username, bio } = formData;
 

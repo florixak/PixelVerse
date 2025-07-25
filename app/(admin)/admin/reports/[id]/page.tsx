@@ -4,6 +4,7 @@ import { Report } from "@/sanity.types";
 import { getReportById } from "@/sanity/lib/reports/getReportById";
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
+import BackButton from "@/components/back-button";
 
 type ReportDetailsPageProps = {
   params: Promise<{ id: Report["_id"] }>;
@@ -20,7 +21,8 @@ const ReportDetailsPage = async ({ params }: ReportDetailsPageProps) => {
     notFound();
   }
   return (
-    <section className="flex flex-col gap-8 w-full max-w-4xl mx-auto p-6">
+    <section className="relative flex flex-col gap-8 w-full max-w-4xl mx-auto p-6">
+      <BackButton className="absolute top-6 -left-18" />
       <ReportDetails report={report} />
       <AdminReportForm report={report} userId={userId} />
     </section>

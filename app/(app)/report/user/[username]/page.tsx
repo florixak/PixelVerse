@@ -19,13 +19,7 @@ const UserReportPage = async ({ params }: PostReportPageProps) => {
     notFound();
   }
 
-  return (
-    <ReportForm
-      content={user}
-      contentType="user"
-      returnUrl={`/user/${user.username}`}
-    />
-  );
+  return <ReportForm content={user} contentType="user" />;
 };
 
 export default UserReportPage;

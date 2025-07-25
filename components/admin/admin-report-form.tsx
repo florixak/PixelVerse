@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { handleReportAction } from "@/actions/adminActions";
+import { handleReportAction, ReportAction } from "@/actions/adminActions";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Report, User } from "@/sanity.types";
 import toast from "react-hot-toast";
+import { useForm } from "@tanstack/react-form";
 import {
   AIReportResult,
   checkReportByAI,
@@ -13,6 +14,7 @@ import {
 } from "@/actions/ai-moderation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Info } from "lucide-react";
+import { z } from "zod";
 
 type AdminReportFormProps = {
   report: Report;
@@ -20,22 +22,61 @@ type AdminReportFormProps = {
   userId?: User["clerkId"];
 };
 
+const notesSchema = z.object({
+  notes: z.string().min(0).max(5, "Notes must be 5 characters or less"),
+});
+
 const AdminReportForm = ({
   report,
   onActionComplete,
   userId,
 }: AdminReportFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notes, setNotes] = useState("");
+  const [currentAction, setCurrentAction] = useState<ReportAction>(null);
   const [aiResult, setAIResult] = useState<AIReportResult | null>(
     report.aiCheckResult || null
   );
+  const form = useForm({
+    defaultValues: { notes: "" } as { notes: string },
+    validators: {
+      onChange: notesSchema,
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        const result = await handleReportAction(
+          report._id,
+          currentAction,
+          value.notes || undefined
+        );
+
+        if (result.success) {
+          toast.success(
+            `Report ${
+              currentAction === "resolved" ? "resolved" : "rejected"
+            } successfully`
+          );
+          if (onActionComplete) onActionComplete();
+        } else {
+          toast.error(result.message || "Failed to process report action");
+        }
+      } catch (error) {
+        toast.error(
+          `Error processing report action: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
+      }
+    },
+  });
 
   if (!report) return null;
 
   const handleAIAction = async () => {
-    setIsSubmitting(true);
     try {
+      if (!userId) {
+        toast.error("User ID is required for AI moderation check.");
+        return;
+      }
+      setCurrentAction("aiChecking");
       const { isViolating, reason, confidence } = await checkReportByAI(
         report,
         userId
@@ -49,9 +90,6 @@ const AdminReportForm = ({
           isViolating ? "Violation detected" : "No violation"
         }`
       );
-      if (reason && isViolating && !notes.trim()) {
-        setNotes(`AI Analysis: ${reason}\n\nAdmin Review: `);
-      }
     } catch (error) {
       toast.error(
         `Error processing AI moderation check: ${
@@ -59,79 +97,105 @@ const AdminReportForm = ({
         }`
       );
     } finally {
-      setIsSubmitting(false);
+      setCurrentAction(null);
     }
   };
 
-  const handleAction = async (action: "resolved" | "rejected") => {
-    setIsSubmitting(true);
-
-    try {
-      const result = await handleReportAction(
-        report._id,
-        action,
-        notes || undefined
-      );
-
-      if (result.success) {
-        toast.success(
-          action === "resolved"
-            ? "Report resolved successfully"
-            : "Report rejected successfully"
-        );
-        if (onActionComplete) onActionComplete();
-      } else {
-        toast.error(result.message || "Failed to process report action");
-      }
-    } catch (error) {
-      toast.error(
-        `Error processing report action: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleResolveAction = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentAction("resolved");
+    form.handleSubmit();
   };
+
+  const handleRejectAction = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentAction("rejected");
+    form.handleSubmit();
+  };
+
+  if (!report) return null;
+  if (report.status !== "pending") return null;
 
   return (
-    <div className="space-y-4">
-      <Textarea
-        placeholder="Optional: Add notes explaining your decision (visible to other moderators)"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="min-h-[100px]"
-      />
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.handleSubmit();
+      }}
+      className="space-y-6"
+    >
+      <form.Field name="notes">
+        {(field) => (
+          <div>
+            <Textarea
+              placeholder="Add notes explaining your decision (visible to other moderators)"
+              className="min-h-[100px]"
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
 
-      {report.status === "pending" && (
-        <div className="flex gap-2 justify-end items-center flex-col sm:flex-row">
-          <div className="flex items-center gap-2 flex-col sm:flex-row">
-            <AIReportInfo aiResult={aiResult} />
+            {field.state.meta.errors.length > 0 && (
+              <div className="text-sm text-red-500 mt-1">
+                {field.state.meta.errors.map((error, index) => (
+                  <div key={index}>{error?.message}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </form.Field>
+      <form.Subscribe
+        selector={(state) => ({
+          isSubmitting: state.isSubmitting,
+          values: state.values,
+          isValid: state.isValid,
+        })}
+      >
+        {({ isSubmitting, isValid }) => (
+          <div className="flex gap-2 justify-end items-center flex-col sm:flex-row">
+            <div className="flex items-center gap-2 flex-col sm:flex-row">
+              <AIReportInfo aiResult={aiResult} />
+              <Button
+                variant="secondary"
+                onClick={handleAIAction}
+                disabled={isSubmitting}
+              >
+                {isSubmitting && currentAction === "aiChecking"
+                  ? "Checking with AI..."
+                  : "Check with AI"}
+              </Button>
+            </div>
+
             <Button
-              variant="secondary"
-              onClick={handleAIAction}
-              disabled={isSubmitting}
+              id="reject-report"
+              variant="outline"
+              onClick={handleRejectAction}
+              disabled={
+                isSubmitting || currentAction === "resolved" || !isValid
+              }
+              type="button"
             >
-              Check with AI
+              {isSubmitting && currentAction === "rejected"
+                ? "Rejecting..."
+                : "Reject Report"}
+            </Button>
+
+            <Button
+              id="resolve-report"
+              onClick={handleResolveAction}
+              disabled={
+                isSubmitting || currentAction === "rejected" || !isValid
+              }
+              type="button"
+            >
+              {isSubmitting && currentAction === "resolved"
+                ? "Resolving..."
+                : "Resolve Report"}
             </Button>
           </div>
-
-          <Button
-            variant="outline"
-            onClick={() => handleAction("rejected")}
-            disabled={isSubmitting}
-          >
-            Reject Report
-          </Button>
-          <Button
-            onClick={() => handleAction("resolved")}
-            disabled={isSubmitting}
-          >
-            Resolve Report
-          </Button>
-        </div>
-      )}
-    </div>
+        )}
+      </form.Subscribe>
+    </form>
   );
 };
 

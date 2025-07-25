@@ -114,9 +114,11 @@ export const deleteUser = async (
   }
 };
 
+export type ReportAction = "resolved" | "rejected" | "aiChecking" | null;
+
 export const handleReportAction = async (
   reportId: Report["_id"],
-  action: Pick<Report, "status" | "moderationNotes">["status"],
+  action: ReportAction,
   resolveMessage?: string
 ): Promise<{
   success: boolean;

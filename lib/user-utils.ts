@@ -15,7 +15,7 @@ export async function ensureSanityUser(
   );
 
   if (sanityUser) {
-    return sanityUser;
+    return sanityUser._id;
   }
 
   const clerk = await clerkClient();

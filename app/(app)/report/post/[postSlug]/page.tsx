@@ -14,13 +14,7 @@ const PostReportPage = async ({ params }: PostReportPageProps) => {
     notFound();
   }
   const post = await getPostBySlug(postSlug);
-  return (
-    <ReportForm
-      content={post}
-      contentType="post"
-      returnUrl={`/topics/${post.topicSlug}/${post.slug}`}
-    />
-  );
+  return <ReportForm content={post} contentType="post" />;
 };
 
 export default PostReportPage;

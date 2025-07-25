@@ -21,7 +21,7 @@ export async function createPost(formData: FormData) {
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
     const postData = parsePostFormData(formData);
 
     // Validate topic exists
@@ -86,7 +86,7 @@ export async function updatePost(
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Verify user owns the post
     const post = await writeClient.fetch(
@@ -159,7 +159,7 @@ export async function deletePost(postId: Post["_id"]) {
   const user = await currentUser();
   if (!user) throw new Error("Must be logged in");
 
-  const userId = await ensureSanityUser(user);
+  const userId = await ensureSanityUser(user.id);
 
   const post = await writeClient.fetch<Post>(
     `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
@@ -189,7 +189,7 @@ export async function reactOnPost(
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Check if user already reacted to this post
     const existingReaction = await writeClient.fetch(
@@ -239,33 +239,27 @@ export async function reactOnPost(
 /**
  * Creates a new comment on a post
  */
-export async function createComment(prevState: any, formData: FormData) {
+export async function createComment({
+  postId,
+  content,
+}: {
+  postId: Post["_id"];
+  content: Comment["content"];
+}) {
   try {
     const user = await currentUser();
     if (!user) {
       return { error: "You must be logged in to comment" };
     }
 
-    const userId = await ensureSanityUser(user);
-    const postInformation = formData.get("postInformation") as string;
-    const {
-      postId,
-      topicSlug,
-      postSlug,
-    }: {
-      postId: Post["_id"];
-      topicSlug: Post["topicSlug"];
-      postSlug: Post["slug"];
-    } = JSON.parse(postInformation);
-    const content = formData.get("content") as string;
+    const userId = await ensureSanityUser(user.id);
 
     if (!content?.trim()) {
       return { error: "Comment cannot be empty" };
     }
 
-    // Verify post exists and comments are enabled
     const post = await writeClient.fetch(
-      `*[_type == "post" && _id == $postId && (isDeleted != true)][0]`,
+      `*[_type == "post" && _id == $postId && isDeleted != true && isBanned != true][0]`,
       { postId }
     );
 
@@ -292,7 +286,7 @@ export async function createComment(prevState: any, formData: FormData) {
       publishedAt: new Date().toISOString(),
     });
 
-    revalidatePath(`/topics/${topicSlug}/${postSlug}`);
+    revalidatePath(`/topics/${post.topicSlug}/${post.slug}`);
     return { success: true };
   } catch (error) {
     console.error("Error creating comment:", error);
@@ -310,7 +304,7 @@ export async function deleteComment(commentId: Post["_id"]) {
       return { error: "You must be logged in to delete a comment" };
     }
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Verify user owns the comment
     const comment = await writeClient.fetch(
@@ -343,7 +337,7 @@ export async function updateComment(
       return { error: "You must be logged in to update a comment" };
     }
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Verify user owns the comment
     const comment = await writeClient.fetch(
@@ -388,7 +382,7 @@ export async function submitReport(
       };
     }
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     const contentExists = await writeClient.fetch(
       `*[_type == $contentType && _id == $contentId][0]._id`,
@@ -423,7 +417,7 @@ export async function submitReport(
       .inc({ reportCount: 1 })
       .commit();
 
-    await writeClient.create({
+    const report = await writeClient.create({
       _type: "report",
       displayId,
       contentType,
@@ -467,7 +461,7 @@ export async function submitReport(
       }
     }
 
-    return { success: true, error: null };
+    return { success: true, error: null, reportId: report._id };
   } catch (error) {
     console.error(`Error reporting ${contentType}:`, error);
     return {
