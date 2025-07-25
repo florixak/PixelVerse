@@ -423,7 +423,7 @@ export async function submitReport(
       .inc({ reportCount: 1 })
       .commit();
 
-    await writeClient.create({
+    const report = await writeClient.create({
       _type: "report",
       displayId,
       contentType,
@@ -467,7 +467,7 @@ export async function submitReport(
       }
     }
 
-    return { success: true, error: null };
+    return { success: true, error: null, reportId: report._id };
   } catch (error) {
     console.error(`Error reporting ${contentType}:`, error);
     return {
