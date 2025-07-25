@@ -60,15 +60,12 @@ const TopicSuggestForm = () => {
         const result = await suggestTopic(formData);
         if (result.success) {
           toast.success("Topic suggested successfully!");
-          return true;
         } else {
           toast.error(result.error || "Failed to suggest topic");
-          return false;
         }
       } catch (error) {
         console.error("Error suggesting topic:", error);
         toast.error("Failed to suggest topic. Please try again.");
-        return false;
       }
     },
   });
