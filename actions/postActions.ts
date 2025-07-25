@@ -21,7 +21,7 @@ export async function createPost(formData: FormData) {
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
     const postData = parsePostFormData(formData);
 
     // Validate topic exists
@@ -86,7 +86,7 @@ export async function updatePost(
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Verify user owns the post
     const post = await writeClient.fetch(
@@ -159,7 +159,7 @@ export async function deletePost(postId: Post["_id"]) {
   const user = await currentUser();
   if (!user) throw new Error("Must be logged in");
 
-  const userId = await ensureSanityUser(user);
+  const userId = await ensureSanityUser(user.id);
 
   const post = await writeClient.fetch<Post>(
     `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
@@ -189,7 +189,7 @@ export async function reactOnPost(
     const user = await currentUser();
     if (!user) throw new Error("Must be logged in");
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Check if user already reacted to this post
     const existingReaction = await writeClient.fetch(
@@ -246,7 +246,7 @@ export async function createComment(prevState: any, formData: FormData) {
       return { error: "You must be logged in to comment" };
     }
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
     const postInformation = formData.get("postInformation") as string;
     const {
       postId,
@@ -310,7 +310,7 @@ export async function deleteComment(commentId: Post["_id"]) {
       return { error: "You must be logged in to delete a comment" };
     }
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Verify user owns the comment
     const comment = await writeClient.fetch(
@@ -343,7 +343,7 @@ export async function updateComment(
       return { error: "You must be logged in to update a comment" };
     }
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     // Verify user owns the comment
     const comment = await writeClient.fetch(
@@ -388,7 +388,7 @@ export async function submitReport(
       };
     }
 
-    const userId = await ensureSanityUser(user);
+    const userId = await ensureSanityUser(user.id);
 
     const contentExists = await writeClient.fetch(
       `*[_type == $contentType && _id == $contentId][0]._id`,
