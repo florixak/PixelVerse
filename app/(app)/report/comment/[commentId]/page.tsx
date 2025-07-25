@@ -18,13 +18,7 @@ const CommentReportPage = async ({ params }: CommentReportPageProps) => {
     notFound();
   }
 
-  return (
-    <ReportForm
-      content={comment}
-      contentType="comment"
-      returnUrl={`/topics/${comment.post.topicSlug}/${comment.post.slug}`}
-    />
-  );
+  return <ReportForm content={comment} contentType="comment" />;
 };
 
 export default CommentReportPage;
