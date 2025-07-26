@@ -11,10 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { X } from "lucide-react";
 
 type TutorialFieldsProps = {
   tutorialSteps: Array<TutorialStepType>;
   addTutorialStep: () => void;
+  removeTutorialStep: (index: number) => void;
   updateTutorialStep: (
     index: number,
     field: keyof TutorialStepType,
@@ -25,6 +27,7 @@ type TutorialFieldsProps = {
 const TutorialFields = ({
   tutorialSteps,
   addTutorialStep,
+  removeTutorialStep,
   updateTutorialStep,
 }: TutorialFieldsProps) => {
   return (
@@ -33,7 +36,17 @@ const TutorialFields = ({
 
       {tutorialSteps.map((step, index) => (
         <div key={index} className="space-y-2 p-3 border rounded-md">
-          <h3 className="font-medium">Step {index + 1}</h3>
+          <div className="flex items-center justify-between">
+            <Label htmlFor={`step-${index}`}>Step {index + 1}</Label>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => removeTutorialStep(index)}
+              aria-label={`Remove step ${index + 1}`}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
           <div>
             <Label htmlFor={`step-${index}-title`}>Title</Label>
             <Input

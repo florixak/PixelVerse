@@ -16,7 +16,6 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { POST_TYPES } from "@/constants";
 import { Post, Topic } from "@/sanity.types";
-import { useState } from "react";
 
 type BasicFieldsProps = {
   topics: Topic[];

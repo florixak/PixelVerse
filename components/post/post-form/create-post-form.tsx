@@ -33,6 +33,16 @@ export type TutorialStepType = {
   imageUrl: string;
 };
 
+type FormState = {
+  postType: Post["postType"];
+  isOriginal: boolean;
+  disabledComments: boolean;
+  software: SoftwareOptionType["value"][];
+  colorPalette: ColorPaletteItem[];
+  tutorialSteps: TutorialStepType[];
+  tags: string[];
+};
+
 export default function CreatePostForm({
   topics,
   topic,
@@ -40,42 +50,50 @@ export default function CreatePostForm({
   className,
   onSuccess,
 }: CreatePostFormProps) {
-  const [postType, setPostType] = useState<Post["postType"]>(post?.postType);
-  const [isOriginal, setIsOriginal] = useState<boolean>(
-    post?.isOriginal ?? true
-  );
-  const [disabledComments, setDisabledComments] = useState<boolean>(
-    post?.disabledComments ?? false
-  );
-  const [software, setSoftware] = useState<SoftwareOptionType["value"][]>(
-    post?.software || []
-  );
-  const [colorPalette, setColorPalette] = useState<ColorPaletteItem[]>(
-    post?.colorPalette?.map((cp) => ({
-      hex: cp.hex || "",
-      name: cp.name || "",
-    })) || []
-  );
-  const [tutorialSteps, setTutorialSteps] = useState<TutorialStepType[]>(
-    post?.tutorialSteps?.map((ts) => ({
-      title: ts.title || "",
-      description: ts.description || "",
-      imageUrl: ts.imageUrl || "",
-    })) || []
-  );
-  const [tags, setTags] = useState<Post["tags"]>(post?.tags || []);
+  const [formState, setFormState] = useState<FormState>({
+    postType: post?.postType || "text",
+    isOriginal: post?.isOriginal ?? true,
+    disabledComments: post?.disabledComments ?? false,
+    software: post?.software || [],
+    colorPalette:
+      post?.colorPalette?.map((cp) => ({
+        hex: cp.hex || "",
+        name: cp.name || "",
+      })) || [],
+    tutorialSteps:
+      post?.tutorialSteps?.map((ts) => ({
+        title: ts.title || "",
+        description: ts.description || "",
+        imageUrl: ts.imageUrl || "",
+      })) || [],
+    tags: post?.tags || [],
+  });
   const router = useRouter();
 
+  const updateFormState = <K extends keyof FormState>(
+    key: K,
+    value: FormState[K]
+  ) => {
+    setFormState((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleSoftwareChange = (value: string) => {
-    if (software.includes(value)) {
-      setSoftware(software.filter((s) => s !== value));
+    const currentSoftware = formState.software;
+    if (currentSoftware.includes(value)) {
+      updateFormState(
+        "software",
+        currentSoftware.filter((s) => s !== value)
+      );
     } else {
-      setSoftware([...software, value]);
+      updateFormState("software", [...currentSoftware, value]);
     }
   };
 
-  const addColorTopalette = () => {
-    setColorPalette([...colorPalette, { hex: "", name: "" }]);
+  const addColorToPalette = () => {
+    updateFormState("colorPalette", [
+      ...formState.colorPalette,
+      { hex: "#000000", name: "" },
+    ]);
   };
 
   const updateColorPalette = (
@@ -83,26 +101,36 @@ export default function CreatePostForm({
     field: "hex" | "name",
     value: string
   ) => {
-    const updated = [...colorPalette];
+    const updated = [...formState.colorPalette];
     updated[index][field] = value;
-    setColorPalette(updated);
+    updateFormState("colorPalette", updated);
+  };
+
+  const removeColorFromPalette = (index: number) => {
+    const updated = formState.colorPalette.filter((_, i) => i !== index);
+    updateFormState("colorPalette", updated);
   };
 
   const addTutorialStep = () => {
-    setTutorialSteps([
-      ...tutorialSteps,
+    updateFormState("tutorialSteps", [
+      ...formState.tutorialSteps,
       { title: "", description: "", imageUrl: "" },
     ]);
   };
 
   const updateTutorialStep = (
     index: number,
-    field: keyof (typeof tutorialSteps)[0],
+    field: keyof TutorialStepType,
     value: string
   ) => {
-    const updated = [...tutorialSteps];
+    const updated = [...formState.tutorialSteps];
     updated[index][field] = value;
-    setTutorialSteps(updated);
+    updateFormState("tutorialSteps", updated);
+  };
+
+  const removeTutorialStep = (index: number) => {
+    const updated = formState.tutorialSteps.filter((_, i) => i !== index);
+    updateFormState("tutorialSteps", updated);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -111,28 +139,23 @@ export default function CreatePostForm({
     try {
       const formData = new FormData(e.currentTarget);
 
-      if (software !== undefined && software.length > 0) {
-        formData.set("software", JSON.stringify(software));
+      if (formState.software.length > 0) {
+        formData.set("software", JSON.stringify(formState.software));
       }
 
-      if (colorPalette !== undefined && colorPalette.length > 0) {
-        formData.set("colorPalette", JSON.stringify(colorPalette));
+      if (formState.colorPalette.length > 0) {
+        formData.set("colorPalette", JSON.stringify(formState.colorPalette));
       }
 
-      if (tutorialSteps !== undefined && tutorialSteps.length > 0) {
-        formData.set("tutorialSteps", JSON.stringify(tutorialSteps));
+      if (formState.tutorialSteps.length > 0) {
+        formData.set("tutorialSteps", JSON.stringify(formState.tutorialSteps));
       }
 
-      if (isOriginal !== undefined) {
-        formData.set("isOriginal", String(isOriginal));
-      }
+      formData.set("isOriginal", String(formState.isOriginal));
+      formData.set("disabledComments", String(formState.disabledComments));
 
-      if (disabledComments !== undefined) {
-        formData.set("disabledComments", String(disabledComments));
-      }
-
-      if (tags !== undefined && tags.length > 0) {
-        formData.set("tags", tags.join(","));
+      if (formState.tags.length > 0) {
+        formData.set("tags", formState.tags.join(","));
       }
 
       if (post) {
@@ -149,7 +172,6 @@ export default function CreatePostForm({
           `Post created successfully! Your post "${result.title}" has been created.`,
           { duration: 5000 }
         );
-
         router.push(`/topics/${result.topicSlug}/${result.slug}`);
       }
     } catch (error) {
@@ -168,35 +190,39 @@ export default function CreatePostForm({
       {/* Basic Fields */}
       <BasicFields
         topics={topics}
-        setPostType={setPostType}
+        setPostType={(value) => updateFormState("postType", value)}
         topicId={topic?._id}
         post={post}
-        tags={tags}
-        setTags={setTags}
-        postType={postType}
-        disabledComments={disabledComments}
-        setDisabledComments={setDisabledComments}
+        tags={formState.tags}
+        setTags={(value) => updateFormState("tags", value)}
+        postType={formState.postType}
+        disabledComments={formState.disabledComments}
+        setDisabledComments={(value) =>
+          updateFormState("disabledComments", value)
+        }
       />
       {/* Conditional Fields Based on Post Type */}
-      {(postType === "pixelArt" || postType === "animation") && (
+      {(formState.postType === "pixelArt" ||
+        formState.postType === "animation") && (
         <ConditionalFields
-          postType={postType}
-          isOriginal={isOriginal}
-          setIsOriginal={setIsOriginal}
-          software={software}
+          postType={formState.postType}
+          isOriginal={formState.isOriginal}
+          setIsOriginal={(value) => updateFormState("isOriginal", value)}
+          software={formState.software}
           handleSoftwareChange={handleSoftwareChange}
-          colorPalette={colorPalette}
-          addColorTopalette={addColorTopalette}
+          colorPalette={formState.colorPalette}
+          addColorTopalette={addColorToPalette}
           updateColorPalette={updateColorPalette}
           post={post}
         />
       )}
       {/* Tutorial-specific fields */}
-      {postType === "tutorial" && (
+      {formState.postType === "tutorial" && (
         <TutorialFields
-          tutorialSteps={tutorialSteps}
+          tutorialSteps={formState.tutorialSteps}
           addTutorialStep={addTutorialStep}
           updateTutorialStep={updateTutorialStep}
+          removeTutorialStep={removeTutorialStep}
         />
       )}
       <div className="flex justify-end space-x-4">
