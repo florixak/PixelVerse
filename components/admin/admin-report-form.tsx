@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { handleReportAction, ReportAction } from "@/actions/adminActions";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
@@ -14,7 +13,6 @@ import {
 } from "@/actions/ai-moderation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Info } from "lucide-react";
-import { z } from "zod";
 
 type AdminReportFormProps = {
   report: Report;
@@ -22,36 +20,46 @@ type AdminReportFormProps = {
   userId?: User["clerkId"];
 };
 
-const notesSchema = z.object({
-  notes: z.string().min(0).max(1000, "Notes must be 1000 characters or less"),
-});
+type ReportFormData = {
+  notes: string;
+  action: ReportAction;
+  aiResult?: AIReportResult | null;
+  isAIChecking?: boolean;
+};
 
 const AdminReportForm = ({
   report,
   onActionComplete,
   userId,
 }: AdminReportFormProps) => {
-  const [currentAction, setCurrentAction] = useState<ReportAction>(null);
-  const [aiResult, setAIResult] = useState<AIReportResult | null>(
-    report.aiCheckResult || null
-  );
   const form = useForm({
-    defaultValues: { notes: "" } as { notes: string },
-    validators: {
-      onChange: notesSchema,
-    },
+    defaultValues: {
+      notes: "",
+      action: null,
+      aiResult: report.aiCheckResult || null,
+      isAIChecking: false,
+    } as ReportFormData,
     onSubmit: async ({ value }) => {
       try {
+        if (value.action === "aiChecking") {
+          return await handleAICheck();
+        }
+
+        if (!report || !report._id) {
+          toast.error("Report ID is required for processing actions.");
+          return;
+        }
+
         const result = await handleReportAction(
           report._id,
-          currentAction,
+          value.action,
           value.notes || undefined
         );
 
         if (result.success) {
           toast.success(
             `Report ${
-              currentAction === "resolved" ? "resolved" : "rejected"
+              value.action === "resolved" ? "resolved" : "rejected"
             } successfully`
           );
           if (onActionComplete) onActionComplete();
@@ -68,21 +76,27 @@ const AdminReportForm = ({
     },
   });
 
-  if (!report) return null;
+  const handleAICheck = async () => {
+    if (!userId) {
+      toast.error("User ID is required for AI moderation check.");
+      return;
+    }
 
-  const handleAIAction = async () => {
+    form.setFieldValue("isAIChecking", true);
+
     try {
-      if (!userId) {
-        toast.error("User ID is required for AI moderation check.");
-        return;
-      }
-      setCurrentAction("aiChecking");
       const { isViolating, reason, confidence } = await checkReportByAI(
         report,
         userId
       );
 
-      setAIResult({ isViolating, reason, confidence });
+      const aiResult = {
+        isViolating,
+        reason: reason || undefined,
+        confidence,
+      };
+
+      form.setFieldValue("aiResult", aiResult);
       await writeReportAIResult(report, isViolating, reason, confidence);
 
       toast.success(
@@ -97,24 +111,11 @@ const AdminReportForm = ({
         }`
       );
     } finally {
-      setCurrentAction(null);
+      form.setFieldValue("isAIChecking", false);
     }
   };
 
-  const handleResolveAction = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentAction("resolved");
-    form.handleSubmit();
-  };
-
-  const handleRejectAction = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentAction("rejected");
-    form.handleSubmit();
-  };
-
-  if (!report) return null;
-  if (report.status !== "pending") return null;
+  if (!report || report.status !== "pending") return null;
 
   return (
     <form
@@ -124,7 +125,17 @@ const AdminReportForm = ({
       }}
       className="space-y-6"
     >
-      <form.Field name="notes">
+      <form.Field
+        name="notes"
+        validators={{
+          onChange: ({ value }) => {
+            if (value.length > 1000) {
+              return "Notes must be 1000 characters or less";
+            }
+            return undefined;
+          },
+        }}
+      >
         {(field) => (
           <div>
             <Textarea
@@ -134,13 +145,25 @@ const AdminReportForm = ({
               onChange={(e) => field.handleChange(e.target.value)}
             />
 
-            {field.state.meta.errors.length > 0 && (
-              <div className="text-sm text-red-500 mt-1">
-                {field.state.meta.errors.map((error, index) => (
-                  <div key={index}>{error?.message}</div>
-                ))}
+            <div
+              className={`flex flex-col sm:flex-row items-start sm:items-center ${
+                field.state.meta.errors.length > 0
+                  ? "justify-between"
+                  : "justify-end"
+              } mt-1`}
+            >
+              {field.state.meta.errors.length > 0 && (
+                <div className="text-sm text-red-500">
+                  {field.state.meta.errors.map((error, index) => (
+                    <div key={index}>{error}</div>
+                  ))}
+                </div>
+              )}
+
+              <div className="text-xs text-muted-foreground mt-1">
+                {field.state.value.length}/1000 characters
               </div>
-            )}
+            </div>
           </div>
         )}
       </form.Field>
@@ -151,16 +174,20 @@ const AdminReportForm = ({
           isValid: state.isValid,
         })}
       >
-        {({ isSubmitting, isValid }) => (
+        {({ isSubmitting, isValid, values }) => (
           <div className="flex gap-2 justify-end items-center flex-col sm:flex-row">
             <div className="flex items-center gap-2 flex-col sm:flex-row">
-              <AIReportInfo aiResult={aiResult} />
+              <AIReportInfo aiResult={values.aiResult} />
               <Button
                 variant="secondary"
-                onClick={handleAIAction}
+                onClick={(e) => {
+                  e.preventDefault();
+                  form.setFieldValue("action", "aiChecking");
+                  form.handleSubmit();
+                }}
                 disabled={isSubmitting}
               >
-                {isSubmitting && currentAction === "aiChecking"
+                {isSubmitting && values.isAIChecking
                   ? "Checking with AI..."
                   : "Check with AI"}
               </Button>
@@ -169,26 +196,32 @@ const AdminReportForm = ({
             <Button
               id="reject-report"
               variant="outline"
-              onClick={handleRejectAction}
+              onClick={(e) => {
+                e.preventDefault();
+                form.setFieldValue("action", "rejected");
+                form.handleSubmit();
+              }}
               disabled={
-                isSubmitting || currentAction === "resolved" || !isValid
+                isSubmitting || values.action === "resolved" || !isValid
               }
-              type="button"
             >
-              {isSubmitting && currentAction === "rejected"
+              {isSubmitting && values.action === "rejected"
                 ? "Rejecting..."
                 : "Reject Report"}
             </Button>
 
             <Button
               id="resolve-report"
-              onClick={handleResolveAction}
+              onClick={(e) => {
+                e.preventDefault();
+                form.setFieldValue("action", "resolved");
+                form.handleSubmit();
+              }}
               disabled={
-                isSubmitting || currentAction === "rejected" || !isValid
+                isSubmitting || values.action === "rejected" || !isValid
               }
-              type="button"
             >
-              {isSubmitting && currentAction === "resolved"
+              {isSubmitting && values.action === "resolved"
                 ? "Resolving..."
                 : "Resolve Report"}
             </Button>
@@ -199,7 +232,11 @@ const AdminReportForm = ({
   );
 };
 
-const AIReportInfo = ({ aiResult }: { aiResult: AIReportResult | null }) => {
+const AIReportInfo = ({
+  aiResult,
+}: {
+  aiResult: AIReportResult | null | undefined;
+}) => {
   const hasAIResult = aiResult && aiResult.isViolating !== undefined;
 
   const getTooltipContent = () => {
