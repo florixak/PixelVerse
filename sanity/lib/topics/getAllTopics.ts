@@ -51,7 +51,7 @@ const getAllTopics = async ({
       updatedAt,
       "iconUrl": icon.asset->url,
       "bannerUrl": banner.asset->url,
-      "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
+      "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true && isBanned != true]),
     }`
   );
 };
