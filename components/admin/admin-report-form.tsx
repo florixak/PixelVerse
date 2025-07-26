@@ -185,7 +185,11 @@ const AdminReportForm = ({
                   form.setFieldValue("action", "aiChecking");
                   form.handleSubmit();
                 }}
-                disabled={isSubmitting}
+                disabled={
+                  isSubmitting ||
+                  values.action === "resolved" ||
+                  values.isAIChecking
+                }
               >
                 {isSubmitting && values.isAIChecking
                   ? "Checking with AI..."
