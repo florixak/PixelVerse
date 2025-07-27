@@ -213,6 +213,7 @@ export default function CreatePostForm({
           colorPalette={formState.colorPalette}
           addColorTopalette={addColorToPalette}
           updateColorPalette={updateColorPalette}
+          removeColorFromPalette={removeColorFromPalette}
           post={post}
         />
       )}

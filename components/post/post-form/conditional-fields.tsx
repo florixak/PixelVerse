@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { SOFTWARE_OPTIONS, DIFFICULTY_LEVELS } from "@/constants";
 import { Post } from "@/sanity.types";
 import { PostTypesType, SoftwareOptionType } from "@/types/posts";
+import { X } from "lucide-react";
 
 type ConditionalFieldsProps = {
   postType: PostTypesType["value"];
@@ -27,6 +28,7 @@ type ConditionalFieldsProps = {
     value: string
   ) => void;
   addColorTopalette: () => void;
+  removeColorFromPalette: (index: number) => void;
   post?: Post | null;
 };
 
@@ -39,6 +41,7 @@ const ConditionalFields = ({
   colorPalette,
   updateColorPalette,
   addColorTopalette,
+  removeColorFromPalette,
   post,
 }: ConditionalFieldsProps) => {
   const imageUrl = post?.imageUrl || "";
@@ -112,6 +115,14 @@ const ConditionalFields = ({
                 updateColorPalette(index, "name", e.target.value)
               }
             />
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => removeColorFromPalette(index)}
+              aria-label={`Remove color ${index + 1}`}
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         ))}
         <Button
