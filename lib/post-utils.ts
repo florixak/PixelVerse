@@ -123,5 +123,12 @@ export function parsePostFormData(formData: FormData) {
         .split(",")
         .map((tag) => tag.trim()) || [],
     imageFile: formData.get("image") as File,
+    isOriginal: formData.get("isOriginal") === "true",
+    colorPalette: formData.get("colorPalette")
+      ? JSON.parse(formData.get("colorPalette") as string)
+      : [],
+    tutorialSteps: formData.get("tutorialSteps")
+      ? JSON.parse(formData.get("tutorialSteps") as string)
+      : [],
   };
 }

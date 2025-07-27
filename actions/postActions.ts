@@ -24,18 +24,14 @@ export async function createPost(formData: FormData) {
     const userId = await ensureSanityUser(user.id);
     const postData = parsePostFormData(formData);
 
-    // Validate topic exists
     if (!(await validateTopicExists(postData.topicId))) {
       throw new Error(`Topic with ID "${postData.topicId}" does not exist`);
     }
 
-    // Handle image upload
     const imageAsset = await uploadImageAsset(postData.imageFile);
 
-    // Generate unique slug
     const finalSlug = await generateUniqueSlug(postData.title);
 
-    // Create the post
     const newPost = await writeClient.create({
       _type: "post",
       title: postData.title,
@@ -55,11 +51,14 @@ export async function createPost(formData: FormData) {
         _ref: userId,
       },
       disabledComments: postData.disabledComments,
-      publishedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
       postType: postData.postType,
       dimensions: postData.dimensions,
       software: postData.software,
       tags: postData.tags,
+      isOriginal: postData.isOriginal,
+      colorPalette: postData.colorPalette,
+      tutorialSteps: postData.tutorialSteps,
     });
 
     const topicSlug = await getTopicSlug(postData.topicId);
@@ -109,7 +108,6 @@ export async function updatePost(
       finalSlug = await generateUniqueSlug(postData.title);
     }
 
-    // Prepare update data
     const updateData: any = {
       title: postData.title,
       slug: {
@@ -128,13 +126,27 @@ export async function updatePost(
       dimensions: postData.dimensions,
       software: postData.software,
       tags: postData.tags,
+      isOriginal: postData.isOriginal,
+      colorPalette: postData.colorPalette,
+      tutorialSteps: postData.tutorialSteps,
     };
+
+    if (postData.postType === "tutorial") {
+      if (!postData.tutorialSteps || postData.tutorialSteps.length === 0) {
+        throw new Error("Tutorial posts must have at least one step");
+      }
+      updateData.tutorialSteps = postData.tutorialSteps.map(
+        (step: any, index: number) => ({
+          ...step,
+          _key: `step-${index}-${Date.now()}`,
+        })
+      );
+    }
 
     if (imageAsset) {
       updateData.image = imageAsset;
     }
 
-    // Update the post
     const updatedPost = await writeClient
       .patch(postId)
       .set(updateData)

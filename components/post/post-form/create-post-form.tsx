@@ -187,7 +187,6 @@ export default function CreatePostForm({
       onSubmit={handleSubmit}
       className={cn("space-y-8 max-w-4xl mx-auto w-full p-6", className)}
     >
-      {/* Basic Fields */}
       <BasicFields
         topics={topics}
         setPostType={(value) => updateFormState("postType", value)}
@@ -201,7 +200,7 @@ export default function CreatePostForm({
           updateFormState("disabledComments", value)
         }
       />
-      {/* Conditional Fields Based on Post Type */}
+
       {(formState.postType === "pixelArt" ||
         formState.postType === "animation") && (
         <ConditionalFields
@@ -217,7 +216,7 @@ export default function CreatePostForm({
           post={post}
         />
       )}
-      {/* Tutorial-specific fields */}
+
       {formState.postType === "tutorial" && (
         <TutorialFields
           tutorialSteps={formState.tutorialSteps}
