@@ -5,7 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { canAccessDashboard } from "@/lib/user-utils";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { auth } from "@clerk/nextjs/server";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,
