@@ -62,7 +62,7 @@ export async function getSearchResults({
   try {
     const postsFilter = `
   _type == "post" && 
-  defined(slug.current) && defined(slug.current) && isDeleted != true &&
+  defined(slug.current) && defined(slug.current) && isDeleted != true && isBanned != true && author->isBanned != true &&
   (
     ${searchTerms
       .map(
@@ -89,9 +89,9 @@ export async function getSearchResults({
           "topicSlug": topic->slug.current,
           publishedAt,
           excerpt,
-          "imageUrl": mainImage.asset->url,
+          "imageUrl": image.asset->url,
           "likes": coalesce(likes, 0),
-          "commentCount": count(*[_type == "comment" && references(^._id)]),
+          "commentCount": count(*[_type == "comment" && references(^._id) && isBanned != true && isDeleted != true]),
           "author": author->{
             _id,
             username,
@@ -123,8 +123,8 @@ export async function getSearchResults({
           "slug": slug.current,
           "imageUrl": image.asset->url,
           color,
-          "postCount": count(*[_type == "post" && references(^._id)]),
-          "memberCount": count(*[_type == "user" && references(^._id)])
+          "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true && isBanned != true && author->isBanned != true]),
+          "memberCount": count(*[_type == "user" && references(^._id) && isBanned != true])
         } | order(postCount desc) [${start}...${end}]`
             : "[]"
         },
@@ -132,7 +132,7 @@ export async function getSearchResults({
         "users": ${
           filter === "all" || filter === "users"
             ? `*[
-          _type == "user" && 
+          _type == "user" && isBanned != true &&
           (
             ${buildSearchCondition("username")} || 
             ${buildSearchCondition("bio")}
@@ -155,7 +155,7 @@ export async function getSearchResults({
             ? `count(*[
       _type == "post" && 
       defined(slug.current) && 
-      isDeleted != true &&
+      isDeleted != true && isBanned != true && author->isBanned != true &&
       (
         ${searchTerms
           .map(
@@ -188,8 +188,7 @@ export async function getSearchResults({
         "totalUsers": ${
           filter === "all" || filter === "users"
             ? `count(*[
-          _type == "user" && 
-          (
+          _type == "user" && isBanned != true && (
             ${buildSearchCondition("username")} || 
             ${buildSearchCondition("bio")}
           )
