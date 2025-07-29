@@ -39,20 +39,6 @@ export const commentSchema = defineType({
       description: "If this is a reply, reference the parent comment",
     }),
     defineField({
-      name: "likes",
-      title: "Likes",
-      type: "number",
-      initialValue: 0,
-      readOnly: true,
-    }),
-    defineField({
-      name: "dislikes",
-      title: "Dislikes",
-      type: "number",
-      initialValue: 0,
-      readOnly: true,
-    }),
-    defineField({
       name: "isEdited",
       title: "Is Edited",
       type: "boolean",

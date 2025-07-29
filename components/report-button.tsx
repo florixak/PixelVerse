@@ -1,7 +1,5 @@
 "use client";
 
-import { FlagTriangleRight } from "lucide-react";
-import ReactionButton from "./reaction-button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useClerk } from "@clerk/nextjs";
@@ -57,7 +55,9 @@ const ReportButton = ({
     }
   };
 
-  return (
+  return null;
+
+  /*return (
     <ReactionButton
       icon={
         <FlagTriangleRight
@@ -72,7 +72,7 @@ const ReportButton = ({
       title={`Report this ${contentType}`}
       className={className}
     />
-  );
+  );*/
 };
 
 export default ReportButton;
