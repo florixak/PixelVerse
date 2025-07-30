@@ -34,7 +34,7 @@ export async function handleReaction(
       target._id,
       user.clerkId,
       {
-        useCdn: false, // ✅ Skip CDN for fresh data
+        useCdn: false,
       }
     );
 
@@ -55,10 +55,7 @@ export async function handleReaction(
       const updatedReaction = await writeClient
         .patch(existingReaction._id)
         .set({ type: reactionType })
-        .commit({
-          autoGenerateArrayKeys: true,
-          dryRun: false,
-        });
+        .commit();
       return { success: true, action: "updated", type: reactionType };
     }
 
@@ -74,9 +71,7 @@ export async function handleReaction(
       },
     };
 
-    const newReaction = await writeClient.create(reactionData, {
-      autoGenerateArrayKeys: true,
-    });
+    const newReaction = await writeClient.create(reactionData);
 
     return {
       success: true,
