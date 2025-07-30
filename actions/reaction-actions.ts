@@ -59,7 +59,7 @@ export async function handleReaction(
       return { success: true, action: "updated", type: reactionType };
     }
 
-    console.log("Creating new reaction");
+    
 
     const reactionData = {
       _type: "reaction",
