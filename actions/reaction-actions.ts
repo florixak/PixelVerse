@@ -38,7 +38,7 @@ export async function handleReaction(
       }
     );
 
-    console.log(existingReaction);
+    
 
     if (reactionType === null) {
       if (existingReaction) {
