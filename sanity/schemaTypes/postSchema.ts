@@ -196,13 +196,6 @@ export const postSchema = defineType({
       description: "If true, comments are disabled for this post.",
     }),
     defineField({
-      name: "reactions",
-      title: "Reactions",
-      type: "array",
-      of: [{ type: "reaction" }],
-      options: { layout: "grid" },
-    }),
-    defineField({
       name: "reportCount",
       title: "Report Count",
       type: "number",

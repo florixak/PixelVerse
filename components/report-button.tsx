@@ -1,17 +1,18 @@
 "use client";
 
-import { FlagTriangleRight } from "lucide-react";
-import ReactionButton from "./reaction-button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useClerk } from "@clerk/nextjs";
 import { Comment, Post, Report, User } from "@/sanity.types";
+import ReactionButton from "./reaction-button";
+import { FlagTriangleRight } from "lucide-react";
 
 type ReportButtonProps = {
   contentType: Report["contentType"];
   content: Post | Comment | User;
   iconSize?: number;
   className?: string;
+  collapsed?: boolean;
 };
 
 const ReportButton = ({
@@ -19,6 +20,7 @@ const ReportButton = ({
   content,
   iconSize = 24,
   className = "",
+  collapsed = false,
 }: ReportButtonProps) => {
   const router = useRouter();
   const { user, openSignIn } = useClerk();
@@ -67,7 +69,7 @@ const ReportButton = ({
       }
       disabled={false}
       onClick={handleReportClick}
-      showLabel={true}
+      showLabel={!collapsed}
       label={getLabel()}
       title={`Report this ${contentType}`}
       className={className}

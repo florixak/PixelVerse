@@ -66,7 +66,7 @@ const PostContent = ({ post, userId }: PostContentProps) => {
 
       <Separator />
 
-      <PostReactions post={post} currentUserClerkId={userId} />
+      <PostReactions post={post} clerkId={userId} />
     </div>
   );
 };

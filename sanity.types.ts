@@ -151,12 +151,16 @@ export type User = {
 };
 
 export type Reaction = {
+  _id: string;
+  _type: "reaction";
+  _createdAt: string;
+  _updatedAt: string;
   user: User;
-  type: "like" | "dislike" | null;
-  _key: string;
+  type: "like" | "dislike" | "love" | "helpful";
+  post?: Post;
+  comment?: Comment;
 };
 
-// Update your Report type definition
 export type Report = {
   _id: string;
   _type: "report";

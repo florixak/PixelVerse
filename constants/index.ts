@@ -1,8 +1,10 @@
+import { Reaction } from "@/sanity.types";
 import type {
   DifficultyLevelType,
   PostTypesType,
   SoftwareOptionType,
 } from "@/types/posts";
+import { ThumbsUp, ThumbsDown, Heart, HelpCircle } from "lucide-react";
 
 const POST_TYPES: PostTypesType[] = [
   { title: "Text Only", value: "text" },
@@ -36,4 +38,34 @@ const REPORT_REASONS = [
   { value: "other", label: "Other" },
 ];
 
-export { POST_TYPES, SOFTWARE_OPTIONS, DIFFICULTY_LEVELS, REPORT_REASONS };
+type Reactions = {
+  title: string;
+  value: Reaction["type"];
+  icon: React.ComponentType;
+  color?: string;
+};
+
+const REACTIONS: Reactions[] = [
+  { title: "Like", value: "like", icon: ThumbsUp, color: "text-blue-500" },
+  {
+    title: "Dislike",
+    value: "dislike",
+    icon: ThumbsDown,
+    color: "text-red-500",
+  },
+  { title: "Love", value: "love", icon: Heart, color: "text-pink-500" },
+  {
+    title: "Helpful",
+    value: "helpful",
+    icon: HelpCircle,
+    color: "text-green-500",
+  },
+];
+
+export {
+  POST_TYPES,
+  SOFTWARE_OPTIONS,
+  DIFFICULTY_LEVELS,
+  REPORT_REASONS,
+  REACTIONS,
+};

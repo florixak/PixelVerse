@@ -1,13 +1,21 @@
+import { REACTIONS } from "@/constants";
 import { defineType, defineField } from "sanity";
 
 export const reactionSchema = defineType({
   name: "reaction",
-  type: "object",
+  type: "document",
   title: "Reaction",
   description:
     "User reactions to posts or comments, such as likes or dislikes.",
-  icon: () => "👍",
   fields: [
+    defineField({
+      name: "content",
+      type: "reference",
+      title: "Content",
+      description: "Reference to the post or comment this reaction is for.",
+      to: [{ type: "post" }, { type: "comment" }],
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: "user",
       type: "reference",
@@ -16,9 +24,45 @@ export const reactionSchema = defineType({
     }),
     defineField({
       name: "type",
+      title: "Reaction Type",
       type: "string",
-      options: { list: ["like", "dislike"] },
+      options: {
+        list: REACTIONS,
+      },
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: "createdAt",
+      title: "Created At",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
+      readOnly: true,
+    }),
   ],
+  preview: {
+    select: {
+      type: "type",
+      userName: "user.username",
+      content: "content.title",
+      commentContent: "comment.content",
+    },
+    prepare(selection) {
+      const { type, userName, content, commentContent } = selection;
+      const target = content || commentContent?.substring(0, 30) + "...";
+      const media =
+        type === "like"
+          ? "Like"
+          : type === "dislike"
+          ? "Dislike"
+          : type === "love"
+          ? "Love"
+          : "Helpful";
+
+      return {
+        title: `${media} by ${userName}`,
+        subtitle: `on ${target}`,
+        media,
+      };
+    },
+  },
 });

@@ -1,100 +1,125 @@
 "use client";
 
-import { reactOnPost } from "@/actions/postActions";
 import { cn } from "@/lib/utils";
-import { Post, Reaction, User } from "@/sanity.types";
+import { Post } from "@/sanity.types";
 import { useClerk } from "@clerk/nextjs";
-import {
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  Share2,
-  FlagTriangleRight,
-} from "lucide-react";
-import { useState } from "react";
+import { MessageCircle, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 import ReactionButton from "../reaction-button";
 import { useRouter } from "next/navigation";
 import ReportButton from "../report-button";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getReactions, handleReaction } from "@/actions/reaction-actions";
+import { REACTIONS } from "@/constants";
+import React from "react";
+import { getQueryClient } from "@/lib/get-query-client";
 
 type PostReactionsProps = {
   post: Post;
-  currentUserClerkId?: User["clerkId"];
   collapsed?: boolean;
   className?: string;
   commentsLink?: string;
+  clerkId?: string;
 };
 
 const PostReactions = ({
   post,
-  currentUserClerkId,
   collapsed = false,
   className = "",
   commentsLink = "",
+  clerkId,
 }: PostReactionsProps) => {
-  const [likes, setLikes] = useState(post.likes || 0);
-  const [dislikes, setDislikes] = useState(post.dislikes || 0);
-  const [isLiking, setIsLiking] = useState(false);
-  const [isDisliking, setIsDisliking] = useState(false);
-  const [userReactionState, setUserReactionState] = useState<Reaction["type"]>(
-    post.reactions?.find(
-      (reaction) => reaction.user?.clerkId === currentUserClerkId
-    )?.type || null
-  );
-  const clerk = useClerk();
   const router = useRouter();
+  const queryClient = getQueryClient();
 
-  const handleLike = async () => {
-    if (!clerk.user) {
-      toast.error("You must be logged in to like a post.");
-      clerk.openSignIn();
+  const queryKey = ["postReactions", post._id, clerkId];
+
+  const {
+    data: postReactions,
+    isLoading: isPostReactionsLoading,
+    isError: isPostReactionsError,
+  } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      const { success, data } = await getReactions(post, clerkId);
+      if (!success) {
+        throw new Error("Failed to fetch post reactions");
+      }
+      return data;
+    },
+  });
+
+  const reactionMutation = useMutation({
+    mutationFn: async (reactionType: string) => {
+      const result = await handleReaction(post, reactionType);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      return result;
+    },
+    onMutate: async (reactionType: string) => {
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousData = queryClient.getQueryData(queryKey);
+
+      if (previousData && typeof previousData === "object" && !Array.isArray(previousData)) {
+        queryClient.setQueryData(queryKey, (old: any) => {
+          if (!old) return old;
+
+          const currentUserReaction = old.userReaction?.type;
+          const newReactionCounts = { ...old.reactionCounts };
+
+          if (currentUserReaction === reactionType) {
+            newReactionCounts[reactionType] = Math.max(
+              0,
+              (newReactionCounts[reactionType] || 0) - 1
+            );
+            return {
+              ...old,
+              reactionCounts: newReactionCounts,
+              userReaction: null,
+            };
+          }
+          if (currentUserReaction && currentUserReaction !== reactionType) {
+            newReactionCounts[currentUserReaction] = Math.max(
+              0,
+              (newReactionCounts[currentUserReaction] || 0) - 1
+            );
+          }
+
+          newReactionCounts[reactionType] =
+            (newReactionCounts[reactionType] || 0) + 1;
+
+          return {
+            ...old,
+            reactionCounts: newReactionCounts,
+            userReaction: { _id: "temp", type: reactionType },
+          };
+        });
+      }
+
+      return { previousData };
+    },
+    onError: (err, reactionType, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(queryKey, context.previousData);
+      }
+      console.error("Failed to handle reaction:", err);
+      toast.error("Failed to handle reaction. Please try again.");
+    },
+  });
+
+  const handleReactionClick = (reactionType: string) => async () => {
+    if (!clerkId) {
+      toast.error("You must be signed in to react.");
       return;
     }
 
-    if (isLiking) return;
-    setIsLiking(true);
-
     try {
-      const newLikes = userReactionState === "like" ? likes - 1 : likes + 1;
-      setLikes(newLikes);
-      setUserReactionState(userReactionState === "like" ? null : "like");
-      await reactOnPost(post._id, "like");
+      await reactionMutation.mutateAsync(reactionType);
     } catch (error) {
-      console.error("Error liking post:", error);
-
-      setLikes(userReactionState === "like" ? likes - 1 : likes + 1);
-      setUserReactionState(userReactionState === "like" ? null : "like");
-      toast.error("Failed to like the post. Please try again.");
-    } finally {
-      setIsLiking(false);
-    }
-  };
-
-  const handleDislike = async () => {
-    if (!clerk.user) {
-      toast.error("You must be logged in to like a post.");
-      clerk.openSignIn();
-      return;
-    }
-    if (isDisliking) return;
-    setIsDisliking(true);
-
-    try {
-      const newDislikes =
-        userReactionState === "dislike" ? dislikes - 1 : dislikes + 1;
-      setDislikes(newDislikes);
-      setUserReactionState(userReactionState === "dislike" ? null : "dislike");
-      await reactOnPost(post._id, "dislike");
-    } catch (error) {
-      console.error("Error disliking post:", error);
-
-      setDislikes(
-        userReactionState === "dislike" ? dislikes - 1 : dislikes + 1
-      );
-      setUserReactionState(userReactionState === "dislike" ? null : "dislike");
-      toast.error("Failed to dislike the post. Please try again.");
-    } finally {
-      setIsDisliking(false);
+      console.error("Failed to handle reaction:", error);
+      toast.error("Failed to handle reaction. Please try again.");
     }
   };
 
@@ -149,39 +174,48 @@ const PostReactions = ({
   return (
     <div
       className={cn(
-        `mt-4 text-muted-foreground flex flex-row justify-between gap-3`,
+        `mt-4 text-muted-foreground flex flex-row items-center justify-between gap-3`,
         className
       )}
     >
       <div className="flex items-center gap-4">
+        {isPostReactionsLoading ? (
+          <div className="flex items-center justify-center">Loading...</div>
+        ) : isPostReactionsError ? (
+          <div className="flex items-center justify-center">
+            Error loading reactions.
+          </div>
+        ) : (
+          REACTIONS.map((reaction) => {
+            const reactionCountValue =
+              postReactions?.reactionCounts[reaction.value];
+
+            const userHasReacted =
+              postReactions?.userReaction?.type === reaction.value;
+
+            return (
+              <ReactionButton
+                key={reaction.value}
+                icon={React.createElement(reaction.icon)}
+                count={reactionCountValue || 0}
+                disabled={isPostReactionsLoading}
+                onClick={handleReactionClick(reaction.value)}
+                showLabel={!collapsed}
+                label={reaction.title + (reactionCountValue === 1 ? "" : "s")}
+                title={`${reactionCountValue} ${reaction.title}s`}
+                className={cn(
+                  "text-muted-foreground",
+                  userHasReacted ? reaction.color : ""
+                )}
+              />
+            );
+          })
+        )}
+
         <ReactionButton
           icon={
-            <ThumbsUp className="inline-block text-blue-500 cursor-pointer" />
+            <MessageCircle className="inline-block text-muted-foreground" />
           }
-          count={likes}
-          disabled={userReactionState === "like" || isLiking}
-          onClick={handleLike}
-          isLoading={isLiking}
-          activeColor="text-green-400"
-          showLabel={!collapsed}
-          label="likes"
-          title={`${likes} likes`}
-        />
-        <ReactionButton
-          icon={
-            <ThumbsDown className="inline-block text-red-500 cursor-pointer" />
-          }
-          count={dislikes}
-          disabled={userReactionState === "dislike" || isDisliking}
-          onClick={handleDislike}
-          isLoading={isDisliking}
-          activeColor="text-red-400"
-          showLabel={!collapsed}
-          label="dislikes"
-          title={`${dislikes} dislikes`}
-        />
-        <ReactionButton
-          icon={<MessageCircle className="inline-block text-gray-500" />}
           count={post.disabledComments ? 0 : post.commentsCount || 0}
           disabled={false}
           onClick={handleCommentClick}
@@ -193,15 +227,15 @@ const PostReactions = ({
 
       <div className="flex items-center gap-4">
         <ReactionButton
-          icon={<Share2 className="inline-block text-gray-500" />}
+          icon={<Share2 className="inline-block text-muted-foreground" />}
           disabled={false}
           onClick={handleShareClick}
-          showLabel={true}
+          showLabel={!collapsed}
           label="Share"
           title="Share this post"
         />
 
-        <ReportButton contentType="post" content={post} />
+        <ReportButton contentType="post" content={post} collapsed={collapsed} />
       </div>
     </div>
   );
