@@ -52,8 +52,14 @@ export const getReactionCounts = async (
 
 export const getUserReaction = async (
   contentId: string,
-  clerkId: string
+  clerkId: string,
+  options: { useCdn?: boolean } = {}
 ): Promise<GetUserReaction> => {
+  const queryOptions = {
+    useCdn: false,
+    perspective: "published" as const,
+    ...options,
+  };
   return await client.fetch(
     `
     *[_type == "reaction" && content._ref == $contentId && user->clerkId == $clerkId][0] {
@@ -61,6 +67,7 @@ export const getUserReaction = async (
       type
     }
   `,
-    { contentId, clerkId }
+    { contentId, clerkId },
+    queryOptions
   );
 };

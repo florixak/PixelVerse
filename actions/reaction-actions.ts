@@ -19,37 +19,50 @@ export async function handleReaction(
   reactionType: string | null
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) {
       return { success: false, error: "Unauthorized" };
     }
-    const user = await getUserByClerkId(userId);
 
-    if (!user) {
-      return { success: false, error: "User not found" };
+    const user = await getUserByClerkId(clerkId);
+
+    if (!user || user.isBanned || !user.clerkId) {
+      return { success: false, error: "User not found or banned" };
     }
 
-    const targetType = isPostContent(target) ? "post" : "comment";
+    const existingReaction = await getLibUserReaction(
+      target._id,
+      user.clerkId,
+      {
+        useCdn: false, // ✅ Skip CDN for fresh data
+      }
+    );
 
-    const existingReaction = await getLibUserReaction(target._id, userId);
+    console.log(existingReaction);
 
     if (reactionType === null) {
       if (existingReaction) {
         await writeClient.delete(existingReaction._id);
-        revalidateTag(`reactions-${targetType}-${target._id}`);
         return { success: true, action: "removed" };
       }
       return { success: true, action: "no-change" };
     }
 
-    if (existingReaction) {
-      await writeClient
+    if (existingReaction?.type) {
+      if (existingReaction.type === reactionType) {
+        return { success: true, action: "no-change" };
+      }
+      const updatedReaction = await writeClient
         .patch(existingReaction._id)
         .set({ type: reactionType })
-        .commit();
-      revalidateTag(`reactions-${targetType}-${target._id}`);
+        .commit({
+          autoGenerateArrayKeys: true,
+          dryRun: false,
+        });
       return { success: true, action: "updated", type: reactionType };
     }
+
+    console.log("Creating new reaction");
 
     const reactionData = {
       _type: "reaction",
@@ -61,8 +74,9 @@ export async function handleReaction(
       },
     };
 
-    const newReaction = await writeClient.create(reactionData);
-    revalidateTag(`reactions-${targetType}-${target._id}`);
+    const newReaction = await writeClient.create(reactionData, {
+      autoGenerateArrayKeys: true,
+    });
 
     return {
       success: true,

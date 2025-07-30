@@ -1,3 +1,5 @@
+"use client";
+
 import Card from "../card";
 import { Post } from "@/sanity.types";
 import { cn } from "@/lib/utils";
@@ -8,6 +10,7 @@ import PostTags from "./post-tags";
 import PostReactions from "./post-reactions";
 import { Separator } from "../ui/separator";
 import SmartImage from "../media/smart-image";
+import { useClerk } from "@clerk/nextjs";
 
 type PostCardProps = {
   post: Post;
@@ -16,6 +19,7 @@ type PostCardProps = {
 };
 
 const PostCard = ({ post, className, imageSize }: PostCardProps) => {
+  const { user } = useClerk();
   return (
     <Card className={cn("h-auto flex p-0 flex-col gap-2", className)}>
       {post.imageUrl && (
@@ -61,6 +65,7 @@ const PostCard = ({ post, className, imageSize }: PostCardProps) => {
           commentsLink={
             "/topics/" + post.topicSlug + "/" + post.slug + "#comments"
           }
+          clerkId={user?.id}
         />
       </div>
     </Card>

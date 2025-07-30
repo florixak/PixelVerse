@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Post, User } from "@/sanity.types";
+import { Post } from "@/sanity.types";
 import { useClerk } from "@clerk/nextjs";
 import { MessageCircle, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -19,6 +19,7 @@ type PostReactionsProps = {
   collapsed?: boolean;
   className?: string;
   commentsLink?: string;
+  clerkId?: string;
 };
 
 const PostReactions = ({
@@ -26,12 +27,12 @@ const PostReactions = ({
   collapsed = false,
   className = "",
   commentsLink = "",
+  clerkId,
 }: PostReactionsProps) => {
-  const clerk = useClerk();
   const router = useRouter();
   const queryClient = getQueryClient();
 
-  const queryKey = ["postReactions", post._id, clerk.user?.id];
+  const queryKey = ["postReactions", post._id, clerkId];
 
   const {
     data: postReactions,
@@ -40,7 +41,7 @@ const PostReactions = ({
   } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { success, data } = await getReactions(post, clerk.user?.id);
+      const { success, data } = await getReactions(post, clerkId);
       if (!success) {
         throw new Error("Failed to fetch post reactions");
       }
@@ -109,7 +110,7 @@ const PostReactions = ({
   });
 
   const handleReactionClick = (reactionType: string) => async () => {
-    if (!clerk.user) {
+    if (!clerkId) {
       toast.error("You must be signed in to react.");
       return;
     }
