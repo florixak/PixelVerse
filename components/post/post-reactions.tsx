@@ -225,20 +225,18 @@ const PostReactions = ({
         />
       </div>
 
-      {!collapsed && (
-        <div className="flex items-center gap-4">
-          <ReactionButton
-            icon={<Share2 className="inline-block text-muted-foreground" />}
-            disabled={false}
-            onClick={handleShareClick}
-            showLabel={true}
-            label="Share"
-            title="Share this post"
-          />
+      <div className="flex items-center gap-4">
+        <ReactionButton
+          icon={<Share2 className="inline-block text-muted-foreground" />}
+          disabled={false}
+          onClick={handleShareClick}
+          showLabel={!collapsed}
+          label="Share"
+          title="Share this post"
+        />
 
-          <ReportButton contentType="post" content={post} />
-        </div>
-      )}
+        <ReportButton contentType="post" content={post} collapsed={collapsed} />
+      </div>
     </div>
   );
 };
