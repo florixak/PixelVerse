@@ -163,7 +163,7 @@ const PostCommentForm = ({ post }: PostCommentFormProps) => {
           )}
         </div>
       </form>
-      <p className="text-muted-foreground text-sm mt-2">
+      <p className="text-muted-foreground text-center text-sm mt-2">
         Comments are visible to everyone. Please be respectful and follow our
         community guidelines.
       </p>
