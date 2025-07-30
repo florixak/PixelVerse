@@ -11,8 +11,8 @@ export const reactionSchema = defineType({
     defineField({
       name: "content",
       type: "reference",
-      title: "Reported Content",
-      description: "Reference to the content being reported",
+      title: "Content",
+      description: "Reference to the post or comment this reaction is for.",
       to: [{ type: "post" }, { type: "comment" }],
       validation: (Rule) => Rule.required(),
     }),
