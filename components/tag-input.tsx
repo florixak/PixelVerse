@@ -62,7 +62,7 @@ const TagInput = ({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border rounded-xl p-2 focus-within:ring-2 ring-ring transition">
+    <div className="flex flex-wrap items-center gap-2 border rounded-xl p-2 py-1 focus-within:ring-2 ring-ring transition">
       {value.map((tag, index) => (
         <Badge
           key={index}
