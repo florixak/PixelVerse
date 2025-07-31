@@ -17,6 +17,7 @@ import UserProfileEditForm from "./user-profile-edit-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {
+  FollowStatus,
   followUser,
   isFollowingUser,
   unfollowUser,
@@ -59,10 +60,13 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
       return response;
     },
     onMutate: () => {
-      queryClient.setQueryData(["followStatus", user._id], (oldData: any) => ({
-        ...oldData,
-        isFollowing: !oldData.isFollowing,
-      }));
+      queryClient.setQueryData(
+        ["followStatus", user._id],
+        (oldData: FollowStatus) => ({
+          ...oldData,
+          isFollowing: true,
+        })
+      );
     },
     onSuccess: (data) => {
       toast.success(`Successfully ${data.action} user`);
@@ -78,10 +82,13 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
       return response;
     },
     onMutate: () => {
-      queryClient.setQueryData(["followStatus", user._id], (oldData: any) => ({
-        ...oldData,
-        isFollowing: false,
-      }));
+      queryClient.setQueryData(
+        ["followStatus", user._id],
+        (oldData: FollowStatus) => ({
+          ...oldData,
+          isFollowing: false,
+        })
+      );
     },
     onSuccess: () => {
       toast.success(`Successfully unfollowed user`);
@@ -98,7 +105,11 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
         await followMutation.mutateAsync();
       }
     } catch (error) {
-      toast.error("Failed to follow/unfollow user");
+      if (data?.isFollowing) {
+        toast.error("Failed to unfollow user");
+      } else {
+        toast.error("Failed to follow user");
+      }
     }
   };
 

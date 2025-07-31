@@ -4,15 +4,23 @@ import { auth } from "@clerk/nextjs/server";
 import { writeClient } from "@/sanity/lib/client";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 
-export async function isFollowingUser(targetUserId: string) {
+export type FollowStatus = {
+  isFollowing: boolean;
+  error?: string;
+  success?: boolean;
+};
+
+export async function isFollowingUser(
+  targetUserId: string
+): Promise<FollowStatus> {
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {
-      return { success: false, error: "Unauthorized" };
+      return { success: false, error: "Unauthorized", isFollowing: false };
     }
     const currentUser = await getUserByClerkId(clerkId);
     if (!currentUser) {
-      return { success: false, error: "User not found" };
+      return { success: false, error: "User not found", isFollowing: false };
     }
     const follow = await writeClient.fetch(
       `*[_type == "follow" && follower._ref == $followerId && following._ref == $followingId][0]`,
@@ -25,7 +33,11 @@ export async function isFollowingUser(targetUserId: string) {
     return { success: true, isFollowing: !!follow };
   } catch (error) {
     console.error("Failed to check following status:", error);
-    return { success: false, error: "Failed to check following status" };
+    return {
+      success: false,
+      error: "Failed to check following status",
+      isFollowing: false,
+    };
   }
 }
 
