@@ -14,6 +14,14 @@ import {
 } from "../ui/sheet";
 import { useState } from "react";
 import UserProfileEditForm from "./user-profile-edit-form";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import {
+  followUser,
+  isFollowingUser,
+  unfollowUser,
+} from "@/actions/follow-actions";
+import { getQueryClient } from "@/lib/get-query-client";
 
 type UserActionsProps = {
   user: User | null;
@@ -26,6 +34,73 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
   if (!user) {
     return null;
   }
+
+  const queryClient = getQueryClient();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["followStatus", user._id],
+    queryFn: async () => {
+      if (!user._id) return null;
+      const { isFollowing, error, success } = await isFollowingUser(user._id);
+      if (error) {
+        console.error("Error checking following status:", error);
+        return null;
+      }
+      return { isFollowing, error, success };
+    },
+  });
+
+  const followMutation = useMutation({
+    mutationFn: async () => {
+      const response = await followUser(user._id);
+      if (!response.success) {
+        throw new Error(response.error || "Failed to follow/unfollow user");
+      }
+      return response;
+    },
+    onMutate: () => {
+      queryClient.setQueryData(["followStatus", user._id], (oldData: any) => ({
+        ...oldData,
+        isFollowing: !oldData.isFollowing,
+      }));
+    },
+    onSuccess: (data) => {
+      toast.success(`Successfully ${data.action} user`);
+    },
+  });
+
+  const unFollowMutation = useMutation({
+    mutationFn: async () => {
+      const response = await unfollowUser(user._id);
+      if (!response.success) {
+        throw new Error(response.error || "Failed to unfollow user");
+      }
+      return response;
+    },
+    onMutate: () => {
+      queryClient.setQueryData(["followStatus", user._id], (oldData: any) => ({
+        ...oldData,
+        isFollowing: false,
+      }));
+    },
+    onSuccess: () => {
+      toast.success(`Successfully unfollowed user`);
+    },
+  });
+
+  const handleFollow = async () => {
+    if (!user) return;
+
+    try {
+      if (data?.isFollowing) {
+        await unFollowMutation.mutateAsync();
+      } else {
+        await followMutation.mutateAsync();
+      }
+    } catch (error) {
+      toast.error("Failed to follow/unfollow user");
+    }
+  };
 
   return (
     <div className="flex flex-row items-center gap-4 justify-center sm:justify-start">
@@ -46,9 +121,17 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
         </SheetContent>
       </Sheet>
 
-      <Button className="px-6" disabled={!user}>
-        Follow
-      </Button>
+      {!isUsersProfile && (
+        <Button
+          className="px-6"
+          variant={data?.isFollowing ? "destructive" : "default"}
+          disabled={!user}
+          onClick={handleFollow}
+          aria-label="Follow/Unfollow User"
+        >
+          {isLoading ? "Loading..." : data?.isFollowing ? "Unfollow" : "Follow"}
+        </Button>
+      )}
       <ThreeDotsSelect
         options={[
           {

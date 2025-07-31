@@ -10,6 +10,9 @@ import UserPosts from "./user-posts";
 import { SortOrder } from "@/types/filter";
 import SortFilterSelect from "../sort-filter-select";
 import { currentUser } from "@clerk/nextjs/server";
+import { getQueryClient } from "@/lib/get-query-client";
+import { isFollowingUser } from "@/actions/follow-actions";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 type UserProfileContentProps = {
   user: User | null;
@@ -18,6 +21,19 @@ type UserProfileContentProps = {
 
 const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
   const currUser = await currentUser();
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["followStatus", user?._id],
+    queryFn: async () => {
+      if (!user?._id) return null;
+      const { isFollowing, error, success } = await isFollowingUser(user._id);
+      if (error) {
+        console.error("Error checking following status:", error);
+        return null;
+      }
+      return { isFollowing, error, success };
+    },
+  });
 
   return (
     <section className="flex flex-col w-full max-w-[70rem] mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 gap-6 md:gap-12">
@@ -65,10 +81,12 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
               <UserProfileStats user={user} />
             </Suspense>
             <div className="flex sm:hidden flex-col gap-6 mt-4">
-              <UserActions
-                user={user}
-                isUsersProfile={user?.clerkId === currUser?.id}
-              />
+              <HydrationBoundary state={dehydrate(queryClient)}>
+                <UserActions
+                  user={user}
+                  isUsersProfile={user?.clerkId === currUser?.id}
+                />
+              </HydrationBoundary>
             </div>
           </div>
         </div>
