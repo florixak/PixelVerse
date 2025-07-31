@@ -47,10 +47,10 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
             <p
               className={`${
                 user?.createdAt ? "flex" : "hidden"
-              } text-muted-foreground items-center text-sm gap-1 justify-center sm:justify-start mt-1`}
+              } text-muted-foreground items-center text-sm gap-1 justify-center sm:justify-start`}
               title={`Joined on ${formatDate(user?.createdAt)}`}
             >
-              <Calendar className="h-4 w-4" /> Joined{" "}
+              <Calendar className="h-4 w-4" /> Joined on{" "}
               {formatDate(user?.createdAt)}
             </p>
 
