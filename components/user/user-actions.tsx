@@ -64,7 +64,7 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
         ["followStatus", user._id],
         (oldData: FollowStatus) => ({
           ...oldData,
-          isFollowing: true,
+          isFollowing: oldData ? !oldData.isFollowing : true,
         })
       );
     },
