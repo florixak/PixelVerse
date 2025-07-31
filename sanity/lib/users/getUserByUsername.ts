@@ -24,9 +24,8 @@ export const getUserByUsername = async (
       },
       "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
       "commentCount": count(*[_type == "comment" && references(^._id) && isDeleted != true && isBanned != true]),
-      "receivedLikes": count(*[_type == "post" && author._ref == ^._id && isDeleted != true]{
-        "likes": reactions[type == "like"]
-      }[].likes[]),
+      "followerCount": count(*[_type == "follow" && following._ref == ^._id]),
+      "followingCount": count(*[_type == "follow" && follower._ref == ^._id]),
       bio,
       isReported
     }`,

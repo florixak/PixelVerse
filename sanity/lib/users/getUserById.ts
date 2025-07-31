@@ -22,6 +22,9 @@ const getUserById = async (userId: string): Promise<User> => {
       },
       "postCount": count(*[_type == "post" && references(^._id)]),
       "commentCount": count(*[_type == "comment" && references(^._id)]),
+      "followerCount": count(*[_type == "follow" && following._ref == ^._id]),
+      "followingCount": count(*[_type == "follow" && follower._ref == ^._id]),
+      "createdAt": _createdAt,
       isReported
     }`,
     { userId }

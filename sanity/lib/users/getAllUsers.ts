@@ -36,6 +36,8 @@ const getAllUsers = async ({
       bio,
       "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
       "commentCount": count(*[_type == "comment" && references(^._id) && isDeleted != true]),
+      "followerCount": count(*[_type == "follow" && following._ref == ^._id]),
+      "followingCount": count(*[_type == "follow" && follower._ref == ^._id]),
       isReported
     }`,
     { limit }

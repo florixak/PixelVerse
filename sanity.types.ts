@@ -144,7 +144,8 @@ export type User = {
   role?: "user" | "admin" | "moderator";
   postCount?: number;
   commentCount?: number;
-  receivedLikes?: number;
+  followerCount?: number;
+  followingCount?: number;
   mostActiveTopic?: Topic;
   favoriteTopics?: Topic[];
   reportCount?: number;
