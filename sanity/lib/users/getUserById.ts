@@ -22,9 +22,6 @@ const getUserById = async (userId: string): Promise<User> => {
       },
       "postCount": count(*[_type == "post" && references(^._id)]),
       "commentCount": count(*[_type == "comment" && references(^._id)]),
-      "receivedLikes": count(*[_type == "post" && author._ref == ^._id]{
-        "likes": reactions[type == "like"]
-      }[].likes[]),
       isReported
     }`,
     { userId }
