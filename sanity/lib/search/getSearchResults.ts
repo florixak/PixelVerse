@@ -138,12 +138,15 @@ export async function getSearchResults({
             ${buildSearchCondition("bio")}
           )
         ] {
-          _type,
-          _id,
-          username,
-          "slug": username,
-          bio,
-          "imageUrl": image.asset->url,
+      _id,
+      _createdAt,
+      username,
+      fullName,
+      email,
+      clerkId,
+      imageUrl,
+      role,
+      bio,
           "postCount": count(*[_type == "post" && author._ref == ^._id]),
           "followerCount": count(*[_type == "follow" && following._ref == ^._id])
         } | order(followerCount desc) [${start}...${end}]`
@@ -175,7 +178,7 @@ export async function getSearchResults({
         "totalTopics": ${
           filter === "all" || filter === "topics"
             ? `count(*[
-          _type == "topic" && 
+          _type == "topic" && isBanned != true &&
           defined(slug.current) &&
           (
             ${buildSearchCondition("title")} || 
