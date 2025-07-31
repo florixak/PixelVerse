@@ -5,6 +5,7 @@ import { topicSchema } from "./topicSchema";
 import { commentSchema } from "./commentSchema";
 import { reactionSchema } from "./reactionSchema";
 import { reportSchema } from "./reportSchema";
+import { followSchema } from "./followSchema";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -14,5 +15,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     topicSchema,
     reactionSchema,
     reportSchema,
+    followSchema,
   ],
 };

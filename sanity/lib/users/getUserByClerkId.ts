@@ -25,9 +25,8 @@ export const getUserByClerkId = async (
       },
       "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true]),
       "commentCount": count(*[_type == "comment" && references(^._id) && isDeleted != true]),
-      "receivedLikes": count(*[_type == "post" && author._ref == ^._id]{
-        "likes": reactions[type == "like"]
-      }[].likes[]),
+      "followerCount": count(*[_type == "follow" && following._ref == ^._id]),
+      "followingCount": count(*[_type == "follow" && follower._ref == ^._id]),
       isReported
     }`,
     { clerkId }
