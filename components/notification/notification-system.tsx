@@ -6,7 +6,7 @@ import { getUnreadNotificationCount } from "@/actions/notification-actions";
 import NotificationPermPrompt from "./notification-perm-prompt";
 import NotificationMenu from "./notification-menu";
 
-const NotificationButton = () => {
+const NotificationSystem = () => {
   const { isSignedIn } = useAuth();
 
   const { data: countData } = useQuery({
@@ -34,4 +34,4 @@ const NotificationButton = () => {
   );
 };
 
-export default NotificationButton;
+export default NotificationSystem;

@@ -1,7 +1,7 @@
 import { ThemeSwitcher } from "./theme-switcher";
 import AuthButtons from "./auth-buttons";
 import HeaderSearch from "./header-search";
-import NotificationButton from "./notification/notification-button";
+import NotificationSystem from "./notification/notification-system";
 import { getQueryClient } from "@/lib/get-query-client";
 import { getUnreadNotificationCount } from "@/actions/notification-actions";
 import { currentUser } from "@clerk/nextjs/server";
@@ -22,7 +22,7 @@ const Header = async () => {
       <HeaderSearch />
       <AuthButtons />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <NotificationButton />
+        <NotificationSystem />
       </HydrationBoundary>
       <ThemeSwitcher />
     </header>
