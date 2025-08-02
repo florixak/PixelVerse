@@ -1,6 +1,7 @@
 # PixelVerse
 
-<img alt="PixelVerse Logo" src="https://place-hold.it/800x200/181820/39D353/bold&fontsize=40&text=PixelVerse">
+<!--<img alt="PixelVerse Logo" src="https://place-hold.it/800x200/181820/39D353/bold&fontsize=40&text=PixelVerse">-->
+<img alt="PixelVerse Logo" src="https://raw.githubusercontent.com/florixak/PixelVerse/refs/heads/main/public/pixelverse-favicon.png">
 
 **PixelVerse** is a modern community platform for pixel artists to share creations, connect with fellow artists, and explore the vibrant world of pixel art.
 
