@@ -204,7 +204,7 @@ export function isUserContent(content: any): content is User {
 export type Notification = {
   _id: string;
   _type: "notification";
-  _createdAt: string;
+  createdAt: string;
   _updatedAt: string;
   _rev: string;
   recipient: User;
