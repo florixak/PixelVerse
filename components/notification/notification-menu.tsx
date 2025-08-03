@@ -1,20 +1,20 @@
+"use client";
+
 import { Bell } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getNotifications,
   markAllNotificationsAsRead,
   markNotificationAsRead,
 } from "@/actions/notification-actions";
-import { getQueryClient } from "@/lib/get-query-client";
 import Notification from "./notification";
 import { Notification as NotificationType } from "@/sanity.types";
 
@@ -27,16 +27,43 @@ const NotificationMenu = ({
   unreadCount,
   isSignedIn,
 }: NotificationMenuProps) => {
-  const queryClient = getQueryClient();
+  const queryClient = useQueryClient();
   const { data: notificationsData } = useQuery({
     queryKey: ["notifications"],
     queryFn: () => getNotifications(10),
     enabled: isSignedIn,
+    staleTime: 30 * 1000,
+    refetchOnWindowFocus: true,
   });
 
   const markAsReadMutation = useMutation({
     mutationFn: markNotificationAsRead,
-    onSuccess: () => {
+    onMutate: async (notificationId) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications"] });
+
+      const previousNotifications = queryClient.getQueryData(["notifications"]);
+
+      queryClient.setQueryData(["notifications"], (old: any) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: old.data.map((notification: any) =>
+            notification._id === notificationId
+              ? { ...notification, isRead: true }
+              : notification
+          ),
+        };
+      });
+
+      return { previousNotifications };
+    },
+    onError: (err, notificationId, context) => {
+      queryClient.setQueryData(
+        ["notifications"],
+        context?.previousNotifications
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["unread-notifications"] });
     },
@@ -44,7 +71,32 @@ const NotificationMenu = ({
 
   const markAllAsReadMutation = useMutation({
     mutationFn: markAllNotificationsAsRead,
-    onSuccess: () => {
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["notifications"] });
+
+      const previousNotifications = queryClient.getQueryData(["notifications"]);
+
+      queryClient.setQueryData(["notifications"], (old: any) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: old.data.map((notification: any) =>
+            notification.isRead
+              ? notification
+              : { ...notification, isRead: true }
+          ),
+        };
+      });
+
+      return { previousNotifications };
+    },
+    onError: (err, notificationId, context) => {
+      queryClient.setQueryData(
+        ["notifications"],
+        context?.previousNotifications
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["unread-notifications"] });
     },
@@ -58,8 +110,19 @@ const NotificationMenu = ({
     }
   };
 
+  const handleDropdownOpen = (open: boolean) => {
+    if (open) return;
+    const queryState = queryClient.getQueryState(["notifications"]);
+    const isStale =
+      !queryState || Date.now() - (queryState.dataUpdatedAt || 0) > 30000;
+
+    if (isStale) {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  };
+
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={handleDropdownOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
