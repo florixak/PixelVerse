@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { writeClient } from "@/sanity/lib/client";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
+import { createNotification } from "./notification-actions";
 
 export type FollowStatus = {
   isFollowing: boolean;
@@ -75,6 +76,13 @@ export async function followUser(targetUserId: string) {
       follower: { _type: "reference", _ref: currentUser._id },
       following: { _type: "reference", _ref: targetUserId },
       createdAt: new Date().toISOString(),
+    });
+
+    await createNotification({
+      type: "follow",
+      recipientId: targetUserId,
+      senderId: currentUser._id,
+      message: ` started following you.`,
     });
 
     return { success: true, action: "followed" };
