@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
 import { writeClient } from "@/sanity/lib/client";
-import { isPostContent, Post, Comment } from "@/sanity.types";
+import { isPostContent, Post, Comment, Reaction } from "@/sanity.types";
 import {
   getUserReaction as getLibUserReaction,
   getReactionCounts as getLibReactionCounts,
@@ -17,7 +17,7 @@ import { createNotification } from "./notification-actions";
 
 export async function handleReaction(
   target: Post | Comment,
-  reactionType: string | null
+  reactionType: Reaction["type"] | null
 ) {
   try {
     const { userId: clerkId } = await auth();
