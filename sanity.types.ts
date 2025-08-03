@@ -211,7 +211,7 @@ export type Notification = {
   sender: User;
   type: "follow" | "post_like" | "comment_like" | "comment" | "mention";
   message?: string;
-  content?: string;
+  content?: Post | Comment | User;
   isRead?: boolean;
 };
 
