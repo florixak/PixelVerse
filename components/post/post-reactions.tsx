@@ -62,7 +62,11 @@ const PostReactions = ({
 
       const previousData = queryClient.getQueryData(queryKey);
 
-      if (previousData && typeof previousData === "object" && !Array.isArray(previousData)) {
+      if (
+        previousData &&
+        typeof previousData === "object" &&
+        !Array.isArray(previousData)
+      ) {
         queryClient.setQueryData(queryKey, (old: any) => {
           if (!old) return old;
 
