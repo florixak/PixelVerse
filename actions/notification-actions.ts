@@ -43,7 +43,9 @@ export async function getNotifications(
           _id,
           _type,
           title,
-          content
+          content,
+          "slug": slug.current,
+          "topicSlug": topic->slug.current
         }
       }`,
       { userId: currentUser._id, limit },
@@ -123,7 +125,6 @@ export async function markNotificationAsRead(
   }
 }
 
-// ✅ Mark all notifications as read
 export async function markAllNotificationsAsRead(): Promise<
   NotificationResult<Notification[]>
 > {
@@ -189,9 +190,9 @@ export async function createNotification({
   contentId?: string;
 }): Promise<NotificationResult<{ _id: string }>> {
   try {
-    if (recipientId === senderId) {
+    /*if (recipientId === senderId) {
       return { success: true, action: "skipped_self" };
-    }
+    }*/
 
     const notification = await writeClient.create({
       _type: "notification",
@@ -203,10 +204,6 @@ export async function createNotification({
       isRead: false,
       createdAt: new Date().toISOString(),
     });
-
-    console.log(
-      `✅ Created notification: ${type} from ${senderId} to ${recipientId}`
-    );
 
     return {
       success: true,
