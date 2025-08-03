@@ -25,9 +25,11 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
       case "comment":
       case "comment_like":
         if (content && content?._type === "post") {
-          return `/topics/${content.topicSlug || content._id}/${content.slug}`;
+          return `/topics/${content.topicSlug || "unknown-topic"}/${
+            content.slug
+          }`;
         } else if (content && content?._type === "comment") {
-          return `/topics/${content.post?.topicSlug || content.post?._id}/${
+          return `/topics/${content.post?.topicSlug || "unknown-topic"}/${
             content.post?.slug
           }#comment-${content._id}`;
         }
@@ -96,26 +98,34 @@ const NotificationMessage = ({
         {sender?.username}
       </span>{" "}
       {message}
-      {content && content._type === "post" && (
-        <Link
-          href={`/topics/${content.topicSlug || content._id}`}
-          className="font-medium"
-          onClick={handleLinkClick}
-        >
-          {content.title}
-        </Link>
-      )}
-      {content && content._type === "comment" && (
-        <Link
-          href={`/topics/${content.post?.topicSlug || content.post?._id}/${
-            content.post?.slug
-          }#comment-${content._id}`}
-          className="font-medium"
-          onClick={handleLinkClick}
-        >
-          {content.post?.title}
-        </Link>
-      )}
+      {content &&
+        content._type === "post" &&
+        content.topicSlug &&
+        content.slug && (
+          <Link
+            href={`/topics/${content.topicSlug || "unknown-topic"}/${
+              content.slug
+            }`}
+            className="font-medium"
+            onClick={handleLinkClick}
+          >
+            {content.title}
+          </Link>
+        )}
+      {content &&
+        content._type === "comment" &&
+        content.post?.topicSlug &&
+        content.post?.slug && (
+          <Link
+            href={`/topics/${content.post?.topicSlug || "unknown-topic"}/${
+              content.post?.slug
+            }#comment-${content._id}`}
+            className="font-medium"
+            onClick={handleLinkClick}
+          >
+            {content.post?.title}
+          </Link>
+        )}
       {content && content._type === "user" && (
         <Link
           href={`/user/${content.username}`}
@@ -125,7 +135,7 @@ const NotificationMessage = ({
           {content.username}
         </Link>
       )}
-      {type === "follow" && <span className="font-medium">followed you</span>}
+      {type === "follow" && <span className="font-medium">{message}</span>}
     </p>
   );
 };
