@@ -12,6 +12,7 @@ import {
   getTopicSlug,
   parsePostFormData,
 } from "@/lib/post-utils";
+import { createNotification } from "./notification-actions";
 
 /**
  * Creates a new post
@@ -270,8 +271,13 @@ export async function createComment({
       return { error: "Comment cannot be empty" };
     }
 
-    const post = await writeClient.fetch(
-      `*[_type == "post" && _id == $postId && isDeleted != true && isBanned != true][0]`,
+    const post = await writeClient.fetch<Post>(
+      `*[_type == "post" && _id == $postId && isDeleted != true && isBanned != true][0] {
+        _id,
+        _type,
+        title,
+        author-> {_id,}
+      }`,
       { postId }
     );
 
@@ -283,7 +289,6 @@ export async function createComment({
       return { error: "Comments are disabled for this post" };
     }
 
-    // Create the comment
     await writeClient.create({
       _type: "comment",
       content,
@@ -296,6 +301,14 @@ export async function createComment({
         _ref: userId,
       },
       publishedAt: new Date().toISOString(),
+    });
+
+    await createNotification({
+      recipientId: post?.author?._id!,
+      senderId: userId,
+      type: "comment",
+      message: ` commented on your post `,
+      contentId: postId,
     });
 
     revalidatePath(`/topics/${post.topicSlug}/${post.slug}`);

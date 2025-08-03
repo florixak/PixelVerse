@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
 import { writeClient } from "@/sanity/lib/client";
-import { isPostContent, Post, Comment } from "@/sanity.types";
+import { isPostContent, Post, Comment, Reaction } from "@/sanity.types";
 import {
   getUserReaction as getLibUserReaction,
   getReactionCounts as getLibReactionCounts,
@@ -13,10 +13,11 @@ import {
   GetUserReaction,
 } from "@/sanity/lib/reactions/getReactionsById";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
+import { createNotification } from "./notification-actions";
 
 export async function handleReaction(
   target: Post | Comment,
-  reactionType: string | null
+  reactionType: Reaction["type"] | null
 ) {
   try {
     const { userId: clerkId } = await auth();
@@ -38,9 +39,7 @@ export async function handleReaction(
       }
     );
 
-    
-
-    if (reactionType === null) {
+    if (reactionType === null || existingReaction?.type === reactionType) {
       if (existingReaction) {
         await writeClient.delete(existingReaction._id);
         return { success: true, action: "removed" };
@@ -49,17 +48,12 @@ export async function handleReaction(
     }
 
     if (existingReaction?.type) {
-      if (existingReaction.type === reactionType) {
-        return { success: true, action: "no-change" };
-      }
       const updatedReaction = await writeClient
         .patch(existingReaction._id)
         .set({ type: reactionType })
         .commit();
       return { success: true, action: "updated", type: reactionType };
     }
-
-    
 
     const reactionData = {
       _type: "reaction",
@@ -72,6 +66,16 @@ export async function handleReaction(
     };
 
     const newReaction = await writeClient.create(reactionData);
+
+    await createNotification({
+      type: isPostContent(target) ? "post_like" : "comment_like",
+      recipientId: target.author?._id!,
+      senderId: user._id,
+      message: ` reacted with ${reactionType} to your ${
+        isPostContent(target) ? "post" : "comment"
+      } `,
+      contentId: target._id,
+    });
 
     return {
       success: true,

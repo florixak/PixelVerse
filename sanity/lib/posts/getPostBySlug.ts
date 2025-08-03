@@ -12,6 +12,7 @@ const getPostBySlug = async (
 
   const query = groq`*[_type == "post" && slug.current == $postSlug && isDeleted != true && isBanned != true && author->isBanned != true][0] {
     _id,
+    _type,
     title,
     "slug": slug.current,
     excerpt,

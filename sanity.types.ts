@@ -201,6 +201,26 @@ export function isUserContent(content: any): content is User {
   return content?._type === "user";
 }
 
+export type Notification = {
+  _id: string;
+  _type: "notification";
+  createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  recipient: User;
+  sender: User;
+  type:
+    | "follow"
+    | "post_like"
+    | "comment_like"
+    | "comment"
+    | "mention"
+    | "share";
+  message?: string;
+  content?: Post | Comment | User;
+  isRead?: boolean;
+};
+
 export type SanityImagePaletteSwatch = {
   _type: "sanity.imagePaletteSwatch";
   background?: string;

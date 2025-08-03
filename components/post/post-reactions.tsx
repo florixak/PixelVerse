@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Post } from "@/sanity.types";
+import { Post, Reaction } from "@/sanity.types";
 import { useClerk } from "@clerk/nextjs";
 import { MessageCircle, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -50,7 +50,7 @@ const PostReactions = ({
   });
 
   const reactionMutation = useMutation({
-    mutationFn: async (reactionType: string) => {
+    mutationFn: async (reactionType: Reaction["type"]) => {
       const result = await handleReaction(post, reactionType);
       if (!result.success) {
         throw new Error(result.error);
@@ -62,7 +62,11 @@ const PostReactions = ({
 
       const previousData = queryClient.getQueryData(queryKey);
 
-      if (previousData && typeof previousData === "object" && !Array.isArray(previousData)) {
+      if (
+        previousData &&
+        typeof previousData === "object" &&
+        !Array.isArray(previousData)
+      ) {
         queryClient.setQueryData(queryKey, (old: any) => {
           if (!old) return old;
 
@@ -109,7 +113,7 @@ const PostReactions = ({
     },
   });
 
-  const handleReactionClick = (reactionType: string) => async () => {
+  const handleReactionClick = (reactionType: Reaction["type"]) => async () => {
     if (!clerkId) {
       toast.error("You must be signed in to react.");
       return;
