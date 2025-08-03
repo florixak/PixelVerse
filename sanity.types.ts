@@ -209,7 +209,13 @@ export type Notification = {
   _rev: string;
   recipient: User;
   sender: User;
-  type: "follow" | "post_like" | "comment_like" | "comment" | "mention";
+  type:
+    | "follow"
+    | "post_like"
+    | "comment_like"
+    | "comment"
+    | "mention"
+    | "share";
   message?: string;
   content?: Post | Comment | User;
   isRead?: boolean;
