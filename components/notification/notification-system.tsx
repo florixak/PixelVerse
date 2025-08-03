@@ -12,7 +12,9 @@ const NotificationSystem = () => {
   const { data: countData } = useQuery({
     queryKey: ["unread-notifications"],
     queryFn: getUnreadNotificationCount,
-    refetchInterval: 30000,
+    refetchInterval: 30 * 1000,
+    staleTime: 10 * 1000,
+    refetchOnWindowFocus: true,
     enabled: isSignedIn,
   });
 
