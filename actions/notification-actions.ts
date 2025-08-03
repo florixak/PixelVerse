@@ -116,8 +116,6 @@ export async function markNotificationAsRead(
 
     await writeClient.patch(notificationId).set({ isRead: true }).commit();
 
-    console.log(`✅ Marked notification as read: ${notificationId}`);
-
     return { success: true, action: "marked_read" };
   } catch (error) {
     console.error("❌ Failed to mark notification as read:", error);
@@ -158,10 +156,6 @@ export async function markAllNotificationsAsRead(): Promise<
 
     await transaction.commit();
 
-    console.log(
-      `✅ Marked ${unreadNotifications.length} notifications as read`
-    );
-
     return {
       success: true,
       action: "marked_all_read",
@@ -190,9 +184,9 @@ export async function createNotification({
   contentId?: string;
 }): Promise<NotificationResult<{ _id: string }>> {
   try {
-    /*if (recipientId === senderId) {
+    if (recipientId === senderId) {
       return { success: true, action: "skipped_self" };
-    }*/
+    }
 
     const notification = await writeClient.create({
       _type: "notification",
@@ -246,8 +240,6 @@ export async function deleteNotification({
 
     await writeClient.delete(notification._id);
 
-    console.log(`✅ Deleted notification: ${notification._id}`);
-
     return { success: true, action: "deleted" };
   } catch (error) {
     console.error("❌ Failed to delete notification:", error);
@@ -278,8 +270,6 @@ export async function cleanupOldNotifications(
     });
 
     await transaction.commit();
-
-    console.log(`✅ Cleaned up ${oldNotifications.length} old notifications`);
 
     return {
       success: true,
