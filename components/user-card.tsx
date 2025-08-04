@@ -11,14 +11,10 @@ type UserCardProps = {
 };
 
 const UserCard = ({ collapsed }: UserCardProps) => {
-  const { openUserProfile, user } = useClerk();
+  const { user } = useClerk();
   if (!user) {
     return null;
   }
-
-  const handleUserButtonClick = () => {
-    openUserProfile();
-  };
 
   return (
     <SignedIn key={user.id}>
@@ -48,14 +44,6 @@ const UserCard = ({ collapsed }: UserCardProps) => {
           </Avatar>
         </Link>
       </div>
-      <Button
-        variant="ghost"
-        className="w-full"
-        onClick={handleUserButtonClick}
-      >
-        <Settings />
-        <span className={`${collapsed ? "hidden" : "block"}`}>Settings</span>
-      </Button>
 
       <Button asChild variant="outline" className="w-full">
         <SignOutButton>
