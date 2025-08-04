@@ -9,14 +9,10 @@ type NotificationProps = {
   onClick?: (notification: NotificationType) => void;
 };
 
-type NotificationMessageProps = {
-  notification: NotificationType;
-  handleLinkClick?: (e: React.MouseEvent) => void;
-};
-
 const Notification = ({ notification, onClick }: NotificationProps) => {
   const router = useRouter();
-  const { sender, type, content, isRead } = notification;
+  const { sender, type, content, isRead, createdAt, message } = notification;
+
   const getNavigationUrl = () => {
     switch (type) {
       case "follow":
@@ -24,14 +20,21 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
       case "post_like":
       case "comment":
       case "comment_like":
-        if (content && content?._type === "post") {
-          return `/topics/${content.topicSlug || "unknown-topic"}/${
-            content.slug
-          }`;
-        } else if (content && content?._type === "comment") {
-          return `/topics/${content.post?.topicSlug || "unknown-topic"}/${
-            content.post?.slug
-          }#comment-${content._id}`;
+        if (
+          content &&
+          content?._type === "post" &&
+          content.topicSlug &&
+          content.slug
+        ) {
+          return `/topics/${content.topicSlug}/${content.slug}`;
+        }
+        if (
+          content &&
+          content?._type === "comment" &&
+          content.post?.topicSlug &&
+          content.post?.slug
+        ) {
+          return `/topics/${content.post?.topicSlug}/${content.post?.slug}#comment-${content._id}`;
         }
         return `/user/${sender?.username}`;
       default:
@@ -47,14 +50,10 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
     router.push(url);
   };
 
-  const handleLinkClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
   return (
     <div
       key={notification._id}
-      className={`p-3 rounded-lg mb-2 cursor-pointer hover:bg-muted/50 ${
+      className={`p-3 rounded-lg mb-2 cursor-pointer hover:bg-muted/50 transition-colors ${
         !notification.isRead ? "bg-muted border-l-2 border-blue-500" : ""
       }`}
       onClick={handleClick}
@@ -65,19 +64,21 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
           alt={sender?.username || "User"}
           width={32}
           height={32}
-          className="rounded-full"
+          className="rounded-full flex-shrink-0"
         />
 
         <div className="flex-1 min-w-0">
-          <NotificationMessage
-            notification={notification}
-            handleLinkClick={handleLinkClick}
-          />
+          <div className="text-sm">
+            <span className="font-medium text-foreground">
+              {sender?.username}
+            </span>
+            <span className="text-muted-foreground"> {message}</span>
+
+            {content && <ContentLink content={content} />}
+          </div>
 
           <p className="text-xs text-muted-foreground mt-1">
-            {formatDistanceToNow(new Date(notification.createdAt), {
-              addSuffix: true,
-            })}
+            {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
           </p>
         </div>
 
@@ -87,57 +88,42 @@ const Notification = ({ notification, onClick }: NotificationProps) => {
   );
 };
 
-const NotificationMessage = ({
-  notification,
-  handleLinkClick,
-}: NotificationMessageProps) => {
-  const { sender, type, content, message } = notification;
-  return (
-    <p className="text-sm">
-      <span onClick={handleLinkClick} className="font-medium">
-        {sender?.username}
-      </span>{" "}
-      {message}
-      {content &&
-        content._type === "post" &&
-        content.topicSlug &&
-        content.slug && (
-          <Link
-            href={`/topics/${content.topicSlug || "unknown-topic"}/${
-              content.slug
-            }`}
-            className="font-medium"
-            onClick={handleLinkClick}
-          >
-            {content.title}
-          </Link>
-        )}
-      {content &&
-        content._type === "comment" &&
-        content.post?.topicSlug &&
-        content.post?.slug && (
-          <Link
-            href={`/topics/${content.post?.topicSlug || "unknown-topic"}/${
-              content.post?.slug
-            }#comment-${content._id}`}
-            className="font-medium"
-            onClick={handleLinkClick}
-          >
-            {content.post?.title}
-          </Link>
-        )}
-      {content && content._type === "user" && (
-        <Link
-          href={`/user/${content.username}`}
-          className="font-medium"
-          onClick={handleLinkClick}
-        >
-          {content.username}
-        </Link>
-      )}
-      {type === "follow" && <span className="font-medium">{message}</span>}
-    </p>
-  );
+const ContentLink = ({ content }: { content: NotificationType["content"] }) => {
+  if (!content) return null;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  if (content._type === "post" && content.topicSlug && content.slug) {
+    return (
+      <Link
+        href={`/topics/${content.topicSlug}/${content.slug}`}
+        className="font-medium text-primary hover:underline ml-1"
+        onClick={handleClick}
+      >
+        "{content.title}"
+      </Link>
+    );
+  }
+
+  if (
+    content._type === "comment" &&
+    content.post?.topicSlug &&
+    content.post?.slug
+  ) {
+    return (
+      <Link
+        href={`/topics/${content.post.topicSlug}/${content.post.slug}#comment-${content._id}`}
+        className="font-medium text-primary hover:underline ml-1"
+        onClick={handleClick}
+      >
+        "{content.post.title}"
+      </Link>
+    );
+  }
+
+  return null;
 };
 
 export default Notification;
