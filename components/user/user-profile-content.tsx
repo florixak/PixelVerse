@@ -11,7 +11,7 @@ import { SortOrder } from "@/types/filter";
 import SortFilterSelect from "../sort-filter-select";
 import { currentUser } from "@clerk/nextjs/server";
 import { getQueryClient } from "@/lib/get-query-client";
-import { FollowStatus, isFollowingUser } from "@/actions/follow-actions";
+import { isFollowingUser } from "@/actions/follow-actions";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 type UserProfileContentProps = {
