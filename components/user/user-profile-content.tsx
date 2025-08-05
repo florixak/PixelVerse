@@ -99,7 +99,6 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
         </div>
       </div>
 
-      {/* Latest Activity Section */}
       <div className="flex flex-col gap-6">
         <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-3 md:gap-0">
           <div className="flex flex-col items-center md:items-start">
