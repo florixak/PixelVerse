@@ -5,37 +5,40 @@ import toast from "react-hot-toast";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { suggestTopic } from "@/actions/topicActions";
+import { suggestTopic } from "@/actions/topic-suggestion-actions";
 import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
 
 const topicSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters").max(100),
+  title: z
+    .string()
+    .min(3, "Title must be at least 3 characters")
+    .max(100)
+    .refine((val) => val.trim() !== "", {
+      message: "Title cannot be empty",
+    }),
   description: z
     .string()
     .min(10, "Description must be at least 10 characters")
-    .max(150),
-  icon: z
-    .instanceof(File)
-    .refine((file) => file.size <= 1 * 1024 * 1024, {
-      message: "Icon image must be less than 1MB",
-    })
-    .optional(),
-  banner: z
-    .instanceof(File)
-    .refine((file) => file.size <= 2 * 1024 * 1024, {
-      message: "Banner image must be less than 2MB",
-    })
-    .optional(),
+    .max(150)
+    .refine((val) => val.trim() !== "", {
+      message: "Description cannot be empty",
+    }),
+  icon: z.instanceof(File).refine((file) => file.size <= 1 * 1024 * 1024, {
+    message: "Icon image must be less than 1MB",
+  }),
+  banner: z.instanceof(File).refine((file) => file.size <= 2 * 1024 * 1024, {
+    message: "Banner image must be less than 2MB",
+  }),
 });
 
 type SuggestTopic = {
   title: string;
   description: string;
-  icon?: File | null;
-  banner?: File | null;
+  icon: File | null;
+  banner: File | null;
 };
 
 const TopicSuggestForm = () => {
@@ -127,11 +130,12 @@ const TopicSuggestForm = () => {
       <form.Field name="icon">
         {(field) => (
           <div className="space-y-2">
-            <Label htmlFor="icon">Icon (optional)</Label>
+            <Label htmlFor="icon">Icon</Label>
             <Input
               id="icon"
               type="file"
               accept="image/*"
+              placeholder="Upload an icon image (max 1MB)"
               onChange={(e) => {
                 const file = e.target.files?.[0] || null;
                 field.handleChange(file);
@@ -151,11 +155,12 @@ const TopicSuggestForm = () => {
       <form.Field name="banner">
         {(field) => (
           <div className="space-y-2">
-            <Label htmlFor="banner">Banner (optional)</Label>
+            <Label htmlFor="banner">Banner</Label>
             <Input
               id="banner"
               type="file"
               accept="image/*"
+              placeholder="Upload a banner image (max 2MB)"
               onChange={(e) => {
                 const file = e.target.files?.[0] || null;
                 field.handleChange(file);
