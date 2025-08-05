@@ -1,3 +1,4 @@
+import { SuggestedTopic } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import slugify from "slugify";
 
@@ -18,14 +19,19 @@ export const IMAGE_CONFIG = {
 /**
  * Validates and uploads an image file to Sanity
  */
-export async function uploadImageAsset(imageFile: File) {
+export async function uploadImageAsset(
+  imageFile: File,
+  maxSize: number = IMAGE_CONFIG.maxSize
+) {
   if (!imageFile || imageFile.size === 0) {
     return null;
   }
 
   // Validate file size
-  if (imageFile.size > IMAGE_CONFIG.maxSize) {
-    throw new Error("Image file too large. Maximum size is 10MB.");
+  if (imageFile.size > maxSize) {
+    throw new Error(
+      `Image file too large. Maximum size is ${maxSize / 1024 / 1024}MB.`
+    );
   }
 
   // Validate content type
@@ -132,3 +138,61 @@ export function parsePostFormData(formData: FormData) {
       : [],
   };
 }
+
+/**
+ * Parses form data into structured topic suggestion data
+ */
+export function parseTopicSuggestionFormData(formData: FormData) {
+  return {
+    title: formData.get("title")?.toString() || "Untitled Topic",
+    description: formData.get("description")?.toString() || "",
+    icon: formData.get("icon") as File,
+    banner: formData.get("banner") as File,
+  };
+}
+
+/**
+ * Gets the status variant for a suggested topic
+ */
+export const getStatusVariant = (status: SuggestedTopic["status"]) => {
+  switch (status) {
+    case "ai_approved":
+      return "default";
+    case "ai_rejected":
+      return "destructive";
+    case "needs_human_review":
+      return "secondary";
+    case "manually_approved":
+      return "default";
+    case "published":
+      return "default";
+    case "rejected":
+      return "destructive";
+    default:
+      return "outline";
+  }
+};
+
+/**
+ * Gets the emoji representation of a suggested topic status
+ */
+export const getStatusEmoji = (status: SuggestedTopic["status"]) => {
+  switch (status) {
+    case "pending_ai":
+      return "⏳";
+    case "ai_approved":
+      return "✅";
+    case "ai_rejected":
+      return "❌";
+    case "needs_human_review":
+      return "👁️";
+    case "manually_approved":
+      return "✅";
+    case "rejected":
+      return "🚫";
+    case "published":
+      return "🚀";
+    default:
+      return "❓";
+  }
+};
