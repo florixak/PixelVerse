@@ -12,7 +12,14 @@ import {
 } from "./ui/sidebar";
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { ArrowLeft, Home, Settings, TriangleAlert, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Home,
+  Newspaper,
+  Settings,
+  TriangleAlert,
+  User,
+} from "lucide-react";
 import SidebarHeader from "./sidebar-header";
 
 const menu: {
@@ -36,6 +43,11 @@ const menu: {
     url: "/admin/users",
     icon: User,
     adminOnly: true,
+  },
+  {
+    title: "Suggested Topics",
+    url: "/admin/suggested-topics",
+    icon: Newspaper,
   },
   {
     title: "Reports",
