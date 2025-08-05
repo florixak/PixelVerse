@@ -4,6 +4,7 @@ import type {
   PostTypesType,
   SoftwareOptionType,
 } from "@/types/posts";
+import { DetectedCategory } from "@/types/suggested-topics";
 import { ThumbsUp, ThumbsDown, Heart, HelpCircle } from "lucide-react";
 
 const POST_TYPES: PostTypesType[] = [
@@ -62,10 +63,23 @@ const REACTIONS: Reactions[] = [
   },
 ];
 
+const DETECTED_CATEGORIES: DetectedCategory[] = [
+  { title: "Gaming", value: "gaming" },
+  { title: "Art & Design", value: "art_design" },
+  { title: "Retro/Nostalgia", value: "retro" },
+  { title: "Technology", value: "technology" },
+  { title: "Creative Tools", value: "creative_tools" },
+  { title: "Community", value: "community" },
+  { title: "Tutorials", value: "tutorials" },
+  { title: "Inappropriate", value: "inappropriate" },
+  { title: "Off-topic", value: "off_topic" },
+];
+
 export {
   POST_TYPES,
   SOFTWARE_OPTIONS,
   DIFFICULTY_LEVELS,
   REPORT_REASONS,
   REACTIONS,
+  DETECTED_CATEGORIES,
 };
