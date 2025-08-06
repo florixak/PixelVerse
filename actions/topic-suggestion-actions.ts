@@ -9,6 +9,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import slugify from "slugify";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { revalidatePath } from "next/cache";
+import { checkTopicSuggestionByAI } from "./ai-moderation";
 
 export const suggestTopic = async (
   formData: FormData
@@ -34,10 +35,7 @@ export const suggestTopic = async (
   const { title, description, icon, banner } =
     parseTopicSuggestionFormData(formData);
 
-  const iconAsset = await uploadImageAsset(icon, 1 * 1024 * 1024);
-  const bannerAsset = await uploadImageAsset(banner, 2 * 1024 * 1024);
-
-  if (!title || !description || !iconAsset || !bannerAsset) {
+  if (!title || !description || !icon || !banner) {
     return {
       success: false,
       error: "All fields are required and images must be valid.",
@@ -59,17 +57,17 @@ export const suggestTopic = async (
     };
   }
 
-  /*const aiResult = await moderateTopicSuggestion({
-    title,
-    description,
-  });*/
+  const iconAsset = await uploadImageAsset(icon, 1 * 1024 * 1024);
+  const bannerAsset = await uploadImageAsset(banner, 2 * 1024 * 1024);
+
+  const aiResult = await checkTopicSuggestionByAI(title, description);
 
   const topic = {
     _type: "suggestedTopic",
     title,
     slug: { current: baseSlug },
     description,
-    /*status: getStatusFromAI(aiResult),
+    status: getStatusFromAI(aiResult),
     aiModerationResult: {
       _type: "aiModerationResult",
       isApproved: aiResult.isApproved,
@@ -79,7 +77,9 @@ export const suggestTopic = async (
       suggestions: aiResult.suggestions,
       checkedAt: new Date().toISOString(),
       confidence: aiResult.confidence,
-    },*/
+    },
+    icon: iconAsset,
+    banner: bannerAsset,
     submittedBy: { _type: "reference", _ref: sanityUser._id },
     submittedAt: new Date().toISOString(),
   };
