@@ -12,8 +12,7 @@
  * ---------------------------------------------------------------------------------
  */
 
-import { AIReportResult } from "./actions/ai-moderation";
-import { AITopicModerationResult } from "./types/suggested-topics";
+import { AIReportResult, AITopicResult } from "./lib/ai/moderation-service";
 
 // Source: schema.json
 export type Comment = {
@@ -235,7 +234,7 @@ export type SuggestedTopic = {
   description?: string;
   iconUrl?: string;
   bannerUrl?: string;
-  aiModerationResult?: AITopicModerationResult;
+  aiModerationResult?: AITopicResult;
   status?:
     | "pending_ai"
     | "ai_approved"
