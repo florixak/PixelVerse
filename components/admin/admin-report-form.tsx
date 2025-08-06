@@ -6,13 +6,10 @@ import { Button } from "../ui/button";
 import { Report, User } from "@/sanity.types";
 import toast from "react-hot-toast";
 import { useForm } from "@tanstack/react-form";
-import {
-  AIReportResult,
-  checkReportByAI,
-  writeReportAIResult,
-} from "@/actions/ai-moderation";
+import { checkReportByAI, writeReportAIResult } from "@/actions/ai-moderation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Info } from "lucide-react";
+import { AIReportResult } from "@/lib/ai/moderation-service";
 
 type AdminReportFormProps = {
   report: Report;
@@ -87,7 +84,9 @@ const AdminReportForm = ({
     try {
       const { isViolating, reason, confidence } = await checkReportByAI(
         report,
-        userId
+        {
+          userId,
+        }
       );
 
       const aiResult = {
