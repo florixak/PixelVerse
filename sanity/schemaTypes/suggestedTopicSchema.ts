@@ -76,10 +76,19 @@ export const suggestedTopicSchema = defineType({
           initialValue: false,
         },
         {
+          name: "confidence",
+          type: "number",
+          title: "Confidence Score",
+          description:
+            "How confident AI is about this topic being suitable (0-1)",
+          validation: (Rule) => Rule.min(0).max(1),
+        },
+        {
           name: "suitabilityScore",
           type: "number",
           title: "Suitability Score",
-          description: "How well this topic fits pixel art social media (0-1)",
+          description:
+            "AI's suitability score for this topic (0-1, higher is better)",
           validation: (Rule) => Rule.min(0).max(1),
         },
         {
