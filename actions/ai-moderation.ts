@@ -5,6 +5,9 @@ import {
   checkComment,
   checkUser,
   AIReportResult,
+  AIResult,
+  AITopicResult,
+  checkTopicSuggestion,
 } from "@/lib/ai/moderation-service";
 import { rateLimiter } from "@/lib/ai/rate-limiter";
 import type { Report, User } from "@/sanity.types";
@@ -99,8 +102,50 @@ export const writeReportAIResult = async (
     confidence,
   };
 
-  await writeClient
-    .patch(report._id)
-    .set({ aiCheckResult: report.aiCheckResult })
-    .commit();
+  await writeAIResult(report._id, { aiCheckResult: report.aiCheckResult });
+};
+
+export const checkTopicSuggestionByAI = async (
+  title: string,
+  description: string
+): Promise<AITopicResult> => {
+  if (!title || !description) {
+    throw new Error("Invalid title or description");
+  }
+
+  try {
+    return await checkTopicSuggestion(title, description);
+  } catch (error) {
+    console.error("Topic suggestion AI check failed:", error);
+    return {
+      isApproved: false,
+      suitabilityScore: 0,
+      categories: [],
+      reasons: ["AI moderation temporarily unavailable"],
+      suggestions: [],
+      confidence: 0,
+    };
+  }
+};
+
+export const writeTopicSuggestionAIResult = async (
+  contentId: string,
+  aiResult: AITopicResult
+): Promise<void> => {
+  if (!contentId) {
+    throw new Error("Invalid content ID");
+  }
+
+  await writeAIResult(contentId, { aiModerationResult: aiResult });
+};
+
+export const writeAIResult = async (
+  contentId: string,
+  result: AIResult
+): Promise<void> => {
+  if (!contentId) {
+    throw new Error("Invalid content ID");
+  }
+
+  await writeClient.patch(contentId).set(result).commit();
 };
