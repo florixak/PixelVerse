@@ -3,7 +3,7 @@ import { Comment, Post, User } from "@/sanity.types";
 export const AI_PROMPTS = {
   system: {
     base: `You are an AI content moderator for PixelVerse, a pixel art community platform.
-    Always respond with valid JSON only. Confidence: 0-1 scale representing certainty.`,
+    Respond valid JSON only. Confidence: 0-1 scale representing certainty.`,
 
     report: {
       base: `Analyze content for violations. Respond with:
@@ -20,34 +20,33 @@ export const AI_PROMPTS = {
     },
 
     topic: {
-      base: `Analyze topic suggestions for pixel art community. Respond with:
-      {"isApproved": boolean, "suitabilityScore": number, "categories": array, "reasons": array, "suggestions": array, "confidence": number}`,
+      base: `Pixel art topic check. {"isApproved":bool,"suitabilityScore":num,"categories":["text"],"reasons":["text"],"suggestions":[],"confidence":num}
+      
+Categories: art_design,gaming,retro,tutorials,inappropriate,off_topic`,
 
-      guidelines: `Rate topics 0-1 based on relevance to pixel art, gaming, digital creativity.
-      Approve: tutorials, retro gaming, art techniques, tools, community events.
-      Reject: unrelated content, spam, inappropriate material.`,
+      guidelines: `Approve: pixel,art,sprite,game,retro. Reject: unrelated.`,
     },
   },
 
   user: {
     post: (post: Post) => `
-      Analyze this pixel art post:
+      Pixel art post:
       Title: "${post.title || "Untitled"}"
       Content: "${post.content || ""}"
       Tags: ${post.tags?.join(", ") || "none"}`,
 
     comment: (comment: Comment) => `
-      Analyze this comment:
+      Comment:
       Content: "${comment.content || ""}"
       Author: ${comment.author?.fullName || "unknown"}`,
 
     user: (user: User) => `
-      Analyze this user profile:
+      User profile:
       Username: "${user.username || ""}"
       Bio: "${user.bio || ""}"`,
 
     topic: (title: string, description?: string) => `
-      Analyze this suggested topic:
+      Suggested topic:
       Title: "${title}"
       Description: "${description || "No description provided"}"`,
   },
