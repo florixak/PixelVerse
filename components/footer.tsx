@@ -47,6 +47,14 @@ const Footer = () => {
         <a href="/contact" className="hover:underline">
           Contact
         </a>
+        <span>•</span>
+        <a href="/terms" className="hover:underline">
+          Terms of Service
+        </a>
+        <span>•</span>
+        <a href="/privacy" className="hover:underline">
+          Privacy Policy
+        </a>
       </div>
     </footer>
   );
