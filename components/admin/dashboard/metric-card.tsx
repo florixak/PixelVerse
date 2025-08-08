@@ -4,8 +4,8 @@ import Link from "next/link";
 
 type MetricCardProps = {
   title: string;
-  value: string | number;
-  change?: string | number;
+  value: string | number | null | undefined;
+  change?: string | number | null | undefined;
   subtext?: string;
   icon: React.ReactNode;
   href?: string;

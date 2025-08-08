@@ -20,31 +20,31 @@ const MetricCards = async () => {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <MetricCard
         title="Total Users"
-        value={stats?.totalUsers || "N/A"}
-        change={stats?.newUsers24h}
+        value={stats?.totalUsers ?? 0}
+        change={stats?.newUsers24h ?? 0}
         icon={<Users className="h-4 w-4 text-muted-foreground" />}
         href="/admin/users"
       />
 
       <MetricCard
         title="Active Users"
-        value={stats?.activeUsers24h || "N/A"}
+        value={stats?.activeUsers24h ?? 0}
         subtext="in last 24h"
         icon={<Activity className="h-4 w-4 text-green-500" />}
       />
 
       <MetricCard
         title="Total Posts"
-        value={stats?.totalPosts || "N/A"}
-        change={stats?.newPosts24h}
+        value={stats?.totalPosts ?? 0}
+        change={stats?.newPosts24h ?? 0}
         icon={<MessageSquare className="h-4 w-4 text-muted-foreground" />}
         href="/admin/posts"
       />
 
       <MetricCard
         title="Pending Reports"
-        value={stats?.pendingReports || "N/A"}
-        change={stats?.newReports24h}
+        value={stats?.pendingReports ?? 0}
+        change={stats?.newReports24h ?? 0}
         icon={<Flag className="h-4 w-4 text-amber-500" />}
         href="/admin/reports"
       />
