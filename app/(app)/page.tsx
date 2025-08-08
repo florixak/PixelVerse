@@ -1,13 +1,6 @@
-import FeaturedPosts from "@/components/post/featured-posts";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
-import Link from "next/link";
-import { SignInButton } from "@clerk/nextjs";
-import PopularTopics from "@/components/topic/popular-topics";
 import { isReturningVisitor } from "@/lib/visitor-detection";
 import HeroSection from "@/components/landing-page/hero-section";
-import NewestPosts from "@/components/post/newest-posts";
 import HomeContent from "@/components/home-content";
 
 export default async function Home() {

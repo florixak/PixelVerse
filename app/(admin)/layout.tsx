@@ -1,6 +1,7 @@
 import AdminSidebar from "@/components/admin-sidebar";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import Providers from "@/components/providers";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { canAccessDashboard } from "@/lib/user-utils";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
@@ -33,7 +34,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <>
+    <Providers>
       <Header />
       <SidebarProvider defaultOpen={true}>
         <AdminSidebar />
@@ -46,6 +47,6 @@ export default async function AdminLayout({
         </main>
       </SidebarProvider>
       <Footer />
-    </>
+    </Providers>
   );
 }

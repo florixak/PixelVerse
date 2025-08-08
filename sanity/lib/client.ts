@@ -6,7 +6,7 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: false,
 });
 
 export const writeClient = createClient({
@@ -14,5 +14,5 @@ export const writeClient = createClient({
   dataset,
   apiVersion,
   token,
-  useCdn: false, // Set to false for writes and uploads
+  useCdn: false,
 });

@@ -100,10 +100,8 @@ export async function updatePost(
 
     const postData = parsePostFormData(formData);
 
-    // Handle image upload
     const imageAsset = await uploadImageAsset(postData.imageFile);
 
-    // Generate new slug if title changed
     let finalSlug = post.slug.current || "untitled";
     if (postData.title !== post.title) {
       finalSlug = await generateUniqueSlug(postData.title);

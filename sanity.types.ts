@@ -12,7 +12,7 @@
  * ---------------------------------------------------------------------------------
  */
 
-import { AIReportResult } from "./actions/ai-moderation";
+import { AIReportResult, AITopicResult } from "./lib/ai/moderation-service";
 
 // Source: schema.json
 export type Comment = {
@@ -219,6 +219,35 @@ export type Notification = {
   message?: string;
   content?: Post | Comment | User;
   isRead?: boolean;
+};
+
+export type SuggestedTopic = {
+  _id: string;
+  _type: "suggestedTopic";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: string;
+  submittedBy?: User;
+  submittedAt?: string;
+  description?: string;
+  iconUrl?: string;
+  bannerUrl?: string;
+  icon?: SanityImageAsset;
+  banner?: SanityImageAsset;
+  aiModerationResult?: AITopicResult;
+  status?:
+    | "pending_ai"
+    | "ai_approved"
+    | "ai_rejected"
+    | "needs_human_review"
+    | "manually_approved"
+    | "published"
+    | "rejected";
+  adminNotes?: string;
+  moderatedBy?: User;
+  moderatedAt?: string;
 };
 
 export type SanityImagePaletteSwatch = {

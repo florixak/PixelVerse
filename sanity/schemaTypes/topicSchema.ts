@@ -34,6 +34,7 @@ export const topicSchema = defineType({
       options: {
         hotspot: true,
       },
+      validation: (Rule) => Rule.required().error("Icon is required"),
     }),
     defineField({
       name: "banner",
@@ -43,6 +44,7 @@ export const topicSchema = defineType({
       options: {
         hotspot: true,
       },
+      validation: (Rule) => Rule.required().error("Banner is required"),
     }),
     defineField({
       name: "reportCount",
