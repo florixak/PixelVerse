@@ -82,12 +82,7 @@ const AdminReportForm = ({
     form.setFieldValue("isAIChecking", true);
 
     try {
-      const { isViolating, reason, confidence } = await checkReportByAI(
-        report,
-        {
-          userId,
-        }
-      );
+      const { isViolating, reason, confidence } = await checkReportByAI(report);
 
       const aiResult = {
         isViolating,
