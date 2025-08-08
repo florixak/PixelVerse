@@ -27,12 +27,14 @@ type SuggestedTopicDetailsProps = {
   params: Promise<{ id: SuggestedTopic["_id"] }>;
 };
 
-export function getTopicStatus(topic: SuggestedTopic): {
+const getTopicStatus = (
+  topic: SuggestedTopic
+): {
   variant: "outline" | "default" | "destructive" | "secondary";
   icon: React.ReactNode;
   label: string;
   emoji: string;
-} {
+} => {
   const statusMap = {
     pending_ai: {
       variant: "outline" as const,
@@ -58,12 +60,6 @@ export function getTopicStatus(topic: SuggestedTopic): {
       label: "Needs Human Review",
       emoji: "👁️",
     },
-    manually_approved: {
-      variant: "default" as const,
-      icon: <CheckCircle className="h-4 w-4 mr-1" />,
-      label: "Manually Approved",
-      emoji: "✅",
-    },
     rejected: {
       variant: "destructive" as const,
       icon: <XCircle className="h-4 w-4 mr-1" />,
@@ -86,7 +82,7 @@ export function getTopicStatus(topic: SuggestedTopic): {
       emoji: "❓",
     }
   );
-}
+};
 
 const SuggestedTopicDetails = async ({
   params,
