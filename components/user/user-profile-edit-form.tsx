@@ -22,7 +22,8 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { useState } from "react";
-
+import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 type UserProfileEditFormProps = {
   user: User;
   onSave?: (data: ProfileData) => void;
@@ -56,11 +57,13 @@ const UserProfileEditForm = ({
   onSave,
   onCancel,
 }: UserProfileEditFormProps) => {
+  const { signOut } = useClerk();
+  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const originalValues: ProfileData = {
-    fullName: user.fullName,
-    username: user.username,
-    bio: user.bio,
+    fullName: user.fullName || "",
+    username: user.username || "",
+    bio: user.bio || "",
   };
 
   const form = useForm({
@@ -93,19 +96,19 @@ const UserProfileEditForm = ({
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      const response = await deleteUserAccount();
-
-      if (!response.success) {
-        throw new Error(response.message || "Failed to delete account");
+      try {
+        await deleteUserAccount();
+        toast.success("Account deleted successfully");
+        if (onCancel) {
+          onCancel();
+        }
+        await signOut();
+        router.push("/");
+      } catch (error) {
+        console.error("Error deleting account:", error);
       }
-
-      toast.success(response.message || "Account deleted successfully");
-
-      if (onCancel) {
-        onCancel();
-      }
-    } catch (error: any) {
-      toast.error(error.message || "An error occurred while deleting account");
+    } catch (error) {
+      toast.error("An error occurred while deleting account");
       console.error("Error deleting account:", error);
     } finally {
       setIsDeleting(false);
@@ -179,7 +182,7 @@ const UserProfileEditForm = ({
                 id="bio"
                 placeholder="Tell us about yourself"
                 className="min-h-[100px]"
-                value={field.state.value}
+                value={field.state.value || ""}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
               {field.state.meta.errors.length > 0 && (
@@ -276,24 +279,26 @@ const UserProfileEditForm = ({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription className="space-y-2">
-                  <p>
-                    This action cannot be undone. This will permanently delete
-                    your account and remove all your data from our servers.
-                  </p>
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-3 mt-3">
-                    <p className="font-semibold text-red-800 dark:text-red-200 text-sm mb-1">
-                      This will delete:
+                <AlertDialogDescription asChild>
+                  <div className="space-y-2">
+                    <p>
+                      This action cannot be undone. This will permanently delete
+                      your account and remove all your data from our servers.
                     </p>
-                    <ul className="text-xs text-red-700 dark:text-red-300 list-disc list-inside space-y-1">
-                      <li>Your profile and account information</li>
-                      <li>All your posts and uploaded images</li>
-                      <li>Your comments and interactions</li>
-                      <li>Your topic suggestions and reports</li>
-                      <li>
-                        All associated data from both Clerk and our database
-                      </li>
-                    </ul>
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-3 mt-3">
+                      <p className="font-semibold text-red-800 dark:text-red-200 text-sm mb-1">
+                        This will delete:
+                      </p>
+                      <ul className="text-xs text-red-700 dark:text-red-300 list-disc list-inside space-y-1">
+                        <li>Your profile and account information</li>
+                        <li>All your posts and uploaded images</li>
+                        <li>Your comments and interactions</li>
+                        <li>Your topic suggestions and reports</li>
+                        <li>
+                          All associated data from both Clerk and our database
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>

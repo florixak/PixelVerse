@@ -4,8 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cookies } from "next/headers";
 import Providers from "@/components/providers";
-import { auth } from "@clerk/nextjs/server";
-import { ensureSanityUser } from "@/lib/user-utils";
+import { Suspense } from "react";
 
 export default async function AppLayout({
   children,
@@ -14,11 +13,6 @@ export default async function AppLayout({
 }>) {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
-
-  const { userId } = await auth();
-  if (userId) {
-    await ensureSanityUser(userId);
-  }
 
   return (
     <Providers>

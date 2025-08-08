@@ -81,13 +81,21 @@ export const deleteUserAccount = async (): Promise<{
       };
     }
 
+    const user = await getUserByClerkId(userId);
+    if (!user) {
+      return {
+        success: false,
+        message: "User not found",
+      };
+    }
+
     const deleteQueries = [
-      `*[_type == "post" && author._ref == "${userId}"]`,
-      `*[_type == "reaction" && user._ref == "${userId}"]`,
-      `*[_type == "comment" && author._ref == "${userId}"]`,
-      `*[_type == "suggestedTopic" && author._ref == "${userId}"]`,
-      `*[_type == "report" && reportedBy._ref == "${userId}"]`,
-      `*[_type == "user" && clerkId == "${userId}"]`,
+      `*[_type == "post" && author._ref == "${user._id}"]`,
+      `*[_type == "reaction" && user._ref == "${user._id}"]`,
+      `*[_type == "comment" && author._ref == "${user._id}"]`,
+      `*[_type == "suggestedTopic" && submittedBy._ref == "${user._id}"]`,
+      `*[_type == "report" && reportedBy._ref == "${user._id}"]`,
+      `*[_type == "user" && _id == "${user._id}"]`,
     ];
 
     for (const query of deleteQueries) {
@@ -102,14 +110,13 @@ export const deleteUserAccount = async (): Promise<{
         await deleteTransaction.commit();
       }
     }
-
-    (await clerkClient()).users.deleteUser(userId);
+    const cClient = await clerkClient();
+    await cClient.users.deleteUser(userId);
 
     revalidatePath("/");
-
     return {
       success: true,
-      message: "Account deleted successfully",
+      message: "Account deleted successfully.",
     };
   } catch (error) {
     console.error("Error deleting user account:", error);

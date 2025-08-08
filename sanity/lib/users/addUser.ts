@@ -1,5 +1,6 @@
-import { writeClient } from "../client";
 import { ensureUniqueUsername } from "@/lib/user-utils";
+import { writeClient } from "../client";
+import { User } from "@/sanity.types";
 
 const addUser = async ({
   clerkId,
@@ -13,7 +14,7 @@ const addUser = async ({
   email: string;
   fullName?: string;
   imageUrl?: string;
-}) => {
+}): Promise<User> => {
   if (!clerkId || !username || !email) {
     throw new Error("clerkId, username, and email are required");
   }

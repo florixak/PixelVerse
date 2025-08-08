@@ -7,11 +7,11 @@ import {
   getNotifications,
   getUnreadNotificationCount,
 } from "@/actions/notification-actions";
-import { currentUser } from "@clerk/nextjs/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { ensureSanityUser } from "@/lib/user-utils";
 
 const Header = async () => {
-  const user = await currentUser();
+  const user = await ensureSanityUser();
 
   const queryClient = getQueryClient();
   if (user) {

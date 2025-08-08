@@ -2,39 +2,64 @@ import { User as UserType } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import addUser from "@/sanity/lib/users/addUser";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
-import { auth, clerkClient, User } from "@clerk/nextjs/server";
+import { auth, currentUser, User } from "@clerk/nextjs/server";
 
-export async function ensureSanityUser(
-  userId: string
-): Promise<UserType["_id"]> {
-  if (!userId) throw new Error("No user ID provided");
+export async function getOrCreateSanityUser(): Promise<UserType | null> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return null;
 
-  const sanityUser = await writeClient.fetch(
-    `*[_type == "user" && clerkId == $clerkId][0]`,
-    { clerkId: userId }
-  );
+    const existingUser = await getUserByClerkId(userId);
+    if (existingUser) {
+      return existingUser;
+    }
 
-  if (sanityUser) {
-    return sanityUser._id;
+    const clerkUser = await currentUser();
+    if (!clerkUser) return null;
+
+    try {
+      const newUser = await addUser({
+        clerkId: clerkUser.id,
+        username:
+          clerkUser.username ||
+          clerkUser.emailAddresses[0]?.emailAddress.split("@")[0] ||
+          `user_${userId.slice(-6)}`,
+        fullName: clerkUser.fullName || clerkUser.firstName || "New User",
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+        imageUrl: clerkUser.imageUrl,
+      });
+
+      return newUser;
+    } catch (createError) {
+      console.error("Failed to create user:", createError);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error in getOrCreateSanityUser:", error);
+    return null;
   }
+}
 
-  const clerk = await clerkClient();
-  const user = await clerk.users.getUser(userId);
+export async function getSanityUser(): Promise<UserType | null> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return null;
 
-  if (!user) throw new Error("No user provided");
+    return await getUserByClerkId(userId);
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null;
+  }
+}
 
-  const newUser = await addUser({
-    clerkId: user.id,
-    username:
-      user.username ||
-      user.emailAddresses[0]?.emailAddress.split("@")[0] ||
-      `user_${userId.slice(-6)}`,
-    fullName: user.fullName || user.firstName || "New User",
-    email: user.emailAddresses[0]?.emailAddress,
-    imageUrl: user.imageUrl,
-  });
-
-  return newUser._id;
+export async function ensureSanityUser(): Promise<UserType["_id"] | null> {
+  try {
+    const user = await getOrCreateSanityUser();
+    return user?._id || null;
+  } catch (error) {
+    console.error("Error in ensureSanityUser:", error);
+    return null;
+  }
 }
 
 export const ensureUniqueUsername = async (
