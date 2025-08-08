@@ -1,6 +1,5 @@
 "use server";
 
-import { currentUser } from "@clerk/nextjs/server";
 import { writeClient } from "@/sanity/lib/client";
 import { ensureSanityUser } from "@/lib/user-utils";
 import { Comment, Post, Reaction, Report } from "@/sanity.types";
@@ -19,10 +18,12 @@ import { createNotification } from "./notification-actions";
  */
 export async function createPost(formData: FormData) {
   try {
-    const user = await currentUser();
-    if (!user) throw new Error("Must be logged in");
+    const userId = await ensureSanityUser();
 
-    const userId = await ensureSanityUser(user.id);
+    if (!userId) {
+      throw new Error("Must be logged in");
+    }
+
     const postData = parsePostFormData(formData);
 
     if (!(await validateTopicExists(postData.topicId))) {
@@ -83,10 +84,11 @@ export async function updatePost(
   postId: string
 ): Promise<{ newSlug: string; topicSlug: string }> {
   try {
-    const user = await currentUser();
-    if (!user) throw new Error("Must be logged in");
+    const userId = await ensureSanityUser();
 
-    const userId = await ensureSanityUser(user.id);
+    if (!userId) {
+      throw new Error("Must be logged in");
+    }
 
     // Verify user owns the post
     const post = await writeClient.fetch(
@@ -167,10 +169,8 @@ export async function updatePost(
  * Soft deletes a post (sets isDeleted flag)
  */
 export async function deletePost(postId: Post["_id"]) {
-  const user = await currentUser();
-  if (!user) throw new Error("Must be logged in");
-
-  const userId = await ensureSanityUser(user.id);
+  const userId = await ensureSanityUser();
+  if (!userId) throw new Error("Must be logged in");
 
   const post = await writeClient.fetch<Post>(
     `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
@@ -197,10 +197,11 @@ export async function reactOnPost(
   reaction: Reaction["type"]
 ) {
   try {
-    const user = await currentUser();
-    if (!user) throw new Error("Must be logged in");
+    const userId = await ensureSanityUser();
 
-    const userId = await ensureSanityUser(user.id);
+    if (!userId) {
+      throw new Error("Must be logged in");
+    }
 
     // Check if user already reacted to this post
     const existingReaction = await writeClient.fetch(
@@ -258,12 +259,11 @@ export async function createComment({
   content: Comment["content"];
 }) {
   try {
-    const user = await currentUser();
-    if (!user) {
+    const userId = await ensureSanityUser();
+
+    if (!userId) {
       return { error: "You must be logged in to comment" };
     }
-
-    const userId = await ensureSanityUser(user.id);
 
     if (!content?.trim()) {
       return { error: "Comment cannot be empty" };
@@ -322,12 +322,11 @@ export async function createComment({
  */
 export async function deleteComment(commentId: Post["_id"]) {
   try {
-    const user = await currentUser();
-    if (!user) {
-      return { error: "You must be logged in to delete a comment" };
-    }
+    const userId = await ensureSanityUser();
 
-    const userId = await ensureSanityUser(user.id);
+    if (!userId) {
+      throw new Error("Must be logged in");
+    }
 
     // Verify user owns the comment
     const comment = await writeClient.fetch(
@@ -355,12 +354,11 @@ export async function updateComment(
   newContent: Comment["content"]
 ) {
   try {
-    const user = await currentUser();
-    if (!user) {
+    const userId = await ensureSanityUser();
+
+    if (!userId) {
       return { error: "You must be logged in to update a comment" };
     }
-
-    const userId = await ensureSanityUser(user.id);
 
     // Verify user owns the comment
     const comment = await writeClient.fetch(
@@ -397,15 +395,11 @@ export async function submitReport(
   contentType: Report["contentType"]
 ) {
   try {
-    const user = await currentUser();
-    if (!user) {
-      return {
-        success: false,
-        error: "You must be logged in to report content",
-      };
-    }
+    const userId = await ensureSanityUser();
 
-    const userId = await ensureSanityUser(user.id);
+    if (!userId) {
+      throw new Error("Must be logged in");
+    }
 
     const contentExists = await writeClient.fetch(
       `*[_type == $contentType && _id == $contentId][0]._id`,
