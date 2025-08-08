@@ -2,7 +2,17 @@ import { groq } from "next-sanity";
 import { client } from "../client";
 import { Report } from "@/sanity.types";
 
-export async function getReportStats() {
+type ReportStats = {
+  pending: number;
+  new24h: number;
+  moderationMetrics: {
+    resolved24h: number;
+    rejected24h: number;
+    avgResolutionTime: string;
+  };
+};
+
+export async function getReportStats(): Promise<ReportStats> {
   const now = new Date();
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
@@ -45,8 +55,8 @@ export async function getReportStats() {
     pending: stats.pending,
     new24h: stats.new24h,
     moderationMetrics: {
-      resolved24h: stats.resolved24h,
-      rejected24h: stats.rejected24h,
+      resolved24h: stats.resolved24h || 0,
+      rejected24h: stats.rejected24h || 0,
       avgResolutionTime: avgResolutionTime.toFixed(1),
     },
   };

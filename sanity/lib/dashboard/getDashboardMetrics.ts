@@ -4,7 +4,6 @@ import { getUserByClerkId } from "../users/getUserByClerkId";
 import { getPostStats } from "./getPostStats";
 import { getReportStats } from "./getReportStats";
 import { getUserStats } from "./getUserStats";
-import { notFound } from "next/navigation";
 
 export const getDashboardMetrics = async () => {
   try {
