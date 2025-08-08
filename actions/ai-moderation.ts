@@ -110,17 +110,6 @@ export const checkTopicSuggestionByAI = async (
   }
 };
 
-export const writeTopicSuggestionAIResult = async (
-  contentId: string,
-  aiResult: AITopicResult
-): Promise<void> => {
-  if (!contentId) {
-    throw new Error("Invalid content ID");
-  }
-
-  await writeAIResult(contentId, { aiModerationResult: aiResult });
-};
-
 export const writeAIResult = async (
   contentId: string,
   result: AIResult
