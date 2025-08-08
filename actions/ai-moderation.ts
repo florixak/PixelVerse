@@ -10,36 +10,14 @@ import {
   AITopicResult,
   checkTopicSuggestion,
 } from "@/lib/ai/moderation-service";
-import { rateLimiter } from "@/lib/ai/rate-limiter";
-import type { Report, User } from "@/sanity.types";
+import type { Report } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 
 export const checkReportByAI = async (
-  report: Report,
-  options: {
-    userId?: User["clerkId"];
-    forceRecheck?: boolean;
-    checkReason?: string;
-  } = {}
+  report: Report
 ): Promise<AIReportResult> => {
-  const {
-    userId,
-    forceRecheck = false,
-    checkReason = "manual_request",
-  } = options;
-
   if (!report?.reportedContent) {
     return { isViolating: false, confidence: 0 };
-  }
-
-  if (userId && !rateLimiter.check(userId, 3, 60000)) {
-    console.log(`⏰ Rate limit exceeded for user ${userId}`);
-    return {
-      isViolating: false,
-      reason: "Rate limit exceeded",
-      confidence: 0,
-      rateLimited: true,
-    };
   }
 
   let result: AIReportResult;
