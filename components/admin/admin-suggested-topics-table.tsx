@@ -51,24 +51,13 @@ const AdminSuggestedTopicsTable = ({
         </Button>
       ),
       cell: (info) => (
-        <div className="flex items-center gap-3">
-          {info.row.original.iconUrl && (
-            <img
-              src={info.row.original.iconUrl || ""}
-              alt={info.getValue()}
-              width={32}
-              height={32}
-              className="rounded-md"
-            />
+        <div>
+          <span className="font-medium">{info.getValue()}</span>
+          {info.row.original.slug && (
+            <p className="text-xs text-muted-foreground">
+              /{info.row.original.slug}
+            </p>
           )}
-          <div>
-            <span className="font-medium">{info.getValue()}</span>
-            {info.row.original.slug?.current && (
-              <p className="text-xs text-muted-foreground">
-                /{info.row.original.slug.current}
-              </p>
-            )}
-          </div>
         </div>
       ),
     }),
