@@ -32,16 +32,13 @@ type UserActionsProps = {
 const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
   const [editing, setEditing] = useState(false);
   const router = useRouter();
-  if (!user) {
-    return null;
-  }
 
   const queryClient = getQueryClient();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["followStatus", user._id],
+    queryKey: ["followStatus", user?._id],
     queryFn: async () => {
-      if (!user._id) return null;
+      if (!user?._id) return null;
       const { isFollowing, error, success } = await isFollowingUser(user._id);
       if (error) {
         console.error("Error checking following status:", error);
@@ -53,6 +50,7 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
 
   const followMutation = useMutation({
     mutationFn: async () => {
+      if (!user?._id) return null;
       const response = await followUser(user._id);
       if (!response.success) {
         throw new Error(response.error || "Failed to follow/unfollow user");
@@ -60,6 +58,7 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
       return response;
     },
     onMutate: () => {
+      if (!user?._id) return null;
       queryClient.setQueryData(
         ["followStatus", user._id],
         (oldData: FollowStatus) => ({
@@ -69,12 +68,13 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
       );
     },
     onSuccess: (data) => {
-      toast.success(`Successfully ${data.action} user`);
+      toast.success(`Successfully ${data?.action} user`);
     },
   });
 
   const unFollowMutation = useMutation({
     mutationFn: async () => {
+      if (!user?._id) return null;
       const response = await unfollowUser(user._id);
       if (!response.success) {
         throw new Error(response.error || "Failed to unfollow user");
@@ -82,6 +82,7 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
       return response;
     },
     onMutate: () => {
+      if (!user?._id) return null;
       queryClient.setQueryData(
         ["followStatus", user._id],
         (oldData: FollowStatus) => ({
@@ -112,6 +113,8 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
       }
     }
   };
+
+  if (!user) return null;
 
   return (
     <div className="flex flex-row items-center gap-4 justify-center sm:justify-start">

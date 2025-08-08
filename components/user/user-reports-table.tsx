@@ -206,7 +206,6 @@ const UserReportsTable = ({
       header: "Actions",
       cell: (info) => {
         const report = info.row.original;
-        const isPending = report.status === "pending";
 
         return (
           <div className="flex items-center gap-2">

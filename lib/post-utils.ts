@@ -16,6 +16,8 @@ export const IMAGE_CONFIG = {
   ],
 } as const;
 
+type ImageType = (typeof IMAGE_CONFIG.allowedTypes)[number];
+
 /**
  * Validates and uploads an image file to Sanity
  */
@@ -35,7 +37,7 @@ export async function uploadImageAsset(
   }
 
   // Validate content type
-  if (!IMAGE_CONFIG.allowedTypes.includes(imageFile.type as any)) {
+  if (!IMAGE_CONFIG.allowedTypes.includes(imageFile.type as ImageType)) {
     throw new Error(`Unsupported image type: ${imageFile.type}`);
   }
 

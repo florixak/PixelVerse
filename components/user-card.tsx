@@ -1,8 +1,8 @@
 "use client";
 
-import { SignedIn, SignOutButton, useClerk, useUser } from "@clerk/nextjs";
+import { SignedIn, SignOutButton, useClerk } from "@clerk/nextjs";
 import { Button } from "./ui/button";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
