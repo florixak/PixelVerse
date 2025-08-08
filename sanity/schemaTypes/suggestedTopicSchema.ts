@@ -1,4 +1,4 @@
-import { DETECTED_CATEGORIES } from "@/constants";
+import { DETECTED_CATEGORIES, MODERATION_STATUS_OPTIONS } from "@/constants";
 import { defineField, defineType } from "sanity";
 
 export const suggestedTopicSchema = defineType({
@@ -131,15 +131,7 @@ export const suggestedTopicSchema = defineType({
       type: "string",
       title: "Moderation Status",
       options: {
-        list: [
-          { title: "Pending AI Review", value: "pending_ai" },
-          { title: "AI Approved", value: "ai_approved" },
-          { title: "AI Rejected", value: "ai_rejected" },
-          { title: "Human Review Required", value: "needs_human_review" },
-          { title: "Manually Approved", value: "manually_approved" },
-          { title: "Rejected", value: "rejected" },
-          { title: "Published", value: "published" },
-        ],
+        list: MODERATION_STATUS_OPTIONS,
       },
       initialValue: "pending_ai",
       validation: (Rule) => Rule.required(),

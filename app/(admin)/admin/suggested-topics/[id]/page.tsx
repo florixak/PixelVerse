@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { getSuggestedTopicById } from "@/sanity/lib/suggested-topics/getSuggestedTopicById";
 import { notFound } from "next/navigation";
+import AdminSuggestTopicButtons from "@/components/admin/admin-suggest-topic-buttons";
 
 type SuggestedTopicDetailsProps = {
   params: Promise<{ id: SuggestedTopic["_id"] }>;
@@ -120,25 +121,9 @@ const SuggestedTopicDetails = async ({
     );
   };
 
-  const TopicPreviewLink = () => {
-    if (topic.status !== "published" || !topic.slug?.current) return null;
-
-    return (
-      <Link
-        href={`/topics/${topic.slug.current}`}
-        className="text-sm flex items-center text-primary hover:underline"
-        target="_blank"
-      >
-        <ExternalLink className="h-3 w-3 mr-1" />
-        View Live Topic
-      </Link>
-    );
-  };
-
   return (
     <div className="space-y-6">
-      {/* Header with key information */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 items-center">
         <div className="flex items-start gap-4">
           {topic.iconUrl && (
             <div className="flex-shrink-0">
@@ -155,9 +140,9 @@ const SuggestedTopicDetails = async ({
             <h1 className="text-2xl font-bold break-words">
               {statusConfig.emoji} {topic.title}
             </h1>
-            {topic.slug?.current && (
+            {topic.slug && (
               <p className="text-muted-foreground font-mono text-sm">
-                /{topic.slug.current}
+                /{topic.slug}
               </p>
             )}
             <div className="flex items-center gap-2 mt-2">
@@ -177,9 +162,8 @@ const SuggestedTopicDetails = async ({
             )}
           </div>
         </div>
-        <div className="flex-shrink-0">
-          <TopicPreviewLink />
-        </div>
+
+        <AdminSuggestTopicButtons topic={topic} />
       </div>
 
       {topic.bannerUrl && (
@@ -248,14 +232,14 @@ const SuggestedTopicDetails = async ({
                 </div>
               </div>
 
-              {topic.slug?.current && (
+              {topic.slug && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground mb-2">
                     <Hash className="h-4 w-4 inline mr-1" />
                     URL Slug
                   </h3>
                   <code className="text-sm bg-muted px-2 py-1 rounded">
-                    /{topic.slug.current}
+                    /{topic.slug}
                   </code>
                 </div>
               )}
@@ -275,7 +259,6 @@ const SuggestedTopicDetails = async ({
                 </div>
               </div>
 
-              {/* Moderation Details */}
               {(moderatedAt || topic.moderatedBy || topic.adminNotes) && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground mb-2">

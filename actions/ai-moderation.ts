@@ -1,5 +1,6 @@
 "use server";
 
+import { ModerationValue } from "@/constants";
 import {
   checkPost,
   checkComment,
@@ -114,7 +115,9 @@ export const checkTopicSuggestionByAI = async (
   }
 
   try {
-    return await checkTopicSuggestion(title, description);
+    const aiResult = await checkTopicSuggestion(title, description);
+    const recommendedAction = determineTopicAction(aiResult);
+    return { ...aiResult, recommendedAction };
   } catch (error) {
     console.error("Topic suggestion AI check failed:", error);
     return {
@@ -124,6 +127,7 @@ export const checkTopicSuggestionByAI = async (
       reasons: ["AI moderation temporarily unavailable"],
       suggestions: [],
       confidence: 0,
+      recommendedAction: "needs_human_review",
     };
   }
 };
@@ -148,4 +152,28 @@ export const writeAIResult = async (
   }
 
   await writeClient.patch(contentId).set(result).commit();
+};
+
+const determineTopicAction = (aiResult: AITopicResult): ModerationValue => {
+  const { isApproved, suitabilityScore, confidence, categories } = aiResult;
+
+  if (
+    isApproved &&
+    suitabilityScore >= 0.8 &&
+    confidence >= 0.85 &&
+    !categories.includes("inappropriate")
+  ) {
+    return "published";
+  }
+
+  if (
+    !isApproved &&
+    (suitabilityScore < 0.3 ||
+      categories.includes("inappropriate") ||
+      confidence >= 0.8)
+  ) {
+    return "rejected";
+  }
+
+  return "needs_human_review";
 };

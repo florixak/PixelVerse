@@ -20,11 +20,7 @@ export const AI_PROMPTS = {
     },
 
     topic: {
-      base: `Pixel art topic check. {"isApproved":bool,"suitabilityScore":num,"categories":["text"],"reasons":["text"],"suggestions":[],"confidence":num}
-      
-Categories: art_design,gaming,retro,tutorials,inappropriate,off_topic`,
-
-      guidelines: `Approve: pixel,art,sprite,game,retro. Reject: unrelated.`,
+      base: `Pixel art, game, and related topics check. Answer shortly and only: {"isApproved":bool,"suitabilityScore":num,"categories":["text"],"reasons":["text"],"suggestions":["text"],"confidence":num}`,
     },
   },
 

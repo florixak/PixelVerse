@@ -10,6 +10,9 @@ import slugify from "slugify";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { revalidatePath } from "next/cache";
 import { checkTopicSuggestionByAI } from "./ai-moderation";
+import { addTopic } from "./topic-actions";
+import { SuggestedTopic } from "@/sanity.types";
+import { getSuggestedTopicById } from "@/sanity/lib/suggested-topics/getSuggestedTopicById";
 
 export const suggestTopic = async (
   formData: FormData
@@ -57,17 +60,33 @@ export const suggestTopic = async (
     };
   }
 
-  const iconAsset = await uploadImageAsset(icon, 1 * 1024 * 1024);
-  const bannerAsset = await uploadImageAsset(banner, 2 * 1024 * 1024);
+  const [iconResult, bannerResult] = await Promise.allSettled([
+    uploadImageAsset(icon, 1 * 1024 * 1024),
+    uploadImageAsset(banner, 2 * 1024 * 1024),
+  ]);
+
+  let iconAsset, bannerAsset;
+
+  if (iconResult.status === "fulfilled") {
+    iconAsset = iconResult.value;
+  } else {
+    iconAsset = undefined;
+  }
+
+  if (bannerResult.status === "fulfilled") {
+    bannerAsset = bannerResult.value;
+  } else {
+    bannerAsset = undefined;
+  }
 
   const aiResult = await checkTopicSuggestionByAI(title, description);
 
-  const topic = {
+  const newSuggestedTopic = {
     _type: "suggestedTopic",
     title,
     slug: { current: baseSlug },
     description,
-    status: getStatusFromAI(aiResult),
+    status: aiResult.recommendedAction,
     aiModerationResult: {
       _type: "aiModerationResult",
       isApproved: aiResult.isApproved,
@@ -84,12 +103,25 @@ export const suggestTopic = async (
     submittedAt: new Date().toISOString(),
   };
 
-  const suggestedTopic = await writeClient.create(topic);
+  const suggestedTopic = await writeClient.create(newSuggestedTopic);
   if (!suggestedTopic) {
     return {
       success: false,
       error: "Failed to create topic. Please try again.",
     };
+  }
+
+  if (aiResult.isApproved && aiResult.recommendedAction === "published") {
+    const publishedTopic = {
+      _type: "topic",
+      title,
+      slug: { current: baseSlug },
+      description,
+      icon: iconAsset,
+      banner: bannerAsset,
+    };
+    await writeClient.create(publishedTopic);
+    revalidatePath(`/topics`);
   }
 
   revalidatePath(`/admin/suggested-topics`);
@@ -99,44 +131,61 @@ export const suggestTopic = async (
   };
 };
 
-const getStatusFromAI = (aiResult: any): string => {
-  const { isApproved, suitabilityScore, confidence } = aiResult;
+export const approveTopic = async (id: string): Promise<void> => {
+  const user = await currentUser();
 
-  if (isApproved && suitabilityScore >= 0.8 && confidence >= 0.85) {
-    return "ai_approved";
+  if (!user) {
+    throw new Error("You must be logged in to approve a topic.");
   }
 
-  if (
-    suitabilityScore < 0.3 ||
-    aiResult.categories?.includes("inappropriate")
-  ) {
-    return "ai_rejected";
+  const sanityUser = await getUserByClerkId(user.id);
+
+  if (!sanityUser) {
+    throw new Error("User not found in Sanity.");
   }
 
-  if (confidence < 0.7 || (suitabilityScore >= 0.3 && suitabilityScore < 0.7)) {
-    return "needs_human_review";
+  const suggestedTopic = await getSuggestedTopicById(id);
+
+  if (!suggestedTopic) {
+    throw new Error("Topic not found.");
   }
 
-  return "ai_approved";
+  const topic = {
+    title: suggestedTopic.title,
+    slug: suggestedTopic.slug,
+    description: suggestedTopic.description,
+    icon: suggestedTopic.icon,
+    banner: suggestedTopic.banner,
+  };
+
+  await Promise.all([
+    writeClient.patch(id).set({ status: "published" }).commit(),
+    addTopic(topic),
+  ]);
+
+  revalidatePath(`/admin/suggested-topics/${id}`);
 };
 
-const getStatusMessage = (status: string, aiResult: any): string => {
-  const score = Math.round(aiResult.suitabilityScore * 100);
+export const rejectTopic = async (id: string): Promise<void> => {
+  const user = await currentUser();
 
-  switch (status) {
-    case "ai_approved":
-      return `🎉 Great suggestion! AI approved with ${score}% suitability. Your topic will be reviewed by moderators and published soon.`;
-
-    case "ai_rejected":
-      return `❌ This topic doesn't seem suitable for our pixel art community (${score}% suitability). ${
-        aiResult.suggestions?.[0] ||
-        "Please try a topic related to pixel art, retro gaming, or digital creativity."
-      }`;
-
-    case "needs_human_review":
-      return `🔍 Your suggestion needs human review. AI found it ${score}% suitable but wants a moderator to take a closer look. This helps ensure quality!`;
-
-    default:
-      return "Topic submitted for review.";
+  if (!user) {
+    throw new Error("You must be logged in to reject a topic.");
   }
+
+  const sanityUser = await getUserByClerkId(user.id);
+
+  if (!sanityUser) {
+    throw new Error("User not found in Sanity.");
+  }
+
+  const suggestedTopic = await getSuggestedTopicById(id);
+
+  if (!suggestedTopic) {
+    throw new Error("Topic not found.");
+  }
+
+  await writeClient.patch(id).set({ status: "rejected" }).commit();
+
+  revalidatePath(`/admin/suggested-topics/${id}`);
 };

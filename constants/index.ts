@@ -75,6 +75,28 @@ const DETECTED_CATEGORIES: DetectedCategory[] = [
   { title: "Off-topic", value: "off_topic" },
 ];
 
+export type ModerationValue =
+  | "pending_ai"
+  | "ai_approved"
+  | "ai_rejected"
+  | "needs_human_review"
+  | "rejected"
+  | "published";
+
+type ModerationStatusOptions = {
+  title: string;
+  value: ModerationValue;
+};
+
+const MODERATION_STATUS_OPTIONS: ModerationStatusOptions[] = [
+  { title: "Pending AI Review", value: "pending_ai" },
+  { title: "AI Approved", value: "ai_approved" },
+  { title: "AI Rejected", value: "ai_rejected" },
+  { title: "Human Review Required", value: "needs_human_review" },
+  { title: "Rejected", value: "rejected" },
+  { title: "Published", value: "published" },
+];
+
 export {
   POST_TYPES,
   SOFTWARE_OPTIONS,
@@ -82,4 +104,5 @@ export {
   REPORT_REASONS,
   REACTIONS,
   DETECTED_CATEGORIES,
+  MODERATION_STATUS_OPTIONS,
 };

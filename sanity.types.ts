@@ -228,12 +228,14 @@ export type SuggestedTopic = {
   _updatedAt: string;
   _rev: string;
   title?: string;
-  slug?: Slug;
+  slug?: string;
   submittedBy?: User;
   submittedAt?: string;
   description?: string;
   iconUrl?: string;
   bannerUrl?: string;
+  icon?: SanityImageAsset;
+  banner?: SanityImageAsset;
   aiModerationResult?: AITopicResult;
   status?:
     | "pending_ai"

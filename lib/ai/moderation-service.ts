@@ -4,6 +4,7 @@ import { AI_PROMPTS } from "./prompts";
 import { moderationSchema, topicSuggestionSchema } from "./schema";
 import { quickCheck } from "./content-filter";
 import type { Comment, Post, User } from "@/sanity.types";
+import { MODERATION_STATUS_OPTIONS, ModerationValue } from "@/constants";
 
 export type AIReportResult = {
   isViolating: boolean;
@@ -20,6 +21,7 @@ export type AITopicResult = {
   suggestions: string[];
   confidence: number;
   checkedAt?: string;
+  recommendedAction?: ModerationValue;
 };
 
 export type AIResult =

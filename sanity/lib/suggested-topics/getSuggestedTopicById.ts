@@ -9,10 +9,12 @@ export async function getSuggestedTopicById(
     *[_type == "suggestedTopic" && _id == $id][0] {
       _id,
       title,
-      "slug": slug,
+      "slug": slug.current,
       description,
       "iconUrl": icon.asset->url,
       "bannerUrl": banner.asset->url,
+      icon,
+      banner,
       status,
       aiModerationResult,
       "submittedBy": submittedBy-> {

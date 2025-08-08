@@ -2,7 +2,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Lightbulb, Plus, Users, Zap } from "lucide-react";
 import TopicSuggestButton from "./topic/topic-suggest-button";
 import { Badge } from "./ui/badge";
-import getAllTopics from "@/sanity/lib/topics/getAllTopics";
 
 const POPULAR_TOPIC_IDEAS = [
   "8-bit Characters",
@@ -10,6 +9,7 @@ const POPULAR_TOPIC_IDEAS = [
   "Game Assets",
   "Animations",
   "Tutorials",
+  "Character Design",
 ];
 
 const GlobalEmptyContentState = async () => {
