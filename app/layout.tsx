@@ -6,7 +6,7 @@ import { dark } from "@clerk/themes";
 import { Toaster } from "react-hot-toast";
 import { VT323 } from "next/font/google";
 
-export const pixelFont = VT323({
+const pixelFont = VT323({
   weight: ["400"],
   subsets: ["latin"],
   display: "swap",
