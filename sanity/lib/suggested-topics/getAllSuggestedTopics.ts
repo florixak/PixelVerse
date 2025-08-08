@@ -6,7 +6,7 @@ export async function getAllSuggestedTopics(): Promise<SuggestedTopic[]> {
     *[_type == "suggestedTopic"] | order(submittedAt desc) {
       _id,
       title,
-      "slug": slug,
+      "slug": slug.current,
       description,
       "iconUrl": icon.asset->url,
       "bannerUrl": banner.asset->url,

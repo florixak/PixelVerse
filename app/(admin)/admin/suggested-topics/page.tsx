@@ -1,5 +1,5 @@
 import AdminSuggestedTopicsClient from "@/components/admin/admin-suggested-topics-client";
-import { getAllSuggestedTopics } from "@/sanity/lib/suggested-topics/getAllSugestedTopic";
+import { getAllSuggestedTopics } from "@/sanity/lib/suggested-topics/getAllSuggestedTopics";
 import { getUserByClerkId } from "@/sanity/lib/users/getUserByClerkId";
 import { currentUser } from "@clerk/nextjs/server";
 
