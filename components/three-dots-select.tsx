@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
-import { Ellipsis, MoreVertical } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 
 type ThreeDotsSelectProps = {
   options: {

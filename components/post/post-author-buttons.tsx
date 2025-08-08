@@ -7,18 +7,14 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import CreatePostForm from "./post-form/create-post-form";
 import { Post, Topic } from "@/sanity.types";
-import { Input } from "../ui/input";
 import {
   SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetFooter,
-  SheetClose,
   Sheet,
 } from "../ui/sheet";
-import { Label } from "../ui/label";
 
 type PostAuthorButtonsProps = {
   post: Post | null;

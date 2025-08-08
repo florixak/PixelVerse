@@ -1,8 +1,6 @@
 import { cn, formatDate } from "@/lib/utils";
 import { Post } from "@/sanity.types";
-import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "../ui/badge";
 import Role from "../role";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 

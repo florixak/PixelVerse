@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import { Post, Reaction } from "@/sanity.types";
-import { useClerk } from "@clerk/nextjs";
 import { MessageCircle, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 import ReactionButton from "../reaction-button";
