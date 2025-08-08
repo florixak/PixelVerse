@@ -1,6 +1,6 @@
 "use client";
 
-import { handleReportAction, ReportAction } from "@/actions/adminActions";
+import { handleReportAction, ReportAction } from "@/actions/admin-actions";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Report, User } from "@/sanity.types";

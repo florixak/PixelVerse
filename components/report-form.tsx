@@ -1,7 +1,7 @@
 "use client";
 
 import { Comment, Post, Report, Topic, User } from "@/sanity.types";
-import { submitReport } from "@/actions/postActions";
+import { submitReport } from "@/actions/post-actions";
 import {
   Select,
   SelectContent,

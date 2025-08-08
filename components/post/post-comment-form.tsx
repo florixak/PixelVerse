@@ -10,7 +10,7 @@ import { useForm } from "@tanstack/react-form";
 import z from "zod";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { createComment } from "@/actions/postActions";
+import { createComment } from "@/actions/post-actions";
 import PostOptimisticComments from "./post-optimistic-commets";
 
 type PostCommentFormProps = {

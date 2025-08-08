@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createPost, updatePost } from "@/actions/postActions";
+import { createPost, updatePost } from "@/actions/post-actions";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Post, Topic } from "@/sanity.types";

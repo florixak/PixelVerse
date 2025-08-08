@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { updateUserRole } from "@/actions/adminActions";
+import { updateUserRole } from "@/actions/admin-actions";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type RoleSelectProps = {

@@ -15,7 +15,7 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import toast from "react-hot-toast";
-import { deleteUser } from "@/actions/adminActions";
+import { deleteUser } from "@/actions/admin-actions";
 
 type AdminModifyButtonsProps = {
   currentUser: User | null;

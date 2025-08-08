@@ -1,6 +1,6 @@
 "use client";
 
-import { deletePost } from "@/actions/postActions";
+import { deletePost } from "@/actions/post-actions";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import toast from "react-hot-toast";

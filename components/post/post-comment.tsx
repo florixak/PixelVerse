@@ -9,7 +9,7 @@ import ReportButton from "../report-button";
 import { useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { Edit } from "lucide-react";
-import { updateComment } from "@/actions/postActions";
+import { updateComment } from "@/actions/post-actions";
 
 type PostCommentProps = {
   comment: Comment | OptimisticComment;
