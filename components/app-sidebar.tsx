@@ -26,6 +26,7 @@ import { getPopularTopics } from "@/sanity/lib/featured/getPopularTopics";
 import { currentUser } from "@clerk/nextjs/server";
 import { canAccessDashboard } from "@/lib/user-utils";
 import SidebarHeader from "./sidebar-header";
+import Image from "next/image";
 
 const menu: {
   title: string;
@@ -70,38 +71,49 @@ const menu: {
   },
 ];
 
-async function TopicsList() {
+const TopicGroup = async () => {
   const popularTopics = await getPopularTopics();
 
   if (!popularTopics || popularTopics.length === 0) {
-    return (
-      <p className="pl-2 text-sm text-muted-foreground">
-        No popular topics found.
-      </p>
-    );
+    return null;
   }
 
   return (
-    <>
-      {popularTopics.map((item) => (
-        <SidebarMenuItem key={item.title}>
-          <SidebarMenuButton asChild>
-            <Link href={`/topics/${item.slug}`}>
-              <span>{item.title}</span>
+    <SidebarGroup>
+      <SidebarGroupLabel>Popular Topics</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {popularTopics.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild>
+                <Link href={`/topics/${item.slug}`}>
+                  {item.iconUrl ? (
+                    <Image
+                      src={item.iconUrl}
+                      alt={item.title + " icon"}
+                      width={40}
+                      height={40}
+                      className="rounded-md"
+                    />
+                  ) : null}
+                  <span>{item.title}</span>
 
-              <span className="text-xs text-muted-foreground flex items-center gap-4">
-                <span>{item.postCount} posts</span>
-                {item.postCountWeek !== undefined && item.postCountWeek > 0 ? (
-                  <span>+{item.postCountWeek} last week</span>
-                ) : null}
-              </span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
-    </>
+                  <span className="text-xs text-muted-foreground flex items-center gap-4">
+                    <span>{item.postCount} posts</span>
+                    {item.postCountWeek !== undefined &&
+                    item.postCountWeek > 0 ? (
+                      <span>+{item.postCountWeek} last week</span>
+                    ) : null}
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
-}
+};
 
 export async function AppSidebar() {
   let user = null;
@@ -142,16 +154,9 @@ export async function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Popular Topics</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <Suspense fallback={<div>Loading topics...</div>}>
-                <TopicsList />
-              </Suspense>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <Suspense fallback={null}>
+          <TopicGroup />
+        </Suspense>
       </SidebarContent>
       <SidebarFooter>
         <CollapsibleUserCard />
