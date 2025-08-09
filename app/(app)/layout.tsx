@@ -4,7 +4,6 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cookies } from "next/headers";
 import Providers from "@/components/providers";
-import { Suspense } from "react";
 
 export default async function AppLayout({
   children,
