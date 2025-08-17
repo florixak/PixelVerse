@@ -30,7 +30,7 @@ const HeroSection = () => {
         <h1 className="font-pixel text-4xl md:text-6xl font-bold mb-6 tracking-tight">
           Welcome to <span className="text-primary">Pixel</span>Verse
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 px-4">
           Discover the world of pixel art, share your creations, and connect
           with fellow artists in our growing community.
         </p>
