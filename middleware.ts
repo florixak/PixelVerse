@@ -4,7 +4,7 @@ const isProtectedRoute = createRouteMatcher([
   "/admin(.*)",
   "/create-post",
   "/dashboard(.*)",
-  "/user/(.*)",
+  "/profile/me",
   "/my-reports(.*)",
 ]);
 
