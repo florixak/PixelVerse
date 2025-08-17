@@ -10,6 +10,7 @@ import {
   validateTopicExists,
   getTopicSlug,
   parsePostFormData,
+  normalizeDimensions,
 } from "@/lib/post-utils";
 import { createNotification } from "./notification-actions";
 
@@ -53,9 +54,9 @@ export async function createPost(formData: FormData) {
         _ref: userId,
       },
       disabledComments: postData.disabledComments,
-      createdAt: new Date().toISOString(),
+      publishedAt: new Date().toISOString(),
       postType: postData.postType,
-      dimensions: postData.dimensions,
+      dimensions: normalizeDimensions(postData.dimensions),
       software: postData.software,
       tags: postData.tags,
       isOriginal: postData.isOriginal,

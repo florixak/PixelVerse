@@ -67,6 +67,19 @@ export async function uploadImageAsset(
 }
 
 /**
+ * Normalizes image dimensions from a string input.
+ * Accepts formats like "32x32", "128x64", etc.
+ */
+export function normalizeDimensions(input: string): string | undefined {
+  if (!input) return undefined;
+  const cleaned = input.replace(/\s+/g, "").toLowerCase();
+  if (/^\d{1,4}x\d{1,4}$/.test(cleaned)) {
+    return cleaned;
+  }
+  return undefined;
+}
+
+/**
  * Generates a unique slug for a post title
  */
 export async function generateUniqueSlug(title: string): Promise<string> {
