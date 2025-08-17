@@ -4,15 +4,11 @@ import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { User } from "@/sanity.types";
 import { Suspense } from "react";
-import UserActions from "./user-actions";
 import UserProfileStats from "./user-profile-stats";
 import UserPosts from "./user-posts";
 import { SortOrder } from "@/types/filter";
 import SortFilterSelect from "../sort-filter-select";
-import { currentUser } from "@clerk/nextjs/server";
-import { getQueryClient } from "@/lib/get-query-client";
-import { isFollowingUser } from "@/actions/follow-actions";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import UserActionsWrapper from "./user-actions-wrapper";
 
 type UserProfileContentProps = {
   user: User | null;
@@ -20,21 +16,6 @@ type UserProfileContentProps = {
 };
 
 const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
-  const currUser = await currentUser();
-  const queryClient = getQueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["followStatus", user?._id],
-    queryFn: async () => {
-      if (!user?._id) return null;
-      const { isFollowing, error, success } = await isFollowingUser(user._id);
-      if (error) {
-        console.error("Error checking following status:", error);
-        return null;
-      }
-      return { isFollowing, error, success };
-    },
-  });
-
   return (
     <section className="flex flex-col w-full max-w-[70rem] mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 gap-6 md:gap-12">
       <div className="flex flex-row w-full items-start justify-center sm:justify-between">
@@ -75,27 +56,19 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
             </p>
             <Suspense
               fallback={
-                <div className="h-16 w-full bg-gray-200 animate-pulse rounded-md" />
+                <div className="h-16 w-full bg-background animate-pulse rounded-md" />
               }
             >
               <UserProfileStats user={user} />
             </Suspense>
             <div className="flex sm:hidden flex-col gap-6 mt-4">
-              <HydrationBoundary state={dehydrate(queryClient)}>
-                <UserActions
-                  user={user}
-                  isUsersProfile={user?.clerkId === currUser?.id}
-                />
-              </HydrationBoundary>
+              <UserActionsWrapper user={user} />
             </div>
           </div>
         </div>
 
         <div className="hidden sm:flex flex-col gap-6 mt-0 md:mt-8">
-          <UserActions
-            user={user}
-            isUsersProfile={user?.clerkId === currUser?.id}
-          />
+          <UserActionsWrapper user={user} />
         </div>
       </div>
 

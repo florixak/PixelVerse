@@ -23,15 +23,16 @@ import {
   unfollowUser,
 } from "@/actions/follow-actions";
 import { getQueryClient } from "@/lib/get-query-client";
+import { useUser } from "@clerk/nextjs";
 
 type UserActionsProps = {
   user: User | null;
-  isUsersProfile: boolean;
 };
 
-const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
+const UserActions = ({ user }: UserActionsProps) => {
   const [editing, setEditing] = useState(false);
   const router = useRouter();
+  const { user: currentUser } = useUser();
 
   const queryClient = getQueryClient();
 
@@ -116,6 +117,8 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
 
   if (!user) return null;
 
+  const isUsersProfile = user?.clerkId === currentUser?.id;
+
   return (
     <div className="flex flex-row items-center gap-4 justify-center sm:justify-start">
       <Sheet open={editing} onOpenChange={setEditing}>
@@ -152,21 +155,6 @@ const UserActions = ({ user, isUsersProfile }: UserActionsProps) => {
             label: "Report User",
             value: "report",
             onSelect: () => router.push(`/report/user/${user.username}`),
-          },
-          {
-            label: "Send Message (Coming Soon)",
-            value: "message",
-            onSelect: () => console.log("Send Message"),
-          },
-          {
-            label: "Add Friend (Coming Soon)",
-            value: "add-friend",
-            onSelect: () => console.log("Add Friend"),
-          },
-          {
-            label: "Mute User (Coming Soon)",
-            value: "mute",
-            onSelect: () => console.log("Mute User"),
           },
         ]}
       />
