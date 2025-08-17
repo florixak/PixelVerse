@@ -121,7 +121,7 @@ export async function getSearchResults({
           title,
           description,
           "slug": slug.current,
-          "imageUrl": image.asset->url,
+          "iconUrl": icon.asset->url,
           color,
           "postCount": count(*[_type == "post" && references(^._id) && isDeleted != true && isBanned != true && author->isBanned != true]),
           "memberCount": count(*[_type == "user" && references(^._id) && isBanned != true])
