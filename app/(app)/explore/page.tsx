@@ -131,20 +131,18 @@ const PostResults = async ({
       {topics.length > 0 && (
         <div className="mb-4">
           <h2 className="text-lg font-semibold mb-2">Topics</h2>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <MasonryWrapper>
             {topics.map((topic) => (
-              <li key={topic._id}>
-                <TopicCard topic={topic} />
-              </li>
+              <TopicCard key={topic._id} topic={topic} />
             ))}
-          </ul>
+          </MasonryWrapper>
         </div>
       )}
 
       {users.length > 0 && (
         <div className="mb-4">
           <h2 className="text-lg font-semibold mb-2">Users</h2>
-          <ul className="space-y-2">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {users.map((u) => (
               <UserSearchCard key={u._id} user={u} />
             ))}
@@ -157,6 +155,9 @@ const PostResults = async ({
 
 const TrendingPosts = async () => {
   const posts = await getTrendingContent();
+  if (!posts || posts.posts.length === 0) {
+    return <GlobalEmptyContentState />;
+  }
   return (
     <MasonryWrapper className="mt-4">
       {posts.posts.map((post) => (
