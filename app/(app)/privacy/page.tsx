@@ -1,5 +1,3 @@
-// app/(app)/privacy/page.tsx
-
 import { formatDate } from "@/lib/utils";
 import { Metadata } from "next";
 
