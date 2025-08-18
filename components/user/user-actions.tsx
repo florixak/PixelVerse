@@ -124,7 +124,7 @@ const UserActions = ({ user }: UserActionsProps) => {
       <Sheet open={editing} onOpenChange={setEditing}>
         <SheetTrigger asChild>
           {isUsersProfile && (
-            <Button variant="outline" className="px-6">
+            <Button variant="secondary" className="px-6">
               Edit
             </Button>
           )}

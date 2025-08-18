@@ -19,11 +19,11 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
   return (
     <section className="flex flex-col w-full max-w-[70rem] mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 gap-6 md:gap-12">
       <div className="flex flex-row w-full items-start justify-center sm:justify-between">
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+        <div className="flex flex-row items-center gap-4 sm:gap-6">
           <Image
             src={user?.imageUrl || "/avatar-default.svg"}
             alt={`${user?.username}'s avatar`}
-            className="w-36 h-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-background shadow-md"
+            className="size-24 sm:size-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-background shadow-md"
             width={192}
             height={192}
             priority
@@ -31,8 +31,8 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
             blurDataURL="/avatar-default.svg"
           />
 
-          <div className="flex flex-col text-center sm:text-left">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold flex flex-wrap items-center justify-center sm:justify-start gap-2">
+          <div className="flex flex-col text-left">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold flex flex-wrap items-center justify-start gap-2">
               {user?.fullName || user?.username || "Unknown user"}{" "}
               <Role role={user?.role} />
             </h1>
@@ -54,15 +54,14 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
             <p className="text-sm md:text-base text-muted-foreground mt-2">
               {user?.bio || "This user has not set a bio yet."}
             </p>
-            <Suspense
-              fallback={
-                <div className="h-16 w-full bg-background animate-pulse rounded-md" />
-              }
-            >
-              <UserProfileStats user={user} />
-            </Suspense>
-            <div className="flex sm:hidden flex-col gap-6 mt-4">
-              <UserActionsWrapper user={user} />
+            <div className="hidden sm:block">
+              <Suspense
+                fallback={
+                  <div className="h-16 w-full bg-background animate-pulse rounded-md" />
+                }
+              >
+                <UserProfileStats user={user} />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -71,8 +70,17 @@ const UserProfileContent = async ({ user, sort }: UserProfileContentProps) => {
           <UserActionsWrapper user={user} />
         </div>
       </div>
-
-      <div className="flex flex-col gap-6">
+      <div className="sm:hidden flex flex-col gap-6">
+        <UserActionsWrapper user={user} />
+        <Suspense
+          fallback={
+            <div className="h-16 w-full bg-background animate-pulse rounded-md" />
+          }
+        >
+          <UserProfileStats user={user} />
+        </Suspense>
+      </div>
+      <div className="flex flex-col gap-6 mt-10">
         <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-3 md:gap-0">
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-xl sm:text-2xl font-bold">Latest Activity</h2>
