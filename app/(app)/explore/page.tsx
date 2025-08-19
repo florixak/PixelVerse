@@ -21,9 +21,6 @@ const ExplorePage = async ({ searchParams }: ExplorePageProps) => {
 
   const isSearchMode = Boolean(q && q.trim().length > 0);
 
-  const allTopicsCount = await getAllTopics({ limit: 1, from: 0 });
-  const hasAnyTopics = allTopicsCount && allTopicsCount.length > 0;
-
   return (
     <section className="relative max-w-6xl mx-auto flex flex-col gap-4 py-8 px-4 md:px-0">
       <div className="text-center max-w-4xl mx-auto flex items-center flex-col gap-2">
@@ -38,7 +35,6 @@ const ExplorePage = async ({ searchParams }: ExplorePageProps) => {
 
         <SearchBar />
       </div>
-      {!hasAnyTopics && !isSearchMode && <GlobalEmptyContentState />}
       <Suspense fallback={<PostsLoadingSkeleton />}>
         {isSearchMode ? (
           <PostResults searchQuery={q || ""} pageNumber={Number(page) || 1} />
