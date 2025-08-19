@@ -29,7 +29,7 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 
   const { sort = "latest" } = await searchParams;
 
-  return <UserProfileContent user={user} sort={sort} />;
+  return <UserProfileContent targetUser={user} sort={sort} />;
 };
 
 export default ProfilePage;
