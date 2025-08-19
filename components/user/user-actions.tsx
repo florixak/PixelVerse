@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "@/sanity.types";
+import { User as SanityUser } from "@/sanity.types";
 import ThreeDotsSelect from "../three-dots-select";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
@@ -23,27 +23,34 @@ import {
   unfollowUser,
 } from "@/actions/follow-actions";
 import { getQueryClient } from "@/lib/get-query-client";
-import { useUser } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
+import { User } from "@clerk/nextjs/server";
 
 type UserActionsProps = {
-  user: User | null;
+  targetUser: SanityUser | null;
+  currentUser: User | null;
 };
 
-const UserActions = ({ user }: UserActionsProps) => {
+const UserActions = ({ targetUser, currentUser }: UserActionsProps) => {
   const [editing, setEditing] = useState(false);
   const router = useRouter();
-  const { user: currentUser } = useUser();
+  const { openSignIn } = useClerk();
 
   const queryClient = getQueryClient();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["followStatus", user?._id],
+    queryKey: ["followStatus", targetUser?._id],
     queryFn: async () => {
-      if (!user?._id) return null;
-      const { isFollowing, error, success } = await isFollowingUser(user._id);
+      if (!targetUser?._id) return null;
+      const { isFollowing, error, success } = await isFollowingUser(
+        targetUser._id
+      );
       if (error) {
-        console.error("Error checking following status:", error);
-        return null;
+        return {
+          isFollowing: false,
+          error,
+          success: false,
+        };
       }
       return { isFollowing, error, success };
     },
@@ -51,17 +58,17 @@ const UserActions = ({ user }: UserActionsProps) => {
 
   const followMutation = useMutation({
     mutationFn: async () => {
-      if (!user?._id) return null;
-      const response = await followUser(user._id);
+      if (!targetUser?._id) return null;
+      const response = await followUser(targetUser._id);
       if (!response.success) {
         throw new Error(response.error || "Failed to follow/unfollow user");
       }
       return response;
     },
     onMutate: () => {
-      if (!user?._id) return null;
+      if (!targetUser?._id) return null;
       queryClient.setQueryData(
-        ["followStatus", user._id],
+        ["followStatus", targetUser._id],
         (oldData: FollowStatus) => ({
           ...oldData,
           isFollowing: oldData ? !oldData.isFollowing : true,
@@ -75,17 +82,17 @@ const UserActions = ({ user }: UserActionsProps) => {
 
   const unFollowMutation = useMutation({
     mutationFn: async () => {
-      if (!user?._id) return null;
-      const response = await unfollowUser(user._id);
+      if (!targetUser?._id) return null;
+      const response = await unfollowUser(targetUser._id);
       if (!response.success) {
         throw new Error(response.error || "Failed to unfollow user");
       }
       return response;
     },
     onMutate: () => {
-      if (!user?._id) return null;
+      if (!targetUser?._id) return null;
       queryClient.setQueryData(
-        ["followStatus", user._id],
+        ["followStatus", targetUser._id],
         (oldData: FollowStatus) => ({
           ...oldData,
           isFollowing: false,
@@ -98,7 +105,10 @@ const UserActions = ({ user }: UserActionsProps) => {
   });
 
   const handleFollow = async () => {
-    if (!user) return;
+    if (!currentUser) {
+      openSignIn();
+      return;
+    }
 
     try {
       if (data?.isFollowing) {
@@ -115,9 +125,9 @@ const UserActions = ({ user }: UserActionsProps) => {
     }
   };
 
-  if (!user) return null;
+  if (!targetUser) return null;
 
-  const isUsersProfile = user?.clerkId === currentUser?.id;
+  const isUsersProfile = targetUser?.clerkId === currentUser?.id;
 
   return (
     <div className="flex flex-row items-center gap-4 justify-center sm:justify-start">
@@ -134,7 +144,10 @@ const UserActions = ({ user }: UserActionsProps) => {
             <SheetTitle>Edit Profile</SheetTitle>
             <SheetDescription>Make changes to your profile.</SheetDescription>
           </SheetHeader>
-          <UserProfileEditForm user={user} onCancel={() => setEditing(false)} />
+          <UserProfileEditForm
+            user={targetUser}
+            onCancel={() => setEditing(false)}
+          />
         </SheetContent>
       </Sheet>
 
@@ -142,7 +155,7 @@ const UserActions = ({ user }: UserActionsProps) => {
         <Button
           className="px-6"
           variant={data?.isFollowing ? "destructive" : "default"}
-          disabled={!user}
+          disabled={!targetUser || isLoading}
           onClick={handleFollow}
           aria-label="Follow/Unfollow User"
         >
@@ -154,7 +167,7 @@ const UserActions = ({ user }: UserActionsProps) => {
           {
             label: "Report User",
             value: "report",
-            onSelect: () => router.push(`/report/user/${user.username}`),
+            onSelect: () => router.push(`/report/user/${targetUser.username}`),
           },
         ]}
       />

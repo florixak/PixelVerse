@@ -60,7 +60,7 @@ const UserProfileRedirectPage = async ({
   const { username, sort = "latest" } = await params;
   const user = await getCachedUserByUsername(username);
 
-  return <UserProfileContent user={user} sort={sort} />;
+  return <UserProfileContent targetUser={user} sort={sort} />;
 };
 
 export default UserProfileRedirectPage;
