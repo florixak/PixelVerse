@@ -12,8 +12,6 @@ type UserActionsWrapperProps = {
 const UserActionsWrapper = async ({ user }: UserActionsWrapperProps) => {
   if (!user || !user?._id) return null;
 
-  const currUser = await currentUser();
-
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["followStatus", user?._id],
@@ -32,7 +30,7 @@ const UserActionsWrapper = async ({ user }: UserActionsWrapperProps) => {
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <UserActions targetUser={user} currentUser={currUser} />
+      <UserActions targetUser={user} />
     </HydrationBoundary>
   );
 };

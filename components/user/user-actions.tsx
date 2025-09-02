@@ -24,14 +24,13 @@ import {
 } from "@/actions/follow-actions";
 import { getQueryClient } from "@/lib/get-query-client";
 import { useClerk } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/server";
 
 type UserActionsProps = {
   targetUser: SanityUser | null;
-  currentUser: User | null;
 };
 
-const UserActions = ({ targetUser, currentUser }: UserActionsProps) => {
+const UserActions = ({ targetUser }: UserActionsProps) => {
+  const currentUser = useClerk().user;
   const [editing, setEditing] = useState(false);
   const router = useRouter();
   const { openSignIn } = useClerk();
