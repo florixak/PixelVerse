@@ -74,9 +74,9 @@ export const metadata: Metadata = {
     creator: "@pixelverse",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/pixelverse-favicon.png",
+    shortcut: "/pixelverse-favicon.png",
+    apple: "/pixelverse-favicon.png",
   },
 };
 
