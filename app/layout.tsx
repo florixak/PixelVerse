@@ -37,7 +37,10 @@ export const metadata: Metadata = {
     "art collaboration",
     "art showcase",
   ],
-  authors: [{ name: "Ondřej Pták", url: "https://ondrejptak.dev" }],
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  ),
+  authors: [{ name: "Ondřej Pták", url: "https://github.com/florixak" }],
   creator: "Ondřej Pták",
   openGraph: {
     title: {
@@ -46,11 +49,11 @@ export const metadata: Metadata = {
     },
     description:
       "Discover the world of pixel art, share your creations, and connect with fellow artists in our growing community. Join PixelVerse today!",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://pixelverse.com",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     siteName: "PixelVerse",
     images: [
       {
-        url: "https://pixelverse.com/og-image.png",
+        url: "/pixelverse-logo.png",
         width: 1200,
         height: 630,
         alt: "PixelDit OG Image",
@@ -67,7 +70,7 @@ export const metadata: Metadata = {
     },
     description:
       "Discover the world of pixel art, share your creations, and connect with fellow artists in our growing community. Join PixelVerse today!",
-    images: ["https://pixelverse.com/og-image.png"],
+    images: ["/pixelverse-logo.png"],
     creator: "@pixelverse",
   },
   icons: {
