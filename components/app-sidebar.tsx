@@ -23,7 +23,7 @@ import { Suspense } from "react";
 
 import { CollapsibleUserCard } from "./collapsible-user-card";
 import { getPopularTopics } from "@/sanity/lib/featured/getPopularTopics";
-import { currentUser } from "@clerk/nextjs/server";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { canAccessDashboard } from "@/lib/user-utils";
 import SidebarHeader from "./sidebar-header";
 import Image from "next/image";
@@ -124,10 +124,10 @@ export async function AppSidebar() {
     if (user) {
       isAdmin = await canAccessDashboard(user.id);
     }
-  } catch (error) {}
+  } catch {}
 
   return (
-    <Sidebar collapsible="icon" key={user?.id || "guest"}>
+    <Sidebar collapsible="icon" key={user?.id || "no-user"}>
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>
@@ -151,6 +151,11 @@ export async function AppSidebar() {
                   </SidebarMenuItem>
                 );
               })}
+              {user ? null : (
+                <span className="text-xs text-muted-foreground mt-2 block px-2">
+                  Login to see more options...
+                </span>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
