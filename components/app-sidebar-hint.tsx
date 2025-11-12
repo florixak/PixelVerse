@@ -12,9 +12,8 @@ const AppSidebarHint = () => {
     </span>
   ) : (
     <div
-      role="status"
       className="flex items-center justify-center w-full mt-2"
-      aria-label="Login to see more options"
+      aria-hidden="true"
     >
       <MoreHorizontal className="w-5 h-5 text-muted-foreground" />
     </div>
