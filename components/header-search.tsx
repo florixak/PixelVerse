@@ -12,14 +12,14 @@ const HeaderSearch = () => {
   return (
     <>
       <div className="relative w-full max-w-[16rem] md:max-w-xs">
-        <Button
-          variant="ghost"
+        <div
+          role="status"
           aria-label="Open search"
           className="p-0 md:hidden absolute left-[80%] top-1/2 -translate-y-1/2"
           onClick={() => setCommandOpen(true)}
         >
           <SearchIcon className="w-4 h-4" />
-        </Button>
+        </div>
 
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hidden md:block">
           <SearchIcon
