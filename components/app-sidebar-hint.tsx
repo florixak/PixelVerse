@@ -11,12 +11,13 @@ const AppSidebarHint = () => {
       Login to see more options...
     </span>
   ) : (
-    <span
+    <div
+      role="status"
       className="flex items-center justify-center w-full mt-2"
       aria-label="Login to see more options"
     >
       <MoreHorizontal className="w-5 h-5 text-muted-foreground" />
-    </span>
+    </div>
   );
 };
 
