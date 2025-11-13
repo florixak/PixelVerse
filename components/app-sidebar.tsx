@@ -23,10 +23,11 @@ import { Suspense } from "react";
 
 import { CollapsibleUserCard } from "./collapsible-user-card";
 import { getPopularTopics } from "@/sanity/lib/featured/getPopularTopics";
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { canAccessDashboard } from "@/lib/user-utils";
 import SidebarHeader from "./sidebar-header";
 import Image from "next/image";
+import AppSidebarHint from "./app-sidebar-hint";
 
 const menu: {
   title: string;
@@ -151,11 +152,7 @@ export async function AppSidebar() {
                   </SidebarMenuItem>
                 );
               })}
-              {user ? null : (
-                <span className="text-xs text-muted-foreground mt-2 block px-2">
-                  Login to see more options...
-                </span>
-              )}
+              {user ? null : <AppSidebarHint />}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
