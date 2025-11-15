@@ -14,5 +14,5 @@ const openai = isGoogle
 
 export const AI_PROVIDERS = {
   openai: openai("gpt-3.5-turbo"),
-  gemini: google("gemini-1.5-flash"),
+  gemini: google("gemini-2.0-flash"),
 } as const;

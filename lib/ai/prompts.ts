@@ -2,7 +2,7 @@ import { Comment, Post, User } from "@/sanity.types";
 
 export const AI_PROMPTS = {
   system: {
-    base: `You are an AI content moderator for PixelVerse, a pixel art community platform.
+    base: `You are an AI content moderator for a pixel art community platform.
     Respond valid JSON only. Confidence: 0-1 scale representing certainty.`,
 
     report: {
@@ -20,7 +20,7 @@ export const AI_PROMPTS = {
     },
 
     topic: {
-      base: `Pixel art, game, and related topics check. Answer shortly and only: {"isApproved":bool,"suitabilityScore":num,"categories":["text"],"reasons":["text"],"suggestions":["text"],"confidence":num}`,
+      base: `Pixel art/game/related topics check. Answer shortly and only: {"isApproved":bool,"suitabilityScore":num,"categories":["text"],"reasons":["text"],"suggestions":["text"],"confidence":num}`,
     },
   },
 
