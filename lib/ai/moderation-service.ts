@@ -32,7 +32,7 @@ const TOKEN_LIMITS = {
   post: 80,
   comment: 60,
   user: 70,
-  topic: 80,
+  topic: 100,
 } as const;
 
 export const callReportAI = async (
@@ -44,15 +44,12 @@ export const callReportAI = async (
   try {
     const model = AI_PROVIDERS[provider];
     if (!model) {
-      console.log(`❌ ${provider} not available for report check`);
       return {
         isViolating: false,
         reason: "AI provider not available",
         confidence: 0,
       };
     }
-
-    console.log(`🤖 Using ${provider} for report check...`);
 
     const { object, usage } = await generateObject({
       model,
@@ -62,11 +59,6 @@ export const callReportAI = async (
       maxTokens,
       temperature: 0.1,
     });
-
-    console.log(
-      `✅ ${provider} report check completed:`,
-      usage?.totalTokens || 0
-    );
 
     return {
       isViolating: Boolean(object.isViolating),
@@ -89,28 +81,20 @@ export const callTopicAI = async (
   try {
     const model = AI_PROVIDERS[provider];
     if (!model) {
-      console.log(`❌ ${provider} not available for topic check`);
       return createTopicFallback(
         userPrompt,
         new Error("Provider not available")
       );
     }
 
-    console.log(`🤖 Using ${provider} for topic check...`);
-
     const { object, usage } = await generateObject({
-      model,
+      model: model,
       schema: topicSuggestionSchema,
       system: `${AI_PROMPTS.system.base}\n${systemPrompt}`,
       prompt: userPrompt,
       maxTokens,
       temperature: 0.1,
     });
-
-    console.log(
-      `✅ ${provider} topic check completed:`,
-      usage?.totalTokens || 0
-    );
 
     return {
       isApproved: Boolean(object.isApproved),
