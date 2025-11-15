@@ -88,7 +88,7 @@ export const callTopicAI = async (
     }
 
     const { object, usage } = await generateObject({
-      model: model,
+      model,
       schema: topicSuggestionSchema,
       system: `${AI_PROMPTS.system.base}\n${systemPrompt}`,
       prompt: userPrompt,
