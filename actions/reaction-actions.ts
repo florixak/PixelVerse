@@ -105,9 +105,7 @@ export async function getReactions(
     if (!target || !target._id) {
       return { success: false, error: "Invalid target" };
     }
-    if (!userId) {
-      return { success: false, error: "Unauthorized" };
-    }
+
     const [reactions, reactionCounts, userReaction] = await Promise.all([
       getLibReactions(target._id),
       getLibReactionCounts(target._id),
