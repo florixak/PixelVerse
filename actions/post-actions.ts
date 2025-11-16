@@ -132,6 +132,7 @@ export async function updatePost(
       isOriginal: postData.isOriginal,
       colorPalette: postData.colorPalette,
       tutorialSteps: postData.tutorialSteps,
+      inspirationSource: postData.inspirationSource,
     };
 
     if (postData.postType === "tutorial") {
