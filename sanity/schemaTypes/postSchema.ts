@@ -98,11 +98,7 @@ export const postSchema = defineType({
     defineField({
       name: "software",
       title: "Software Used",
-      type: "array",
-      of: [{ type: "string" }],
-      options: {
-        list: SOFTWARE_OPTIONS,
-      },
+      type: "string",
       hidden: ({ document }) =>
         document?.postType !== "pixelArt" &&
         document?.postType !== "animation" &&
