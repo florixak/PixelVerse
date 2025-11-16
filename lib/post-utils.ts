@@ -1,4 +1,4 @@
-import { Post, SuggestedTopic } from "@/sanity.types";
+import { SuggestedTopic } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import slugify from "slugify";
 
