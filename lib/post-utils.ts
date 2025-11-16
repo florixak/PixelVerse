@@ -142,7 +142,12 @@ export function parsePostFormData(formData: FormData) {
         .get("tags")
         ?.toString()
         .split(",")
-        .map((tag) => tag.trim()) || [],
+        .map((tag) =>
+          slugify(tag, {
+            lower: true,
+            strict: true,
+          })
+        ) || [],
     imageFile: formData.get("image") as File,
     isOriginal: formData.get("isOriginal") === "true",
     colorPalette: formData.get("colorPalette")
@@ -151,6 +156,7 @@ export function parsePostFormData(formData: FormData) {
     tutorialSteps: formData.get("tutorialSteps")
       ? JSON.parse(formData.get("tutorialSteps") as string)
       : [],
+    inspirationSource: formData.get("inspirationSource")?.toString() || "",
   };
 }
 
