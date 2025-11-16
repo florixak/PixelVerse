@@ -1,4 +1,4 @@
-import { SuggestedTopic } from "@/sanity.types";
+import { Post, SuggestedTopic } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
 import slugify from "slugify";
 
@@ -142,7 +142,7 @@ export function parsePostFormData(formData: FormData) {
         .get("tags")
         ?.toString()
         .split(",")
-        .map((tag) => tag.trim()) || [],
+        .map((tag) => slugify(tag)) || [],
     imageFile: formData.get("image") as File,
     isOriginal: formData.get("isOriginal") === "true",
     colorPalette: formData.get("colorPalette")
@@ -151,6 +151,7 @@ export function parsePostFormData(formData: FormData) {
     tutorialSteps: formData.get("tutorialSteps")
       ? JSON.parse(formData.get("tutorialSteps") as string)
       : [],
+    inspirationSource: formData.get("inspirationSource")?.toString() || "",
   };
 }
 

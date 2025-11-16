@@ -62,6 +62,7 @@ export async function createPost(formData: FormData) {
       isOriginal: postData.isOriginal,
       colorPalette: postData.colorPalette,
       tutorialSteps: postData.tutorialSteps,
+      inspirationSource: postData.inspirationSource,
     });
 
     const topicSlug = await getTopicSlug(postData.topicId);

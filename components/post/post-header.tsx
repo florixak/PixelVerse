@@ -28,6 +28,9 @@ const PostHeader = async ({ post, isAuthor }: PostHeaderProps) => {
       </div>
 
       <h1 className="text-3xl font-bold">{post.title}</h1>
+      <h2>
+        {post.inspirationSource ? "Inspired by: " + post.inspirationSource : ""}
+      </h2>
       <div className="flex flex-col gap-1 text-sm text-muted-foreground">
         {displayDimensions ? <p>Dimensions: {post.dimensions}</p> : null}
         {/* {post.software && (
