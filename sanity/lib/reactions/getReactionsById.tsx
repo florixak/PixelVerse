@@ -61,6 +61,10 @@ export const getUserReaction = async (
     ...options,
   };
 
+  if (!clerkId) {
+    return null;
+  }
+
   return await client.fetch(
     `
     *[_type == "reaction" && content._ref == $contentId && user->clerkId == $clerkId][0] {
