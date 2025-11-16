@@ -54,11 +54,6 @@ const menu: {
     url: "/admin/reports",
     icon: TriangleAlert,
   },
-  {
-    title: "Settings",
-    url: "/admin/settings",
-    icon: Settings,
-  },
 ];
 
 const AdminSiderbar = async () => {
