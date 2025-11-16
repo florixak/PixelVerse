@@ -142,7 +142,12 @@ export function parsePostFormData(formData: FormData) {
         .get("tags")
         ?.toString()
         .split(",")
-        .map((tag) => slugify(tag)) || [],
+        .map((tag) =>
+          slugify(tag, {
+            lower: true,
+            strict: true,
+          })
+        ) || [],
     imageFile: formData.get("image") as File,
     isOriginal: formData.get("isOriginal") === "true",
     colorPalette: formData.get("colorPalette")
