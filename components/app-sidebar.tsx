@@ -1,11 +1,4 @@
-import {
-  Home,
-  Newspaper,
-  Search,
-  ShieldCheck,
-  TriangleAlert,
-  User,
-} from "lucide-react";
+import { Home } from "lucide-react";
 
 import {
   Sidebar,
@@ -28,45 +21,48 @@ import { canAccessDashboard } from "@/lib/user-utils";
 import SidebarHeader from "./sidebar-header";
 import Image from "next/image";
 import AppSidebarHint from "./app-sidebar-hint";
+import SidebarItem from "./sidebar-item";
 
-const menu: {
+export type Item = {
   title: string;
   url: string;
-  icon: React.ComponentType;
+  icon: string;
   adminOnly?: boolean;
   loggedInOnly?: boolean;
-}[] = [
+};
+
+const menu: Item[] = [
   {
     title: "Home",
     url: "/",
-    icon: Home,
+    icon: "Home",
   },
   {
     title: "Profile",
     url: "/profile/me",
-    icon: User,
+    icon: "User",
     loggedInOnly: true,
   },
   {
     title: "Topics",
     url: "/topics",
-    icon: Newspaper,
+    icon: "Newspaper",
   },
   {
     title: "Explore",
     url: "/explore",
-    icon: Search,
+    icon: "Search",
   },
   {
     title: "My Reports",
     url: "/my-reports",
-    icon: TriangleAlert,
+    icon: "TriangleAlert",
     loggedInOnly: true,
   },
   {
     title: "Admin",
     url: "/admin",
-    icon: ShieldCheck,
+    icon: "ShieldCheck",
     loggedInOnly: true,
     adminOnly: true,
   },
@@ -135,23 +131,14 @@ export async function AppSidebar() {
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menu.map((item) => {
-                const adminOnly = item.adminOnly || false;
-                const loggedInOnly = item.loggedInOnly || false;
-                if ((adminOnly && !isAdmin) || (loggedInOnly && !user)) {
-                  return null;
-                }
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {menu.map((item) => (
+                <SidebarItem
+                  key={item.title}
+                  item={item}
+                  isLoggedIn={!!user}
+                  isAdmin={isAdmin}
+                />
+              ))}
               {user ? null : <AppSidebarHint />}
             </SidebarMenu>
           </SidebarGroupContent>
