@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cookies } from "next/headers";
 import Providers from "@/components/providers";
+import SidebarTriggerWrapper from "@/components/sidebar-trigger-wrapper";
 
 export default async function AppLayout({
   children,
@@ -21,10 +22,7 @@ export default async function AppLayout({
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
         <main className="relative min-h-screen w-full">
-          <SidebarTrigger
-            className="fixed top-3 ml-2 z-[60] size-10 rounded-md bg-background border shadow-sm hover:bg-muted transition-colors duration-200"
-            aria-label="Toggle sidebar"
-          />
+          <SidebarTriggerWrapper />
           {children}
         </main>
       </SidebarProvider>
