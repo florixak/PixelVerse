@@ -29,9 +29,10 @@ const ICONS: Record<string, React.ComponentType> = {
 };
 
 const SidebarItem = ({ item, isLoggedIn, isAdmin }: SidebarItemProps) => {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, isMobile } = useSidebar();
 
   const handleClick = () => {
+    if (!isMobile) return;
     toggleSidebar();
   };
 
