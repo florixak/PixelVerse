@@ -16,8 +16,27 @@ const getAllUserPosts = async ({
   const { software, tags, postType, difficulty, isOriginal } = filter;
   const orderBy = getSanityOrderBy(sort);
   const offset = page * limit;
+
+  let filterConditions = `_type == "post" && isDeleted != true && isBanned != true && author->isBanned != true && author->clerkId == $clerkId`;
+
+  if (software && software.length > 0) {
+    filterConditions += ` && count((software[])[@ in $software]) > 0`;
+  }
+  if (tags && tags.length > 0) {
+    filterConditions += ` && count((tags[])[@ in $tags]) > 0`;
+  }
+  if (postType) {
+    filterConditions += ` && postType == $postType`;
+  }
+  if (difficulty) {
+    filterConditions += ` && difficulty == $difficulty`;
+  }
+  if (isOriginal !== undefined) {
+    filterConditions += ` && isOriginal == $isOriginal`;
+  }
+
   return client.fetch(
-    groq`*[_type == "post" && isDeleted != true && isBanned != true && author->isBanned != true && author->clerkId == $clerkId] | order(publishedAt desc) {
+    groq`*[${filterConditions}] {
       _id,
       title,
       "slug": slug.current,
@@ -38,13 +57,7 @@ const getAllUserPosts = async ({
       content,
       disabledComments,
       "commentsCount": count(*[_type == "comment" && references(^._id) && isDeleted != true && isBanned != true]),
-    } | order(${orderBy})[${offset}..${offset + limit - 1}] ${
-      software ? `&& software[any(_ in $software)]` : ""
-    } ${tags ? `&& tags[any(_ in $tags)]` : ""} ${
-      postType ? `&& postType == $postType` : ""
-    } ${difficulty ? `&& difficulty == $difficulty` : ""} ${
-      isOriginal !== undefined ? `&& isOriginal == $isOriginal` : ""
-    }`,
+    } | order(${orderBy})[${offset}..${offset + limit - 1}]`,
     {
       clerkId,
       software: software || [],

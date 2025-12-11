@@ -13,9 +13,9 @@ type UserPostsProps = {
 const UserPosts = async ({ user, sort = "latest" }: UserPostsProps) => {
   if (!user || !user.clerkId) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
+      <p className="py-8 text-center text-muted-foreground">
         No user posts found.
-      </div>
+      </p>
     );
   }
 
