@@ -72,7 +72,7 @@ const UserInfinitePosts = ({
 
       {isError && (
         <p className="text-red-500 text-center">
-          Error occured while fetching posts.
+          Error occurred while fetching posts.
         </p>
       )}
 
