@@ -40,21 +40,21 @@ const UserInfinitePosts = ({
 
   if (isError) {
     return (
-      <div className="text-red-500 text-center">
+      <p className="text-red-500 text-center">
         Error: {error instanceof Error ? error.message : "Something went wrong"}
-      </div>
+      </p>
     );
   }
 
   if (isLoading) {
-    return <div className="text-center">Loading posts...</div>;
+    return <p className="text-center">Loading posts...</p>;
   }
 
   if (!data) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
+      <p className="py-8 text-center text-muted-foreground">
         No user posts found.
-      </div>
+      </p>
     );
   }
 
@@ -71,15 +71,15 @@ const UserInfinitePosts = ({
       </MasonryWrapper>
 
       {isError && (
-        <div className="text-red-500 text-center">
+        <p className="text-red-500 text-center">
           Error occured while fetching posts.
-        </div>
+        </p>
       )}
 
       <div ref={ref}>
         {hasNextPage ? (
           isFetchingNextPage ? (
-            <div className="text-center">Loading...</div>
+            <p className="text-center">Loading...</p>
           ) : (
             <div className="flex justify-center mt-4">
               <Button
@@ -92,9 +92,9 @@ const UserInfinitePosts = ({
             </div>
           )
         ) : (
-          <div className="text-center text-muted-foreground mt-4">
+          <p className="text-center text-muted-foreground mt-4">
             No more posts to load
-          </div>
+          </p>
         )}
       </div>
     </>
