@@ -59,12 +59,12 @@ const InfiniteTopicPosts = ({
     );
   }
 
-  const wasPrefeched = data && !isLoading;
+  //const wasPrefeched = data && !isLoading;
 
-  usePrefetchPerformance({
+  /*usePrefetchPerformance({
     queryKey: ["posts", "topic", topicSlug, sort],
     wasDataPrefetched: !!wasPrefeched,
-  });
+  });*/
 
   return (
     <>
