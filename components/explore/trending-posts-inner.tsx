@@ -14,12 +14,12 @@ const TrendingPostsInner = () => {
     queryFn: () => getTrendingContent(),
   });
 
-  if (isError || !data || data.posts.length === 0) {
-    return <GlobalEmptyContentState />;
-  }
-
   if (isLoading) {
     return <ExploreLoadingSkeleton />;
+  }
+
+  if (isError || !data || data.posts.length === 0) {
+    return <GlobalEmptyContentState />;
   }
 
   return (
