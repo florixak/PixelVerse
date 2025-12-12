@@ -3,7 +3,6 @@ import { getQueryClient } from "@/lib/get-query-client";
 import { User } from "@/sanity.types";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import UserActions from "./user-actions";
-import { currentUser } from "@clerk/nextjs/server";
 
 type UserActionsWrapperProps = {
   user: User | null;
