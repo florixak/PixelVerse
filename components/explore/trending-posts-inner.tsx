@@ -14,7 +14,7 @@ const TrendingPostsInner = () => {
     queryFn: () => getTrendingContent(),
   });
 
-  if (isError) {
+  if (isError || !data || data.posts.length === 0) {
     return <GlobalEmptyContentState />;
   }
 
@@ -24,7 +24,7 @@ const TrendingPostsInner = () => {
 
   return (
     <MasonryWrapper className="mt-4">
-      {data?.posts.map((post) => (
+      {data.posts.map((post) => (
         <PostCard key={post._id} post={post} />
       ))}
     </MasonryWrapper>
