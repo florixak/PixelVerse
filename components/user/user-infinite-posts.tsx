@@ -1,7 +1,7 @@
 "use client";
 
 import { Post, User } from "@/sanity.types";
-import MasonryWrapper from "../masonry-wrapper";
+import MasonryWrapper from "../layout/masonry-wrapper";
 import useInfiniteScroll from "@/hooks/use-infinite-scroll";
 import getAllUserPosts from "@/sanity/lib/posts/getAllUserPosts";
 import PostCard from "../post/post-card";

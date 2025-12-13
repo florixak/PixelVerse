@@ -1,4 +1,4 @@
-import MasonryWrapper from "@/components/masonry-wrapper";
+import MasonryWrapper from "@/components/layout/masonry-wrapper";
 import TopicTrendingCard from "@/components/topic/topic-trending-card";
 import { SortOrder } from "@/types/filter";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";

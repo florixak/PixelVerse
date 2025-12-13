@@ -4,11 +4,11 @@ import {
   isCommentContent,
   isUserContent,
 } from "@/sanity.types";
-import { Badge } from "./ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import {
   ExternalLink,
   AlertTriangle,

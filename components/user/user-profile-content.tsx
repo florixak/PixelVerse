@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Role from "@/components/role";
+import Role from "@/components/user/role";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { User } from "@/sanity.types";

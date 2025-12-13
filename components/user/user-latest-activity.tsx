@@ -1,5 +1,5 @@
 import getLatestActivityOfUser from "@/sanity/lib/featured/getLatestActivityOfUser";
-import MasonryWrapper from "../masonry-wrapper";
+import MasonryWrapper from "../layout/masonry-wrapper";
 import PostCard from "../post/post-card";
 
 type LatestUserActivityProps = {

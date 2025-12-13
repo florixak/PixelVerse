@@ -1,6 +1,6 @@
 "use client";
 
-import { useSidebar } from "./ui/sidebar";
+import { useSidebar } from "../ui/sidebar";
 import { MoreHorizontal } from "lucide-react";
 
 const AppSidebarHint = () => {

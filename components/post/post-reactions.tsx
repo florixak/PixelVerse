@@ -6,7 +6,7 @@ import { MessageCircle, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 import ReactionButton from "../reaction-button";
 import { useRouter } from "next/navigation";
-import ReportButton from "../report-button";
+import ReportButton from "../report/report-button";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getReactions, handleReaction } from "@/actions/reaction-actions";
 import { REACTIONS } from "@/constants";

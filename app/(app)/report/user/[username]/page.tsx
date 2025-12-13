@@ -1,4 +1,4 @@
-import ReportForm from "@/components/report-form";
+import ReportForm from "@/components/report/report-form";
 import { getUserByUsername } from "@/sanity/lib/users/getUserByUsername";
 import { notFound } from "next/navigation";
 

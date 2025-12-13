@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import MasonryWrapper from "../masonry-wrapper";
+import MasonryWrapper from "../layout/masonry-wrapper";
 import PostCard from "../post/post-card";
 import { useQuery } from "@tanstack/react-query";
 import { getTrendingContent } from "@/sanity/lib/featured/getTrendingContent";
