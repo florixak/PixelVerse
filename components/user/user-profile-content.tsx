@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Role from "@/components/role";
+import Role from "@/components/user/role";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { User } from "@/sanity.types";
@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import UserProfileStats from "./user-profile-stats";
 import UserPosts from "./user-posts";
 import { SortOrder } from "@/types/filter";
-import SortFilterSelect from "../sort-filter-select";
+import SortFilterSelect from "../ui/sort-filter-select";
 import UserActionsWrapper from "./user-actions-wrapper";
 
 type UserProfileContentProps = {

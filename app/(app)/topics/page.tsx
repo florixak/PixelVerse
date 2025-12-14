@@ -1,4 +1,4 @@
-import MasonryWrapper from "@/components/masonry-wrapper";
+import MasonryWrapper from "@/components/layout/masonry-wrapper";
 import TopicTrendingCard from "@/components/topic/topic-trending-card";
 import { SortOrder } from "@/types/filter";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
@@ -14,7 +14,7 @@ import TopicsSkeleton from "@/components/topic/topic-list-skeleton";
 import TrendingTopicsSkeleton from "@/components/topic/topic-trending-card-skeleton";
 import PopularTopicsSkeleton from "@/components/topic/popular-topics-skeleton";
 import TopicSuggestButton from "@/components/topic/topic-suggest-button";
-import SortFilterSelect from "@/components/sort-filter-select";
+import SortFilterSelect from "@/components/ui/sort-filter-select";
 import NoContent from "@/components/no-content";
 import GlobalEmptyContentState from "@/components/global-empty-content-state";
 

@@ -1,10 +1,10 @@
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import { cookies } from "next/headers";
-import Providers from "@/components/providers";
-import SidebarTriggerWrapper from "@/components/sidebar-trigger-wrapper";
+import Providers from "@/components/layout/providers";
+import SidebarTriggerWrapper from "@/components/layout/sidebar-trigger-wrapper";
 
 export default async function AppLayout({
   children,

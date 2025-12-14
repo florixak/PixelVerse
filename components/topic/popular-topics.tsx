@@ -1,6 +1,6 @@
 import { getPopularTopics } from "@/sanity/lib/featured/getPopularTopics";
 import TopicCard from "./topic-card";
-import MasonryWrapper from "../masonry-wrapper";
+import MasonryWrapper from "../layout/masonry-wrapper";
 
 type PopularTopicsProps = {
   className?: string;

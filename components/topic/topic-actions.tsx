@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import SortFilterSelect from "@/components/sort-filter-select";
+import SortFilterSelect from "@/components/ui/sort-filter-select";
 import { Topic } from "@/sanity.types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
-import NotSignInButton from "../not-sign-in-button";
+import NotSignInButton from "../ui/not-sign-in-button";
 
 type TopicActionsProps = {
   topic: Topic;

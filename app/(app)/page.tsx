@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import HeroSection from "@/components/landing-page/hero-section";
-import HomeContent from "@/components/home-content";
+import HomeContent from "@/components/landing-page/home-content";
 
 export default async function Home() {
   return (

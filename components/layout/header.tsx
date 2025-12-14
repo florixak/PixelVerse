@@ -1,7 +1,7 @@
-import { ThemeSwitcher } from "./theme-switcher";
-import AuthButtons from "./auth-buttons";
-import HeaderSearch from "./header-search";
-import NotificationSystem from "./notification/notification-system";
+import { ThemeSwitcher } from "../ui/theme-switcher";
+import AuthButtons from "../auth-buttons";
+import HeaderSearch from "../header-search";
+import NotificationSystem from "../notification/notification-system";
 import { getQueryClient } from "@/lib/get-query-client";
 import {
   getNotifications,

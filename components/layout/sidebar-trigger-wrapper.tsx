@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarTrigger, useSidebar } from "./ui/sidebar";
+import { SidebarTrigger, useSidebar } from "../ui/sidebar";
 
 const SidebarTriggerWrapper = () => {
   const { openMobile, isMobile } = useSidebar();

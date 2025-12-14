@@ -1,4 +1,4 @@
-import ReportDetails from "@/components/report-details";
+import ReportDetails from "@/components/report/report-details";
 import AdminReportForm from "@/components/admin/admin-report-form";
 import { Report } from "@/sanity.types";
 import { getReportById } from "@/sanity/lib/reports/getReportById";

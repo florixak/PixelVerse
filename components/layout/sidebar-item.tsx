@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { SidebarMenuButton, SidebarMenuItem, useSidebar } from "./ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem, useSidebar } from "../ui/sidebar";
 import Link from "next/link";
 import { Item } from "./app-sidebar";
 import {

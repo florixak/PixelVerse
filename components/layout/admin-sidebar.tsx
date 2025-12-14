@@ -1,25 +1,18 @@
-import { CollapsibleUserCard } from "./collapsible-user-card";
-import {
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarFooter,
-  Sidebar,
-} from "./ui/sidebar";
 import { currentUser } from "@clerk/nextjs/server";
+import { ArrowLeft, Home, Newspaper, TriangleAlert, User } from "lucide-react";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  Home,
-  Newspaper,
-  Settings,
-  TriangleAlert,
-  User,
-} from "lucide-react";
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "../ui/sidebar";
+import { CollapsibleUserCard } from "./collapsible-user-card";
 import SidebarHeader from "./sidebar-header";
 
 const menu: {

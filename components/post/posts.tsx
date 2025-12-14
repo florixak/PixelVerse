@@ -1,4 +1,4 @@
-import MasonryWrapper from "../masonry-wrapper";
+import MasonryWrapper from "../layout/masonry-wrapper";
 import { Post } from "@/sanity.types";
 import PostCard from "./post-card";
 

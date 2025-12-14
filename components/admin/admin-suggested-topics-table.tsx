@@ -17,7 +17,7 @@ import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Badge } from "../ui/badge";
-import Table from "../table";
+import Table from "../ui/table";
 import { Status } from "@/types/suggested-topics";
 import { getStatusVariant, getStatusEmoji } from "@/lib/post-utils";
 

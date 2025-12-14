@@ -5,7 +5,7 @@ type CardProps = {
   className?: string;
 };
 
-const Card = ({ children, className }: CardProps) => {
+const BasicCard = ({ children, className }: CardProps) => {
   return (
     <div className={cn("border rounded-lg p-4 overflow-hidden", className)}>
       {children}
@@ -13,4 +13,4 @@ const Card = ({ children, className }: CardProps) => {
   );
 };
 
-export default Card;
+export default BasicCard;

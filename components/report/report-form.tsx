@@ -8,16 +8,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Textarea } from "./ui/textarea";
-import { Label } from "./ui/label";
+} from "../ui/select";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
 import { REPORT_REASONS } from "@/constants";
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import BackButton from "./back-button";
+import BackButton from "../ui/back-button";
 
 type ReportFormProps = {
   content: Post | Comment | User | Topic;

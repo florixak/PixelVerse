@@ -1,7 +1,7 @@
 import { cn, formatDate } from "@/lib/utils";
 import { Post } from "@/sanity.types";
 import Link from "next/link";
-import Role from "../role";
+import Role from "../user/role";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type PostAuthorProps = {

@@ -1,5 +1,5 @@
 import { User } from "@/sanity.types";
-import { Badge } from "./ui/badge";
+import { Badge } from "../ui/badge";
 
 type RoleProps = {
   role: User["role"];

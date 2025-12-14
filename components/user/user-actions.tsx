@@ -1,7 +1,7 @@
 "use client";
 
 import { User as SanityUser } from "@/sanity.types";
-import ThreeDotsSelect from "../three-dots-select";
+import ThreeDotsSelect from "../ui/three-dots-select";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import {

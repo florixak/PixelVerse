@@ -1,7 +1,7 @@
 import React from "react";
 import { Topic } from "@/sanity.types";
 import Link from "next/link";
-import Card from "../card";
+import BasicCard from "../basic-card";
 import Image from "next/image";
 
 type TopicCardProps = {
@@ -10,7 +10,7 @@ type TopicCardProps = {
 
 const TopicCard = ({ topic }: TopicCardProps) => {
   return (
-    <Card>
+    <BasicCard>
       {topic.iconUrl && (
         <Image
           src={topic.iconUrl}
@@ -32,7 +32,7 @@ const TopicCard = ({ topic }: TopicCardProps) => {
       <p>
         <span className="font-semibold">Posts:</span> {topic.postCount}
       </p>
-    </Card>
+    </BasicCard>
   );
 };
 

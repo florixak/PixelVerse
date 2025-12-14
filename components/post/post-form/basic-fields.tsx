@@ -1,6 +1,6 @@
 "use client";
 
-import TagInput from "@/components/tag-input";
+import TagInput from "@/components/ui/tag-input";
 import TopicSuggestButton from "@/components/topic/topic-suggest-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

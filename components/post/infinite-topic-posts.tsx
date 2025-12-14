@@ -1,6 +1,6 @@
 "use client";
 
-import MasonryWrapper from "../masonry-wrapper";
+import MasonryWrapper from "../layout/masonry-wrapper";
 import PostCard from "./post-card";
 import { Button } from "../ui/button";
 import { LIMIT } from "./newest-posts";

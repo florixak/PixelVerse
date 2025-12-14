@@ -1,7 +1,7 @@
 import { getSearchResults } from "@/sanity/lib/search/getSearchResults";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import MasonryWrapper from "../masonry-wrapper";
+import MasonryWrapper from "../layout/masonry-wrapper";
 import PostCard from "../post/post-card";
 import TopicCard from "../topic/topic-card";
 import UserSearchCard from "../user/user-search-card";

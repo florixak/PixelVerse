@@ -9,7 +9,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "./ui/command";
+} from "./command";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BrushIcon,

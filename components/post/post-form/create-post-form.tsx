@@ -9,7 +9,7 @@ import TutorialFields from "./tutorial-fields";
 import ConditionalFields from "./conditional-fields";
 import BasicFields from "./basic-fields";
 import toast from "react-hot-toast";
-import SubmitButton from "@/components/submit-button";
+import SubmitButton from "@/components/ui/submit-button";
 import { DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { SoftwareOptionType } from "@/types/posts";

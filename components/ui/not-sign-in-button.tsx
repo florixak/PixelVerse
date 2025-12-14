@@ -1,7 +1,7 @@
 "use client";
 
 import { useClerk } from "@clerk/nextjs";
-import { Button } from "./ui/button";
+import { Button } from "./button";
 
 type NotSignInButtonProps = {
   children?: React.ReactNode;

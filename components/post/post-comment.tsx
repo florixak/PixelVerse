@@ -5,7 +5,7 @@ import { Comment, User } from "@/sanity.types";
 import Image from "next/image";
 import Link from "next/link";
 import { OptimisticComment } from "./post-comment-form";
-import ReportButton from "../report-button";
+import ReportButton from "../report/report-button";
 import { useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { Edit } from "lucide-react";
