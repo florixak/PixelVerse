@@ -1,10 +1,10 @@
 "use client";
 
 import { SignedIn, SignOutButton, useClerk } from "@clerk/nextjs";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type UserCardProps = {
   collapsed?: boolean;

@@ -1,4 +1,4 @@
-import Card from "@/components/card";
+import BasicCard from "@/components/basic-card";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
@@ -19,7 +19,7 @@ const MetricCard = ({
   icon,
   href,
 }: MetricCardProps) => (
-  <Card
+  <BasicCard
     className={`${href ? "transition-all hover:border-primary/50" : ""} ${
       href ? "relative" : ""
     }`}
@@ -54,7 +54,7 @@ const MetricCard = ({
         aria-label={`View ${title}`}
       />
     )}
-  </Card>
+  </BasicCard>
 );
 
 export default MetricCard;

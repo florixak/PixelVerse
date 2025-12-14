@@ -1,6 +1,6 @@
 "use client";
 
-import Card from "../card";
+import BasicCard from "../basic-card";
 import { Post } from "@/sanity.types";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ type PostCardProps = {
 const PostCard = ({ post, className, imageSize }: PostCardProps) => {
   const { user } = useClerk();
   return (
-    <Card className={cn("h-auto flex p-0 flex-col gap-2", className)}>
+    <BasicCard className={cn("h-auto flex p-0 flex-col gap-2", className)}>
       {post.imageUrl && (
         <SmartImage
           src={post.imageUrl || "/avatar-default.svg"}
@@ -68,7 +68,7 @@ const PostCard = ({ post, className, imageSize }: PostCardProps) => {
           clerkId={user?.id}
         />
       </div>
-    </Card>
+    </BasicCard>
   );
 };
 

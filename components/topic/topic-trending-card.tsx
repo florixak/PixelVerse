@@ -1,5 +1,5 @@
 import { Topic } from "@/sanity.types";
-import Card from "../card";
+import BasicCard from "../basic-card";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,7 +10,9 @@ type TopicTrendingCardProps = {
 
 const TopicTrendingCard = ({ topic, className }: TopicTrendingCardProps) => {
   return (
-    <Card className={`flex flex-row items-center p-2 w-[13rem] ${className}`}>
+    <BasicCard
+      className={`flex flex-row items-center p-2 w-[13rem] ${className}`}
+    >
       <div className="flex items-center justify-center min-w-[80px] h-16 p-2">
         {topic.iconUrl && (
           <Image
@@ -33,7 +35,7 @@ const TopicTrendingCard = ({ topic, className }: TopicTrendingCardProps) => {
           {topic.postCount} posts
         </p>
       </div>
-    </Card>
+    </BasicCard>
   );
 };
 

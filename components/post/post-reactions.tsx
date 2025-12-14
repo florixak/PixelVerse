@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Post, Reaction } from "@/sanity.types";
 import { MessageCircle, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
-import ReactionButton from "../reaction-button";
+import ReactionButton from "../ui/reaction-button";
 import { useRouter } from "next/navigation";
 import ReportButton from "../report/report-button";
 import { useMutation, useQuery } from "@tanstack/react-query";

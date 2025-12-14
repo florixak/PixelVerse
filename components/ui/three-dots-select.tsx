@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "./ui/button";
+import { Button } from "./button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
+} from "./dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "./select";
 import { MoreVertical } from "lucide-react";
 
 type ThreeDotsSelectProps = {

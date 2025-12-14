@@ -18,7 +18,7 @@ import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import AdminModifyButtons from "./admin-modify-buttons";
-import Table from "../table";
+import Table from "../ui/table";
 
 type AdminUsersTableProps = {
   initialUsers: User[];

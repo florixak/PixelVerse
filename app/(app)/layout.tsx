@@ -3,7 +3,7 @@ import Footer from "@/components/layout/footer";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { cookies } from "next/headers";
-import Providers from "@/components/providers";
+import Providers from "@/components/layout/providers";
 import SidebarTriggerWrapper from "@/components/layout/sidebar-trigger-wrapper";
 
 export default async function AppLayout({

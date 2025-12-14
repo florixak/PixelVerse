@@ -1,4 +1,4 @@
-import { ThemeSwitcher } from "../theme-switcher";
+import { ThemeSwitcher } from "../ui/theme-switcher";
 import AuthButtons from "../auth-buttons";
 import HeaderSearch from "../header-search";
 import NotificationSystem from "../notification/notification-system";

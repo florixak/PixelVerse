@@ -1,13 +1,14 @@
-import { SignInButton } from "@clerk/nextjs";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Suspense } from "react";
-import FeaturedPosts from "./post/featured-posts";
-import NewestPosts from "./post/newest-posts";
-import PopularTopics from "./topic/popular-topics";
-import { Button } from "./ui/button";
+import FeaturedPosts from "../post/featured-posts";
+import NewestPosts from "../post/newest-posts";
+import PopularTopics from "../topic/popular-topics";
+import { Button } from "../ui/button";
 import Link from "next/link";
-import GlobalEmptyContentState from "./global-empty-content-state";
+import GlobalEmptyContentState from "../global-empty-content-state";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
+import JoinCommunity from "./join-community";
+import SuspenseFallback from "../ui/suspense-fallback";
 
 const HomeContent = async () => {
   const allTopicsCount = await getAllTopics({ limit: 1, from: 0 });
@@ -29,11 +30,7 @@ const HomeContent = async () => {
   }
   return (
     <>
-      <Suspense
-        fallback={
-          <div className="h-96 w-full bg-muted/50 animate-pulse rounded-lg"></div>
-        }
-      >
+      <Suspense fallback={<SuspenseFallback />}>
         <NewestPosts />
       </Suspense>
       <section className="w-full bg-muted/30 py-16 px-4">
@@ -76,27 +73,13 @@ const HomeContent = async () => {
             </Link>
           </Button>
         </div>
-        <Suspense
-          fallback={
-            <div className="h-48 w-full bg-muted/50 animate-pulse rounded-lg"></div>
-          }
-        >
+        <Suspense fallback={<SuspenseFallback />}>
           <PopularTopics />
         </Suspense>
       </section>
-
-      <section className="w-full max-w-5xl mx-auto py-16 px-4 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6">
-          Join Our Community
-        </h2>
-        <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Connect with thousands of pixel artists, get feedback on your work,
-          and participate in weekly challenges.
-        </p>
-        <Button size="lg" asChild>
-          <SignInButton />
-        </Button>
-      </section>
+      <Suspense fallback={<SuspenseFallback />}>
+        <JoinCommunity />
+      </Suspense>
     </>
   );
 };

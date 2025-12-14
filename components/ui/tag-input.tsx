@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "./ui/input";
-import { Badge } from "./ui/badge";
+import { Input } from "./input";
+import { Badge } from "./badge";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
 

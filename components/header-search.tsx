@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CommandSearch from "./command-search";
+import CommandSearch from "./ui/command-search";
 import { Badge } from "./ui/badge";
 import { SearchIcon } from "lucide-react";
 import { Button } from "./ui/button";

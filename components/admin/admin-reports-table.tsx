@@ -23,7 +23,7 @@ import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Badge } from "../ui/badge";
 import { useRouter } from "next/navigation";
-import Table from "../table";
+import Table from "../ui/table";
 
 type AdminReportsTableProps = {
   initialReports: Report[];

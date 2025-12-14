@@ -4,7 +4,7 @@ import { Report } from "@/sanity.types";
 import { getReportById } from "@/sanity/lib/reports/getReportById";
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
-import BackButton from "@/components/back-button";
+import BackButton from "@/components/ui/back-button";
 
 type ReportDetailsPageProps = {
   params: Promise<{ id: Report["_id"] }>;
