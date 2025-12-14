@@ -9,8 +9,10 @@ import GlobalEmptyContentState from "../global-empty-content-state";
 import getAllTopics from "@/sanity/lib/topics/getAllTopics";
 import JoinCommunity from "./join-community";
 import SuspenseFallback from "../ui/suspense-fallback";
+import { currentUser } from "@clerk/nextjs/server";
 
 const HomeContent = async () => {
+  const user = await currentUser();
   const allTopicsCount = await getAllTopics({ limit: 1, from: 0 });
   const hasAnyTopics = allTopicsCount && allTopicsCount.length > 0;
 
@@ -77,9 +79,7 @@ const HomeContent = async () => {
           <PopularTopics />
         </Suspense>
       </section>
-      <Suspense fallback={<SuspenseFallback />}>
-        <JoinCommunity />
-      </Suspense>
+      {!user && <JoinCommunity />}
     </>
   );
 };

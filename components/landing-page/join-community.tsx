@@ -1,15 +1,9 @@
 "use client";
 
-import { SignInButton, useClerk } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 import { Button } from "../ui/button";
 
 const JoinCommunity = () => {
-  const { user } = useClerk();
-
-  if (user) {
-    return null;
-  }
-
   return (
     <section className="w-full py-16 text-center bg-muted/30">
       <h2 className="text-2xl md:text-3xl font-bold mb-6">
