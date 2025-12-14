@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent, KeyboardEvent } from "react";
 import { Input } from "./input";
 import { Badge } from "./badge";
 import { X } from "lucide-react";
@@ -39,11 +39,11 @@ const TagInput = ({
     onChange(newTags);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
       e.preventDefault();
       addTag(inputValue);
