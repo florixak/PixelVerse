@@ -13,7 +13,7 @@ export default function TermsPage() {
 
       <div className="prose dark:prose-invert max-w-none space-y-6">
         <p className="text-lg text-muted-foreground">
-          Last updated: {formatDate(new Date("2025-08-08"))}
+          Last updated: {formatDate(new Date("2026-04-08"))}
         </p>
         <section>
           <h2 className="text-2xl font-semibold mb-4">Acceptance of Terms</h2>
@@ -35,8 +35,7 @@ export default function TermsPage() {
                 rights to post all content
               </li>
               <li>
-                <strong>No copyrighted characters</strong> without permission
-                (Nintendo, Disney, etc.)
+                <strong>You may only upload content that you have the legal right to use</strong>, including original work, properly licensed material, or content permitted under applicable laws (e.g., fair use where applicable).
               </li>
               <li>
                 <strong>Original artwork only</strong> or content you have
@@ -74,6 +73,7 @@ export default function TermsPage() {
                 <li>Company logos or trademarked content</li>
                 <li>Content you don't have rights to distribute</li>
                 <li>Commercial use of copyrighted characters</li>
+                <li>Content that you do not have the legal right to distribute or share</li>
               </ul>
             </div>
           </div>
@@ -102,6 +102,17 @@ export default function TermsPage() {
         </section>
 
         <section>
+          <h2 className="text-2xl font-semibold mb-4">DMCA Process</h2>
+          <p>Upon receiving a valid copyright complaint, we will:</p>
+          <ul className="list-disc list-inside ml-4 space-y-1 mt-2">
+            <li>Review the request</li>
+            <li>Remove or disable access to the reported content</li>
+            <li>Notify the user who uploaded the content</li>
+            <li>Allow the user to submit a counter-notification where applicable</li>
+          </ul>
+        </section>
+
+        <section>
           <h2 className="text-2xl font-semibold mb-4">User Responsibilities</h2>
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
             <p className="font-semibold text-red-800 dark:text-red-200">
@@ -117,14 +128,17 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">Account Termination</h2>
-          <p>We reserve the right to suspend or terminate your account for:</p>
-          <ul className="list-disc list-inside ml-4 space-y-2">
-            <li>Violation of these terms</li>
-            <li>Copyright infringement</li>
-            <li>Repeated policy violations</li>
-            <li>Illegal activity</li>
-          </ul>
+          <h2 className="text-2xl font-semibold mb-4">
+            Repeat Infringer Policy
+          </h2>
+          <p>Accounts that repeatedly violate copyright or intellectual property rights may be permanently suspended or terminated.</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Platform Role</h2>
+          <p>
+            PixelVerse is a platform that allows users to share content. We do not actively monitor or pre-screen all user content. However, we take reports seriously and will act promptly to remove content that violates these terms or applicable laws.
+          </p>
         </section>
 
         <section>
@@ -146,10 +160,7 @@ export default function TermsPage() {
             <p className="font-semibold text-blue-800 dark:text-blue-200 mb-2">
               🛡️ You Agree to Protect Us
             </p>
-            <p>
-              You agree to defend, indemnify, and hold PixelVerse harmless from
-              any claims, damages, or legal fees arising from:
-            </p>
+            <p>You agree to defend, indemnify, and hold PixelVerse harmless from any claims, damages, losses, and legal fees arising from your content, your use of the service, or your violation of these terms.</p>
             <ul className="list-disc list-inside mt-2 space-y-1">
               <li>Your posted content</li>
               <li>Your violation of these terms</li>
