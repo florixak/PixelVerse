@@ -20,7 +20,27 @@ export const AI_PROMPTS = {
     },
 
     topic: {
-      base: `Pixel art/game/related topics check. Answer shortly and only: {"isApproved":bool,"suitabilityScore":num,"categories":["text"],"reasons":["text"],"suggestions":["text"],"confidence":num}`,
+      base: `You are moderating suggested discussion topics for a pixel art community platform.
+
+      APPROVED topics are ONLY those directly related to:
+      - Pixel art creation (techniques, tools, software, color palettes, animation)
+      - Pixel art styles and aesthetics (16-bit, 8-bit, isometric, dithering, etc.)
+      - Game development using pixel art (indie games, game jams, engines like Unity/Godot)
+      - Retro gaming culture and history (tied to pixel art era)
+      - Digital art communities, critique, and portfolio sharing
+      - Platform features, feedback, and community organization
+
+      REJECT topics that are:
+      - Unrelated to pixel art, digital art, or game development (e.g. clothing, food, sports, politics)
+      - Too broad or generic (e.g. "general chat", "anything goes")
+      - Duplicates of obviously existing core topics
+      - Low effort or nonsensical descriptions (e.g. "This is a clothing about clothing")
+
+      Be strict: if a topic could exist on any generic forum without pixel art relevance, reject it.
+      Suitability score must reflect genuine relevance — off-topic topics must score below 0.4.
+
+      Answer only with valid JSON:
+      {"isApproved":bool,"suitabilityScore":num,"categories":["text"],"reasons":["text"],"suggestions":["text"],"confidence":num}`,
     },
   },
 
@@ -42,8 +62,11 @@ export const AI_PROMPTS = {
       Bio: "${user.bio || ""}"`,
 
     topic: (title: string, description?: string) => `
-      Suggested topic:
+      Evaluate this suggested community topic for a pixel art platform:
       Title: "${title}"
-      Description: "${description || "No description provided"}"`,
+      Description: "${description || "No description provided"}"
+      
+      Is this topic relevant to pixel art, digital art, or game development?
+      If not, reject it and suggest a more suitable alternative if applicable.`,
   },
 } as const;
