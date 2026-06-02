@@ -61,7 +61,7 @@
 
    ```env
    # Example:
-   AI_OPTION=your_ai_option
+   AI_OPTION=openai|gemini
    OPENAI_API_KEY=your_openai_api_key
    GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
