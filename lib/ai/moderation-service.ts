@@ -39,7 +39,7 @@ export const callReportAI = async (
   systemPrompt: string,
   userPrompt: string,
   maxTokens: number = 60,
-  provider: keyof typeof AI_PROVIDERS = "gemini"
+  provider: keyof typeof AI_PROVIDERS = "openai",
 ): Promise<AIReportResult> => {
   try {
     const model = AI_PROVIDERS[provider];
@@ -76,14 +76,14 @@ export const callTopicAI = async (
   systemPrompt: string,
   userPrompt: string,
   maxTokens: number = 80,
-  provider: keyof typeof AI_PROVIDERS = "gemini"
+  provider: keyof typeof AI_PROVIDERS = "openai",
 ): Promise<AITopicResult> => {
   try {
     const model = AI_PROVIDERS[provider];
     if (!model) {
       return createTopicFallback(
         userPrompt,
-        new Error("Provider not available")
+        new Error("Provider not available"),
       );
     }
 
@@ -100,7 +100,7 @@ export const callTopicAI = async (
       isApproved: Boolean(object.isApproved),
       suitabilityScore: Math.min(
         Math.max(Number(object.suitabilityScore) || 0, 0),
-        1
+        1,
       ),
       categories: Array.isArray(object.categories)
         ? object.categories
@@ -121,7 +121,7 @@ export const callTopicAI = async (
 
 const createReportFallback = (
   userPrompt: string,
-  error: Error
+  error: Error,
 ): AIReportResult => {
   const content = userPrompt.toLowerCase();
 
@@ -153,7 +153,7 @@ const createReportFallback = (
 
 const createTopicFallback = (
   userPrompt: string,
-  error: Error
+  error: Error,
 ): AITopicResult => {
   const content = userPrompt.toLowerCase();
 
@@ -194,7 +194,7 @@ const createTopicFallback = (
     reasons: [
       `AI temporarily unavailable - using keyword analysis`,
       `Found ${matches} relevant keywords (${Math.round(
-        score * 100
+        score * 100,
       )}% relevance)`,
       `Error: ${error.message.substring(0, 80)}`,
     ],
@@ -223,12 +223,12 @@ export const checkPost = async (post: Post): Promise<AIReportResult> => {
   return callReportAI(
     AI_PROMPTS.system.report.post,
     AI_PROMPTS.user.post(post),
-    TOKEN_LIMITS.post
+    TOKEN_LIMITS.post,
   );
 };
 
 export const checkComment = async (
-  comment: Comment
+  comment: Comment,
 ): Promise<AIReportResult> => {
   if (!comment?.content) {
     return { isViolating: false, confidence: 0 };
@@ -245,7 +245,7 @@ export const checkComment = async (
   return callReportAI(
     AI_PROMPTS.system.report.comment,
     AI_PROMPTS.user.comment(comment),
-    TOKEN_LIMITS.comment
+    TOKEN_LIMITS.comment,
   );
 };
 
@@ -265,13 +265,13 @@ export const checkUser = async (user: User): Promise<AIReportResult> => {
   return callReportAI(
     AI_PROMPTS.system.report.user,
     AI_PROMPTS.user.user(user),
-    TOKEN_LIMITS.user
+    TOKEN_LIMITS.user,
   );
 };
 
 export const checkTopicSuggestion = async (
   title: string,
-  description: string = ""
+  description: string = "",
 ): Promise<AITopicResult> => {
   if (!title?.trim()) {
     return {
@@ -300,6 +300,6 @@ export const checkTopicSuggestion = async (
   return callTopicAI(
     AI_PROMPTS.system.topic.base,
     AI_PROMPTS.user.topic(title, description),
-    TOKEN_LIMITS.topic
+    TOKEN_LIMITS.topic,
   );
 };
