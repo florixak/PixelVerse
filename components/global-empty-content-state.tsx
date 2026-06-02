@@ -12,7 +12,7 @@ const POPULAR_TOPIC_IDEAS = [
   "Character Design",
 ];
 
-const GlobalEmptyContentState = async () => {
+const GlobalEmptyContentState = () => {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <Card className="border-2 border-muted-foreground/25">
