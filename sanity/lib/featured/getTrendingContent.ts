@@ -29,11 +29,11 @@ export const getTrendingContent = async (
     commentsWeight = 2, // Each comment is worth 2 points (only when enabled)
     likeDislikeRatio = true, // Consider engagement quality
     randomFactorMax = 5, // Random boost of 0-5 points
-    maxOffset = 10, // Random start position in results (0-10)
   } = options || {};
 
-  const offset = Math.floor(Math.random() * maxOffset);
-  const randomFactor = Math.floor(Math.random() * randomFactorMax);
+  // Daily seed keeps sort variety stable within a page load / hydration cycle
+  const dailySeed = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  const randomFactor = dailySeed % randomFactorMax;
 
   return client.fetch<{ posts: Post[] }>(
     groq`{"posts": *[_type == "post" && defined(slug.current) && publishedAt < now() && isDeleted != true && isBanned != true] | order(
@@ -70,7 +70,7 @@ export const getTrendingContent = async (
         // Random factor for variety
         ${randomFactor}
       ) desc
-    ) [${offset}...${offset + limit}] {
+    ) [0...${limit}] {
       _id,
       _type,
       title,

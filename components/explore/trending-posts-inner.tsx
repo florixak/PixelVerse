@@ -12,6 +12,8 @@ const TrendingPostsInner = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["trendingPosts"],
     queryFn: () => getTrendingContent(),
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
   });
 
   if (isLoading) {

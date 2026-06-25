@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, X, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -20,31 +19,42 @@ const SearchBar = ({
   initialValue = "",
   onSearch,
 }: SearchBarProps) => {
-  const [searchValue, setSearchValue] = useState(initialValue);
   const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [searchValue, setSearchValue] = useState(
+    () => searchParams.get("q") ?? initialValue
+  );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      const params = new URLSearchParams(window.location.search);
+      const currentQuery = searchParams.get("q") ?? "";
+      if (searchValue === currentQuery) return;
+
+      const params = new URLSearchParams(searchParams.toString());
       if (searchValue) {
         params.set("q", searchValue);
       } else {
         params.delete("q");
+        params.delete("page");
       }
-      router.replace(`?${params.toString()}`, { scroll: false });
+
+      const nextSearch = params.toString();
+      router.replace(nextSearch ? `?${nextSearch}` : "/explore", {
+        scroll: false,
+      });
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [searchValue, router]);
+  }, [searchValue, router, searchParams]);
 
   const clearSearch = () => {
     setSearchValue("");
     const params = new URLSearchParams(searchParams.toString());
     params.delete("q");
     params.delete("page");
-    router.replace(`?${params.toString()}`, { scroll: false });
+    const nextSearch = params.toString();
+    router.replace(nextSearch ? `?${nextSearch}` : "/explore", { scroll: false });
     if (onSearch) onSearch("");
 
     if (inputRef.current) {
