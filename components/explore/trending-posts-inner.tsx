@@ -4,14 +4,16 @@ import React from "react";
 import MasonryWrapper from "../layout/masonry-wrapper";
 import PostCard from "../post/post-card";
 import { useQuery } from "@tanstack/react-query";
-import { getTrendingContent } from "@/sanity/lib/featured/getTrendingContent";
+import { getTrendingContent, trendingPostsQueryKey } from "@/sanity/lib/featured/getTrendingContent";
 import ExploreLoadingSkeleton from "./explore-loading-skeleton";
 import GlobalEmptyContentState from "../global-empty-content-state";
 
 const TrendingPostsInner = () => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["trendingPosts"],
+    queryKey: trendingPostsQueryKey(),
     queryFn: () => getTrendingContent(),
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
   });
 
   if (isLoading) {
