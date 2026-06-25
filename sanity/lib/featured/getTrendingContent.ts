@@ -9,13 +9,18 @@ type TrendingAlgorithmOptions = {
   dislikesWeight?: number;
   commentsWeight?: number;
   likeDislikeRatio?: boolean;
-  randomFactorMax?: number;
   maxOffset?: number;
 };
 
+export const getTrendingDayBucket = (): number =>
+  Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+
+export const trendingPostsQueryKey = (): readonly ["trendingPosts", number] =>
+  ["trendingPosts", getTrendingDayBucket()] as const;
+
 export const getTrendingContent = async (
   limit: number = 6,
-  options?: TrendingAlgorithmOptions
+  options?: TrendingAlgorithmOptions,
 ): Promise<{ posts: Post[] }> => {
   if (limit <= 0) {
     return { posts: [] };
@@ -28,14 +33,13 @@ export const getTrendingContent = async (
     dislikesWeight = -1, // Each dislike removes 1 point
     commentsWeight = 2, // Each comment is worth 2 points (only when enabled)
     likeDislikeRatio = true, // Consider engagement quality
-    randomFactorMax = 5, // Random boost of 0-5 points
+    maxOffset = 10, // Max daily window shift within the ranked pool
   } = options || {};
 
-  // Daily seed keeps sort variety stable within a page load / hydration cycle
-  const dailySeed = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
-  const randomFactor = dailySeed % randomFactorMax;
+  const dailySeed = getTrendingDayBucket();
+  const poolSize = limit + maxOffset;
 
-  return client.fetch<{ posts: Post[] }>(
+  const { posts: rankedPosts } = await client.fetch<{ posts: Post[] }>(
     groq`{"posts": *[_type == "post" && defined(slug.current) && publishedAt < now() && isDeleted != true && isBanned != true] | order(
       (
         // Recency boost for recent posts
@@ -65,12 +69,9 @@ export const getTrendingContent = async (
           0
         )`
             : "0"
-        } +
-        
-        // Random factor for variety
-        ${randomFactor}
+        }
       ) desc
-    ) [0...${limit}] {
+    ) [0...${poolSize}] {
       _id,
       _type,
       title,
@@ -91,6 +92,13 @@ export const getTrendingContent = async (
         "slug": slug.current,
         color
       }
-  }}`
+  }}`,
   );
+
+  const offset =
+    rankedPosts.length <= limit
+      ? 0
+      : dailySeed % (rankedPosts.length - limit + 1);
+
+  return { posts: rankedPosts.slice(offset, offset + limit) };
 };
