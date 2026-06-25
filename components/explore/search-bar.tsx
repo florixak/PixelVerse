@@ -23,7 +23,7 @@ const SearchBar = ({
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState(
-    () => searchParams.get("q") ?? initialValue
+    () => searchParams.get("q") ?? initialValue,
   );
 
   useEffect(() => {
@@ -32,11 +32,11 @@ const SearchBar = ({
       if (searchValue === currentQuery) return;
 
       const params = new URLSearchParams(searchParams.toString());
+      params.delete("page");
       if (searchValue) {
         params.set("q", searchValue);
       } else {
         params.delete("q");
-        params.delete("page");
       }
 
       const nextSearch = params.toString();
@@ -54,7 +54,9 @@ const SearchBar = ({
     params.delete("q");
     params.delete("page");
     const nextSearch = params.toString();
-    router.replace(nextSearch ? `?${nextSearch}` : "/explore", { scroll: false });
+    router.replace(nextSearch ? `?${nextSearch}` : "/explore", {
+      scroll: false,
+    });
     if (onSearch) onSearch("");
 
     if (inputRef.current) {
