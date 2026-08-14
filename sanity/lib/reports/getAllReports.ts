@@ -64,6 +64,8 @@ export async function getAllReports(): Promise<Report[]> {
         username,
         imageUrl
       }
-    }`
+    }`,
+    {},
+    { useCdn: false }
   );
 }

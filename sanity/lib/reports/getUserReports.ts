@@ -67,7 +67,8 @@ export const getUserReports = async (
         imageUrl
       }
     }`,
-    { clerkId }
+    { clerkId },
+    { useCdn: false }
   );
 
   return result;

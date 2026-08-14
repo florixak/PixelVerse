@@ -2,7 +2,8 @@ import { client } from "../client";
 import { SuggestedTopic } from "@/sanity.types";
 
 export async function getAllSuggestedTopics(): Promise<SuggestedTopic[]> {
-  return client.fetch(`
+  return client.fetch(
+    `
     *[_type == "suggestedTopic"] | order(submittedAt desc) {
       _id,
       title,
@@ -20,5 +21,8 @@ export async function getAllSuggestedTopics(): Promise<SuggestedTopic[]> {
       _createdAt,
       _updatedAt
     }
-  `);
+  `,
+    {},
+    { useCdn: false }
+  );
 }

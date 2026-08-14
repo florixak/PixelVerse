@@ -257,7 +257,8 @@ export async function cleanupOldNotifications(
 
     const oldNotifications = await client.fetch(
       `*[_type == "notification" && createdAt < $cutoffDate] { _id }`,
-      { cutoffDate: cutoffISOString }
+      { cutoffDate: cutoffISOString },
+      { useCdn: false }
     );
 
     if (oldNotifications.length === 0) {

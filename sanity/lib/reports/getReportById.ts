@@ -71,6 +71,7 @@ export async function getReportById(id: string): Promise<Report | null> {
         imageUrl
       }
     }`,
-    { id }
+    { id },
+    { useCdn: false }
   );
 }

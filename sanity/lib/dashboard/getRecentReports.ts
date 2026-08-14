@@ -45,6 +45,7 @@ export async function getRecentReports(limit = 3): Promise<Report[]> {
         role
       }
     }`,
-    { limit: limit - 1 }
+    { limit: limit - 1 },
+    { useCdn: false }
   );
 }

@@ -25,7 +25,8 @@ export async function getReportStats(): Promise<ReportStats> {
       "resolved24h": count(*[_type == "report" && status == "resolved" && moderatedAt > $yesterday]),
       "rejected24h": count(*[_type == "report" && status == "rejected" && moderatedAt > $yesterday])
     }`,
-    { yesterday: yesterdayISOString }
+    { yesterday: yesterdayISOString },
+    { useCdn: false }
   );
 
   const thirtyDaysAgo = new Date(now);
@@ -36,7 +37,8 @@ export async function getReportStats(): Promise<ReportStats> {
       reportedAt,
       moderatedAt
     }`,
-    { thirtyDaysAgo: thirtyDaysAgo.toISOString() }
+    { thirtyDaysAgo: thirtyDaysAgo.toISOString() },
+    { useCdn: false }
   );
 
   let avgResolutionTime = 0;

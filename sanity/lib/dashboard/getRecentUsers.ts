@@ -15,6 +15,7 @@ export async function getRecentUsers(limit = 5): Promise<User[]> {
       isBanned,
       clerkId
     }`,
-    { limit: limit - 1 }
+    { limit: limit - 1 },
+    { useCdn: false }
   );
 }
