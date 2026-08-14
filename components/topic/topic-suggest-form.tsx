@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import { Label } from "../ui/label";
@@ -10,6 +11,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
+import TopicSuggestionResult, {
+  TopicSuggestionResultData,
+} from "./topic-suggestion-result";
 
 const topicSchema = z.object({
   title: z
@@ -42,6 +46,13 @@ type SuggestTopic = {
 };
 
 const TopicSuggestForm = () => {
+  const router = useRouter();
+  const [result, setResult] = useState<TopicSuggestionResultData | null>(null);
+  const [rejectedSuggestionId, setRejectedSuggestionId] = useState<
+    string | null
+  >(null);
+  const [fileInputsKey, setFileInputsKey] = useState(0);
+
   const form = useForm({
     defaultValues: {
       title: "",
@@ -54,18 +65,54 @@ const TopicSuggestForm = () => {
     },
     onSubmit: async ({ value }) => {
       try {
+        setResult(null);
+
         const formData = new FormData();
         formData.set("title", value.title);
         formData.set("description", value.description);
         if (value.icon) formData.set("icon", value.icon);
         if (value.banner) formData.set("banner", value.banner);
-
-        const result = await suggestTopic(formData);
-        if (result.success) {
-          toast.success("Topic suggested successfully!");
-        } else {
-          toast.error(result.error || "Failed to suggest topic");
+        if (rejectedSuggestionId) {
+          formData.set("previousSuggestionId", rejectedSuggestionId);
         }
+
+        const response = await suggestTopic(formData);
+        if (!response.success) {
+          toast.error(response.error || "Failed to suggest topic");
+          return;
+        }
+
+        if (response.status === "published" && response.slug) {
+          setRejectedSuggestionId(null);
+          toast.success(
+            `Topic published successfully! Your topic "${response.title}" is now live.`,
+            { duration: 5000 },
+          );
+          router.push(`/topics/${response.slug}`);
+          return;
+        }
+
+        if (
+          response.status === "rejected" ||
+          response.status === "needs_human_review"
+        ) {
+          if (response.status === "rejected" && response.id) {
+            setRejectedSuggestionId(response.id);
+          } else {
+            setRejectedSuggestionId(null);
+          }
+
+          setResult({
+            status: response.status,
+            id: response.id,
+            title: response.title,
+            reasons: response.reasons,
+            suggestions: response.suggestions,
+          });
+          return;
+        }
+
+        toast.success("Topic suggested successfully!");
       } catch (error) {
         console.error("Error suggesting topic:", error);
         toast.error("Failed to suggest topic. Please try again.");
@@ -73,7 +120,23 @@ const TopicSuggestForm = () => {
     },
   });
 
-  const router = useRouter();
+  const handleSuggestAnother = () => {
+    setResult(null);
+    setRejectedSuggestionId(null);
+    form.reset();
+    setFileInputsKey((key) => key + 1);
+  };
+
+  if (result?.status === "needs_human_review") {
+    return (
+      <div className="max-w-4xl mx-auto w-full p-6">
+        <TopicSuggestionResult
+          result={result}
+          onSuggestAnother={handleSuggestAnother}
+        />
+      </div>
+    );
+  }
 
   return (
     <form
@@ -83,6 +146,10 @@ const TopicSuggestForm = () => {
       }}
       className="space-y-8 max-w-4xl mx-auto w-full p-6"
     >
+      {result?.status === "rejected" && (
+        <TopicSuggestionResult result={result} />
+      )}
+
       <form.Field name="title">
         {(field) => (
           <div className="space-y-2">
@@ -127,7 +194,7 @@ const TopicSuggestForm = () => {
         )}
       </form.Field>
 
-      <form.Field name="icon">
+      <form.Field name="icon" key={`icon-${fileInputsKey}`}>
         {(field) => (
           <div className="space-y-2">
             <Label htmlFor="icon">Icon</Label>
@@ -152,7 +219,7 @@ const TopicSuggestForm = () => {
         )}
       </form.Field>
 
-      <form.Field name="banner">
+      <form.Field name="banner" key={`banner-${fileInputsKey}`}>
         {(field) => (
           <div className="space-y-2">
             <Label htmlFor="banner">Banner</Label>
