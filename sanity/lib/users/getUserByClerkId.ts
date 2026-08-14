@@ -29,6 +29,7 @@ export const getUserByClerkId = async (
       "followingCount": count(*[_type == "follow" && follower._ref == ^._id]),
       isReported
     }`,
-    { clerkId }
+    { clerkId },
+    { useCdn: false }
   );
 };

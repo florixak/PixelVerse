@@ -17,6 +17,7 @@ export async function getUserStats(): Promise<{
       "new24h": count(*[_type == "user" && _createdAt > $yesterday]),
       "active24h": count(*[_type == "user" && _updatedAt > $yesterday])
     }`,
-    { yesterday: yesterdayISOString }
+    { yesterday: yesterdayISOString },
+    { useCdn: false }
   );
 }

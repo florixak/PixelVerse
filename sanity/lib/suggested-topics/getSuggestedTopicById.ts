@@ -27,6 +27,7 @@ export async function getSuggestedTopicById(
       _updatedAt
     }
   `,
-    { id }
+    { id },
+    { useCdn: false }
   );
 }

@@ -5,7 +5,8 @@ import { groq } from "next-sanity";
 export const getTrendingTopics = async (
   limit: number = 5
 ): Promise<Topic[]> => {
-  return client.fetch(groq`
+  return client.fetch(
+    groq`
     *[_type == "topic" && defined(slug.current)] {
       _id,
       title,
@@ -27,5 +28,8 @@ export const getTrendingTopics = async (
         (count(*[_type == "post" && references(^._id)]) * 0.5) * 0.3
       )
     } | order(trendScore desc) [0...${limit}]
-  `);
+  `,
+    {},
+    { useCdn: false }
+  );
 };

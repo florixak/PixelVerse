@@ -17,6 +17,7 @@ export async function getPostStats(): Promise<PostStats> {
       "total": count(*[_type == "post"]),
       "new24h": count(*[_type == "post" && publishedAt > $yesterday])
     }`,
-    { yesterday: yesterdayISOString }
+    { yesterday: yesterdayISOString },
+    { useCdn: false }
   );
 }
