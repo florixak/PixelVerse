@@ -9,9 +9,18 @@ import {
   AIResult,
   AITopicResult,
   checkTopicSuggestion,
+  checkPostForCreation,
+  PostCreationInput,
 } from "@/lib/ai/moderation-service";
 import type { Report } from "@/sanity.types";
 import { writeClient } from "@/sanity/lib/client";
+
+export type PostSafetyGateResult = {
+  rejected: boolean;
+  reasons: string[];
+};
+
+const POST_REJECT_CONFIDENCE = 0.8;
 
 export const checkReportByAI = async (
   report: Report
@@ -107,6 +116,30 @@ export const checkTopicSuggestionByAI = async (
       confidence: 0,
       recommendedAction: "needs_human_review",
     };
+  }
+};
+
+export const checkPostByAI = async (
+  input: PostCreationInput
+): Promise<PostSafetyGateResult> => {
+  try {
+    const result = await checkPostForCreation(input);
+
+    if (result.isViolating && result.confidence >= POST_REJECT_CONFIDENCE) {
+      return {
+        rejected: true,
+        reasons:
+          result.reasons.length > 0
+            ? result.reasons
+            : ["This post was flagged for community safety guidelines"],
+      };
+    }
+
+    return { rejected: false, reasons: [] };
+  } catch (error) {
+    console.error("Post creation AI check failed:", error);
+    // Fail open — allow create when moderation is unavailable
+    return { rejected: false, reasons: [] };
   }
 };
 

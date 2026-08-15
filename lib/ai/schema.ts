@@ -15,3 +15,10 @@ export const topicSuggestionSchema = z.object({
   confidence: z.number().min(0).max(1),
   checkedAt: z.string().optional(),
 });
+
+export const postCreationSchema = z.object({
+  isViolating: z.boolean(),
+  confidence: z.number().min(0).max(1),
+  reasons: z.array(z.string()),
+  categories: z.array(z.string()),
+});

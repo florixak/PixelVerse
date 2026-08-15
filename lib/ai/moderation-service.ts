@@ -1,7 +1,11 @@
 import { generateObject } from "ai";
 import { AI_PROVIDERS } from "./provider";
 import { AI_PROMPTS } from "./prompts";
-import { moderationSchema, topicSuggestionSchema } from "./schema";
+import {
+  moderationSchema,
+  postCreationSchema,
+  topicSuggestionSchema,
+} from "./schema";
 import { quickCheck } from "./content-filter";
 import type { Comment, Post, User } from "@/sanity.types";
 import { ModerationValue } from "@/constants";
@@ -24,6 +28,20 @@ export type AITopicResult = {
   recommendedAction?: ModerationValue;
 };
 
+export type AIPostCreationResult = {
+  isViolating: boolean;
+  confidence: number;
+  reasons: string[];
+  categories: string[];
+};
+
+export type PostCreationInput = {
+  title: string;
+  content: string;
+  tags?: string[];
+  tutorialSteps?: { title?: string; description?: string }[];
+};
+
 export type AIResult =
   | { aiCheckResult: AIReportResult }
   | { aiModerationResult: AITopicResult };
@@ -33,6 +51,7 @@ const TOKEN_LIMITS = {
   comment: 60,
   user: 70,
   topic: 100,
+  postCreation: 80,
 } as const;
 
 export const callReportAI = async (
@@ -205,6 +224,76 @@ const createTopicFallback = (
     confidence: 0.4,
     checkedAt: new Date().toISOString(),
   };
+};
+
+export const callPostCreationAI = async (
+  systemPrompt: string,
+  userPrompt: string,
+  maxTokens: number = 80,
+  provider: keyof typeof AI_PROVIDERS = "openai",
+): Promise<AIPostCreationResult> => {
+  try {
+    const model = AI_PROVIDERS[provider];
+    if (!model) {
+      return createPostCreationFallback();
+    }
+
+    const { object } = await generateObject({
+      model,
+      schema: postCreationSchema,
+      system: `${AI_PROMPTS.system.base}\n${systemPrompt}`,
+      prompt: userPrompt,
+      maxTokens,
+      temperature: 0.1,
+    });
+
+    return {
+      isViolating: Boolean(object.isViolating),
+      confidence: Math.min(Math.max(Number(object.confidence) || 0, 0), 1),
+      reasons: Array.isArray(object.reasons) ? object.reasons : [],
+      categories: Array.isArray(object.categories) ? object.categories : [],
+    };
+  } catch (error) {
+    console.log(`❌ ${provider} post creation check failed:`, error);
+    return createPostCreationFallback();
+  }
+};
+
+// Fail open, allow create when the provider is down or unavailable
+const createPostCreationFallback = (): AIPostCreationResult => ({
+  isViolating: false,
+  confidence: 0,
+  reasons: [],
+  categories: [],
+});
+
+export const checkPostForCreation = async ({
+  title,
+  content,
+  tags = [],
+  tutorialSteps = [],
+}: PostCreationInput): Promise<AIPostCreationResult> => {
+  const tutorialText = tutorialSteps
+    .map((step) => `${step.title || ""} ${step.description || ""}`)
+    .join(" ");
+  const combinedText = [title, content, tags.join(" "), tutorialText]
+    .filter(Boolean)
+    .join(" ");
+
+  if (quickCheck(combinedText)) {
+    return {
+      isViolating: true,
+      confidence: 0.9,
+      reasons: ["Contains inappropriate language"],
+      categories: ["inappropriate"],
+    };
+  }
+
+  return callPostCreationAI(
+    AI_PROMPTS.system.post.base,
+    AI_PROMPTS.user.postCreation(title, content, tags, tutorialSteps),
+    TOKEN_LIMITS.postCreation,
+  );
 };
 
 export const checkPost = async (post: Post): Promise<AIReportResult> => {
