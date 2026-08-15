@@ -13,22 +13,64 @@ import {
   normalizeDimensions,
 } from "@/lib/post-utils";
 import { createNotification } from "./notification-actions";
+import { checkPostByAI } from "./ai-moderation";
+
+export type CreatePostOutcome =
+  | {
+      success: true;
+      title: string;
+      slug: string;
+      topicSlug: string;
+    }
+  | {
+      success: false;
+      rejected?: boolean;
+      reasons?: string[];
+      error?: string;
+    };
+
+export type UpdatePostOutcome =
+  | {
+      success: true;
+      newSlug: string;
+      topicSlug: string;
+    }
+  | {
+      success: false;
+      rejected?: boolean;
+      reasons?: string[];
+      error?: string;
+    };
 
 /**
  * Creates a new post
  */
-export async function createPost(formData: FormData) {
+export async function createPost(formData: FormData): Promise<CreatePostOutcome> {
   try {
     const userId = await ensureSanityUser();
 
     if (!userId) {
-      throw new Error("Must be logged in");
+      return { success: false, error: "Must be logged in" };
     }
 
     const postData = parsePostFormData(formData);
 
     if (!(await validateTopicExists(postData.topicId))) {
-      throw new Error(`Topic with ID "${postData.topicId}" does not exist`);
+      return {
+        success: false,
+        error: `Topic with ID "${postData.topicId}" does not exist`,
+      };
+    }
+
+    const gate = await checkPostByAI({
+      title: postData.title,
+      content: postData.content,
+      tags: postData.tags,
+      tutorialSteps: postData.tutorialSteps,
+    });
+
+    if (gate.rejected) {
+      return { success: false, rejected: true, reasons: gate.reasons };
     }
 
     const imageAsset = await uploadImageAsset(postData.imageFile);
@@ -68,13 +110,14 @@ export async function createPost(formData: FormData) {
     const topicSlug = await getTopicSlug(postData.topicId);
 
     return {
-      ...newPost,
+      success: true,
+      title: newPost.title || postData.title,
       slug: newPost.slug?.current || finalSlug,
       topicSlug,
     };
   } catch (error) {
     console.error("Error creating post:", error);
-    throw new Error("Failed to create post");
+    return { success: false, error: "Failed to create post" };
   }
 }
 
@@ -84,12 +127,12 @@ export async function createPost(formData: FormData) {
 export async function updatePost(
   formData: FormData,
   postId: string
-): Promise<{ newSlug: string; topicSlug: string }> {
+): Promise<UpdatePostOutcome> {
   try {
     const userId = await ensureSanityUser();
 
     if (!userId) {
-      throw new Error("Must be logged in");
+      return { success: false, error: "Must be logged in" };
     }
 
     // Verify user owns the post
@@ -99,10 +142,24 @@ export async function updatePost(
     );
 
     if (!post) {
-      throw new Error("You are not authorized to update this post");
+      return {
+        success: false,
+        error: "You are not authorized to update this post",
+      };
     }
 
     const postData = parsePostFormData(formData);
+
+    const gate = await checkPostByAI({
+      title: postData.title,
+      content: postData.content,
+      tags: postData.tags,
+      tutorialSteps: postData.tutorialSteps,
+    });
+
+    if (gate.rejected) {
+      return { success: false, rejected: true, reasons: gate.reasons };
+    }
 
     const imageAsset = await uploadImageAsset(postData.imageFile);
 
@@ -137,7 +194,10 @@ export async function updatePost(
 
     if (postData.postType === "tutorial") {
       if (!postData.tutorialSteps || postData.tutorialSteps.length === 0) {
-        throw new Error("Tutorial posts must have at least one step");
+        return {
+          success: false,
+          error: "Tutorial posts must have at least one step",
+        };
       }
       updateData.tutorialSteps = postData.tutorialSteps.map(
         (step: any, index: number) => ({
@@ -159,12 +219,13 @@ export async function updatePost(
     const topicSlug = await getTopicSlug(postData.topicId);
 
     return {
+      success: true,
       newSlug: updatedPost.slug?.current || finalSlug,
       topicSlug,
     };
   } catch (error) {
     console.error("Error updating post:", error);
-    throw new Error("Failed to update post");
+    return { success: false, error: "Failed to update post" };
   }
 }
 

@@ -13,6 +13,8 @@ import SubmitButton from "@/components/ui/submit-button";
 import { DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { SoftwareOptionType } from "@/types/posts";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { XCircle } from "lucide-react";
 
 type CreatePostFormProps = {
   topics: Topic[];
@@ -68,6 +70,9 @@ export default function CreatePostForm({
       })) || [],
     tags: post?.tags || [],
   });
+  const [rejectionReasons, setRejectionReasons] = useState<string[] | null>(
+    null
+  );
   const router = useRouter();
 
   const updateFormState = <K extends keyof FormState>(
@@ -135,6 +140,7 @@ export default function CreatePostForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setRejectionReasons(null);
 
     try {
       const formData = new FormData(e.currentTarget);
@@ -160,6 +166,23 @@ export default function CreatePostForm({
 
       if (post) {
         const result = await updatePost(formData, post._id);
+
+        if (!result.success) {
+          if (result.rejected) {
+            setRejectionReasons(
+              result.reasons?.length
+                ? result.reasons
+                : ["This post was flagged for community safety guidelines"]
+            );
+            return;
+          }
+          toast.error(
+            result.error || "Failed to update post. Please try again.",
+            { duration: 5000 }
+          );
+          return;
+        }
+
         toast.success(
           `Post updated successfully! Your post "${post.title}" has been updated.`,
           { duration: 5000 }
@@ -168,6 +191,23 @@ export default function CreatePostForm({
         router.push(`/topics/${result.topicSlug}/${result.newSlug}`);
       } else {
         const result = await createPost(formData);
+
+        if (!result.success) {
+          if (result.rejected) {
+            setRejectionReasons(
+              result.reasons?.length
+                ? result.reasons
+                : ["This post was flagged for community safety guidelines"]
+            );
+            return;
+          }
+          toast.error(
+            result.error || "Failed to create post. Please try again.",
+            { duration: 5000 }
+          );
+          return;
+        }
+
         toast.success(
           `Post created successfully! Your post "${result.title}" has been created.`,
           { duration: 5000 }
@@ -187,6 +227,27 @@ export default function CreatePostForm({
       onSubmit={handleSubmit}
       className={cn("space-y-8 max-w-4xl mx-auto w-full p-6", className)}
     >
+      {rejectionReasons && (
+        <Alert variant="destructive">
+          <XCircle className="h-4 w-4" />
+          <AlertTitle>Post declined</AlertTitle>
+          <AlertDescription>
+            <p>
+              This post was not approved due to community safety guidelines.
+              Edit your content below and try again.
+            </p>
+            <ul className="mt-2 space-y-1">
+              {rejectionReasons.map((reason, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm">
+                  <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                  <span>{reason}</span>
+                </li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <BasicFields
         topics={topics}
         setPostType={(value) => updateFormState("postType", value)}
