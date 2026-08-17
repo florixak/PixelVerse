@@ -75,7 +75,7 @@ const ReportForm = ({ content, contentType }: ReportFormProps) => {
           content._id,
           validationResult.reason as Report["reason"],
           validationResult.additionalInfo as Report["additionalInfo"],
-          contentType
+          contentType,
         );
 
         if (response.success) {

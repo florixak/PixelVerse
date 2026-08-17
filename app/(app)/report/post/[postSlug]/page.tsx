@@ -1,6 +1,7 @@
 import ReportForm from "@/components/report/report-form";
 import getPostBySlug from "@/sanity/lib/posts/getPostBySlug";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
 type PostReportPageProps = {
   params: Promise<{
@@ -10,10 +11,19 @@ type PostReportPageProps = {
 
 const PostReportPage = async ({ params }: PostReportPageProps) => {
   const { postSlug } = await params;
-  if (!postSlug) {
-    notFound();
+  if (!postSlug) notFound();
+
+  const [post, viewer] = await Promise.all([
+    getPostBySlug(postSlug),
+    currentUser(),
+  ]);
+
+  if (!post) notFound();
+
+  if (viewer && post.author?.clerkId === viewer.id) {
+    redirect(`/topics/${post.topicSlug}/${post.slug}`);
   }
-  const post = await getPostBySlug(postSlug);
+
   return <ReportForm content={post} contentType="post" />;
 };
 

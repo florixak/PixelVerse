@@ -1,6 +1,7 @@
 import ReportForm from "@/components/report/report-form";
 import { getUserByUsername } from "@/sanity/lib/users/getUserByUsername";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
 type PostReportPageProps = {
   params: Promise<{
@@ -10,16 +11,20 @@ type PostReportPageProps = {
 
 const UserReportPage = async ({ params }: PostReportPageProps) => {
   const { username } = await params;
-  if (!username) {
-    notFound();
-  }
-  const user = await getUserByUsername(username);
+  if (!username) notFound();
 
-  if (!user) {
-    notFound();
+  const [reportedUser, viewer] = await Promise.all([
+    getUserByUsername(username),
+    currentUser(),
+  ]);
+
+  if (!reportedUser) notFound();
+
+  if (viewer && reportedUser.clerkId === viewer.id) {
+    redirect(`/user/${username}`);
   }
 
-  return <ReportForm content={user} contentType="user" />;
+  return <ReportForm content={reportedUser} contentType="user" />;
 };
 
 export default UserReportPage;
