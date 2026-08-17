@@ -1,9 +1,18 @@
 "use client";
 
+import {
+  FollowStatus,
+  followUser,
+  isFollowingUser,
+  unfollowUser,
+} from "@/actions/follow-actions";
+import { getQueryClient } from "@/lib/get-query-client";
 import { User as SanityUser } from "@/sanity.types";
-import ThreeDotsSelect from "../ui/three-dots-select";
+import { useClerk } from "@clerk/nextjs";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
 import {
   Sheet,
   SheetContent,
@@ -12,18 +21,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { useState } from "react";
 import UserProfileEditForm from "./user-profile-edit-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import {
-  FollowStatus,
-  followUser,
-  isFollowingUser,
-  unfollowUser,
-} from "@/actions/follow-actions";
-import { getQueryClient } from "@/lib/get-query-client";
-import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import ThreeDotsSelect from "../ui/three-dots-select";
 
 type UserActionsProps = {
   targetUser: SanityUser | null;
@@ -42,7 +42,7 @@ const UserActions = ({ targetUser }: UserActionsProps) => {
     queryFn: async () => {
       if (!targetUser?._id) return null;
       const { isFollowing, error, success } = await isFollowingUser(
-        targetUser._id
+        targetUser._id,
       );
       if (error) {
         return {
@@ -71,7 +71,7 @@ const UserActions = ({ targetUser }: UserActionsProps) => {
         (oldData: FollowStatus) => ({
           ...oldData,
           isFollowing: oldData ? !oldData.isFollowing : true,
-        })
+        }),
       );
     },
     onSuccess: (data) => {
@@ -95,7 +95,7 @@ const UserActions = ({ targetUser }: UserActionsProps) => {
         (oldData: FollowStatus) => ({
           ...oldData,
           isFollowing: false,
-        })
+        }),
       );
     },
     onSuccess: () => {
@@ -151,25 +151,32 @@ const UserActions = ({ targetUser }: UserActionsProps) => {
       </Sheet>
 
       {!isUsersProfile && (
-        <Button
-          className="px-6"
-          variant={data?.isFollowing ? "destructive" : "default"}
-          disabled={!targetUser || isLoading}
-          onClick={handleFollow}
-          aria-label="Follow/Unfollow User"
-        >
-          {isLoading ? "Loading..." : data?.isFollowing ? "Unfollow" : "Follow"}
-        </Button>
+        <>
+          <Button
+            className="px-6"
+            variant={data?.isFollowing ? "destructive" : "default"}
+            disabled={!targetUser || isLoading}
+            onClick={handleFollow}
+            aria-label={data?.isFollowing ? "Unfollow User" : "Follow User"}
+          >
+            {isLoading
+              ? "Loading..."
+              : data?.isFollowing
+                ? "Unfollow"
+                : "Follow"}
+          </Button>
+          <ThreeDotsSelect
+            options={[
+              {
+                label: "Report User",
+                value: "report",
+                onSelect: () =>
+                  router.push(`/report/user/${targetUser.username}`),
+              },
+            ]}
+          />
+        </>
       )}
-      <ThreeDotsSelect
-        options={[
-          {
-            label: "Report User",
-            value: "report",
-            onSelect: () => router.push(`/report/user/${targetUser.username}`),
-          },
-        ]}
-      />
     </div>
   );
 };

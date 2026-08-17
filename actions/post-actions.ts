@@ -45,7 +45,9 @@ export type UpdatePostOutcome =
 /**
  * Creates a new post
  */
-export async function createPost(formData: FormData): Promise<CreatePostOutcome> {
+export async function createPost(
+  formData: FormData,
+): Promise<CreatePostOutcome> {
   try {
     const userId = await ensureSanityUser();
 
@@ -126,7 +128,7 @@ export async function createPost(formData: FormData): Promise<CreatePostOutcome>
  */
 export async function updatePost(
   formData: FormData,
-  postId: string
+  postId: string,
 ): Promise<UpdatePostOutcome> {
   try {
     const userId = await ensureSanityUser();
@@ -138,7 +140,7 @@ export async function updatePost(
     // Verify user owns the post
     const post = await writeClient.fetch(
       `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
-      { postId, userId }
+      { postId, userId },
     );
 
     if (!post) {
@@ -203,7 +205,7 @@ export async function updatePost(
         (step: any, index: number) => ({
           ...step,
           _key: `step-${index}-${Date.now()}`,
-        })
+        }),
       );
     }
 
@@ -238,7 +240,7 @@ export async function deletePost(postId: Post["_id"]) {
 
   const post = await writeClient.fetch<Post>(
     `*[_type == "post" && _id == $postId && author._ref == $userId][0]`,
-    { postId, userId }
+    { postId, userId },
   );
 
   if (!post) {
@@ -258,7 +260,7 @@ export async function deletePost(postId: Post["_id"]) {
  */
 export async function reactOnPost(
   postId: Post["_id"],
-  reaction: Reaction["type"]
+  reaction: Reaction["type"],
 ) {
   try {
     const userId = await ensureSanityUser();
@@ -270,7 +272,7 @@ export async function reactOnPost(
     // Check if user already reacted to this post
     const existingReaction = await writeClient.fetch(
       `*[_type == "reaction" && post._ref == $postId && user._ref == $userId][0]`,
-      { postId, userId }
+      { postId, userId },
     );
 
     if (existingReaction) {
@@ -340,7 +342,7 @@ export async function createComment({
         title,
         author-> {_id,}
       }`,
-      { postId }
+      { postId },
     );
 
     if (!post) {
@@ -395,7 +397,7 @@ export async function deleteComment(commentId: Post["_id"]) {
     // Verify user owns the comment
     const comment = await writeClient.fetch(
       `*[_type == "comment" && _id == $commentId && author._ref == $userId][0]`,
-      { commentId, userId }
+      { commentId, userId },
     );
 
     if (!comment) {
@@ -415,7 +417,7 @@ export async function deleteComment(commentId: Post["_id"]) {
  */
 export async function updateComment(
   commentId: Post["_id"],
-  newContent: Comment["content"]
+  newContent: Comment["content"],
 ) {
   try {
     const userId = await ensureSanityUser();
@@ -427,7 +429,7 @@ export async function updateComment(
     // Verify user owns the comment
     const comment = await writeClient.fetch(
       `*[_type == "comment" && _id == $commentId && author._ref == $userId][0]`,
-      { commentId, userId }
+      { commentId, userId },
     );
 
     if (!comment) {
@@ -456,7 +458,7 @@ export async function submitReport(
   contentId: string,
   reason: Report["reason"],
   additionalInfo: string | undefined,
-  contentType: Report["contentType"]
+  contentType: Report["contentType"],
 ) {
   try {
     const userId = await ensureSanityUser();
@@ -465,21 +467,39 @@ export async function submitReport(
       throw new Error("Must be logged in");
     }
 
-    const contentExists = await writeClient.fetch(
-      `*[_type == $contentType && _id == $contentId][0]._id`,
-      { contentType, contentId }
+    const content = await writeClient.fetch<{
+      _id: string;
+      ownerId: string | null;
+    } | null>(
+      `*[_type == $contentType && _id == $contentId][0]{
+        _id,
+        "ownerId": select(
+          _type == "user" => _id,
+          _type == "post" => author._ref,
+          _type == "comment" => author._ref,
+          null
+        )
+      }`,
+      { contentType, contentId },
     );
 
-    if (!contentExists) {
+    if (!content) {
       return {
         success: false,
         error: `The ${contentType} you're trying to report doesn't exist`,
       };
     }
 
+    if (content.ownerId === userId) {
+      return {
+        success: false,
+        error: `You can't report your own ${contentType}`,
+      };
+    }
+
     const existingReport = await writeClient.fetch(
       `*[_type == "report" && content._ref == $contentId && reporter._ref == $userId][0]._id`,
-      { contentId, userId }
+      { contentId, userId },
     );
 
     if (existingReport) {
@@ -524,7 +544,7 @@ export async function submitReport(
           "slug": slug.current, 
           "topicSlug": topic->slug.current 
         }`,
-        { contentId }
+        { contentId },
       );
       if (post) {
         revalidatePath(`/topics/${post.topicSlug}/${post.slug}`);
@@ -535,7 +555,7 @@ export async function submitReport(
           "postSlug": post->slug.current, 
           "topicSlug": post->topic->slug.current 
         }`,
-        { contentId }
+        { contentId },
       );
       if (comment) {
         revalidatePath(`/topics/${comment.topicSlug}/${comment.postSlug}`);

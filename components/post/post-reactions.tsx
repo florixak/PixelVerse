@@ -75,7 +75,7 @@ const PostReactions = ({
           if (currentUserReaction === reactionType) {
             newReactionCounts[reactionType] = Math.max(
               0,
-              (newReactionCounts[reactionType] || 0) - 1
+              (newReactionCounts[reactionType] || 0) - 1,
             );
             return {
               ...old,
@@ -86,7 +86,7 @@ const PostReactions = ({
           if (currentUserReaction && currentUserReaction !== reactionType) {
             newReactionCounts[currentUserReaction] = Math.max(
               0,
-              (newReactionCounts[currentUserReaction] || 0) - 1
+              (newReactionCounts[currentUserReaction] || 0) - 1,
             );
           }
 
@@ -178,7 +178,7 @@ const PostReactions = ({
     <div
       className={cn(
         `mt-4 text-muted-foreground flex flex-row items-center justify-between gap-3`,
-        className
+        className,
       )}
     >
       <div className="flex items-center gap-4">
@@ -208,7 +208,7 @@ const PostReactions = ({
                 title={`${reactionCountValue} ${reaction.title}s`}
                 className={cn(
                   "text-muted-foreground",
-                  userHasReacted ? reaction.color : ""
+                  userHasReacted ? reaction.color : "",
                 )}
               />
             );
@@ -238,7 +238,11 @@ const PostReactions = ({
           title="Share this post"
         />
 
-        <ReportButton contentType="post" content={post} collapsed={collapsed} />
+        <ReportButton
+          contentType="post"
+          content={post}
+          collapsed={collapsed}
+        />
       </div>
     </div>
   );

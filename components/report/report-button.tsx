@@ -59,6 +59,14 @@ const ReportButton = ({
     }
   };
 
+  const isOwnContent = (() => {
+    if (!user) return false;
+    if (contentType === "user") return (content as User).clerkId === user.id;
+    return (content as Post | Comment).author?.clerkId === user.id;
+  })();
+
+  if (isOwnContent) return null;
+
   return (
     <ReactionButton
       icon={
