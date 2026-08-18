@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import { useClerk } from "@clerk/nextjs";
 import { Comment, Post, Report, User } from "@/sanity.types";
 import ReactionButton from "../ui/reaction-button";
@@ -43,7 +42,6 @@ const ReportButton = ({
 
   const handleReportClick = () => {
     if (!user) {
-      toast.error(`You must be logged in to report this ${contentType}.`);
       openSignIn();
       return;
     }

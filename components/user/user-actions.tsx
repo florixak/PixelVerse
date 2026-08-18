@@ -37,7 +37,7 @@ const UserActions = ({ targetUser }: UserActionsProps) => {
 
   const queryClient = getQueryClient();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["followStatus", targetUser?._id],
     queryFn: async () => {
       if (!targetUser?._id) return null;
@@ -170,8 +170,13 @@ const UserActions = ({ targetUser }: UserActionsProps) => {
               {
                 label: "Report User",
                 value: "report",
-                onSelect: () =>
-                  router.push(`/report/user/${targetUser.username}`),
+                onSelect: () => {
+                  if (!currentUser) {
+                    openSignIn();
+                    return;
+                  }
+                  router.push(`/report/user/${targetUser.username}`);
+                },
               },
             ]}
           />

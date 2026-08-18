@@ -12,6 +12,7 @@ import { getReactions, handleReaction } from "@/actions/reaction-actions";
 import { REACTIONS } from "@/constants";
 import React from "react";
 import { getQueryClient } from "@/lib/get-query-client";
+import { useClerk } from "@clerk/nextjs";
 
 type PostReactionsProps = {
   post: Post;
@@ -30,6 +31,7 @@ const PostReactions = ({
 }: PostReactionsProps) => {
   const router = useRouter();
   const queryClient = getQueryClient();
+  const { openSignIn } = useClerk();
 
   const queryKey = ["postReactions", post._id, clerkId];
 
@@ -114,7 +116,7 @@ const PostReactions = ({
 
   const handleReactionClick = (reactionType: Reaction["type"]) => async () => {
     if (!clerkId) {
-      toast.error("You must be signed in to react.");
+      openSignIn();
       return;
     }
 
@@ -238,11 +240,7 @@ const PostReactions = ({
           title="Share this post"
         />
 
-        <ReportButton
-          contentType="post"
-          content={post}
-          collapsed={collapsed}
-        />
+        <ReportButton contentType="post" content={post} collapsed={collapsed} />
       </div>
     </div>
   );
