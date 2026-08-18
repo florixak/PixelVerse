@@ -93,10 +93,10 @@ export default function PrivacyPage() {
           <p>
             For privacy questions, contact:{" "}
             <a
-              href="mailto:ptakondrej@seznam.cz"
+              href="mailto:ondrej@ondrejptak.dev"
               className="text-primary hover:underline"
             >
-              ptakondrej@seznam.cz
+              ondrej@ondrejptak.dev
             </a>
           </p>
         </section>

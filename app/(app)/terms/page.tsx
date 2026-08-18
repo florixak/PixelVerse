@@ -35,7 +35,13 @@ export default function TermsPage() {
                 rights to post all content
               </li>
               <li>
-                <strong>You may only upload content that you have the legal right to use</strong>, including original work, properly licensed material, or content permitted under applicable laws (e.g., fair use where applicable).
+                <strong>
+                  You may only upload content that you have the legal right to
+                  use
+                </strong>
+                , including original work, properly licensed material, or
+                content permitted under applicable laws (e.g., fair use where
+                applicable).
               </li>
               <li>
                 <strong>Original artwork only</strong> or content you have
@@ -73,7 +79,10 @@ export default function TermsPage() {
                 <li>Company logos or trademarked content</li>
                 <li>Content you don't have rights to distribute</li>
                 <li>Commercial use of copyrighted characters</li>
-                <li>Content that you do not have the legal right to distribute or share</li>
+                <li>
+                  Content that you do not have the legal right to distribute or
+                  share
+                </li>
               </ul>
             </div>
           </div>
@@ -85,10 +94,10 @@ export default function TermsPage() {
             We respect intellectual property rights. If you believe content on
             PixelVerse infringes your copyright, please contact me at{" "}
             <a
-              href="mailto:ptakondrej@seznam.cz"
+              href="mailto:ondrej@ondrejptak.dev"
               className="text-primary hover:underline"
             >
-              ptakondrej@seznam.cz
+              ondrej@ondrejptak.dev
             </a>{" "}
             with:
           </p>
@@ -108,7 +117,9 @@ export default function TermsPage() {
             <li>Review the request</li>
             <li>Remove or disable access to the reported content</li>
             <li>Notify the user who uploaded the content</li>
-            <li>Allow the user to submit a counter-notification where applicable</li>
+            <li>
+              Allow the user to submit a counter-notification where applicable
+            </li>
           </ul>
         </section>
 
@@ -131,13 +142,19 @@ export default function TermsPage() {
           <h2 className="text-2xl font-semibold mb-4">
             Repeat Infringer Policy
           </h2>
-          <p>Accounts that repeatedly violate copyright or intellectual property rights may be permanently suspended or terminated.</p>
+          <p>
+            Accounts that repeatedly violate copyright or intellectual property
+            rights may be permanently suspended or terminated.
+          </p>
         </section>
 
         <section>
           <h2 className="text-2xl font-semibold mb-4">Platform Role</h2>
           <p>
-            PixelVerse is a platform that allows users to share content. We do not actively monitor or pre-screen all user content. However, we take reports seriously and will act promptly to remove content that violates these terms or applicable laws.
+            PixelVerse is a platform that allows users to share content. We do
+            not actively monitor or pre-screen all user content. However, we
+            take reports seriously and will act promptly to remove content that
+            violates these terms or applicable laws.
           </p>
         </section>
 
@@ -160,7 +177,12 @@ export default function TermsPage() {
             <p className="font-semibold text-blue-800 dark:text-blue-200 mb-2">
               🛡️ You Agree to Protect Us
             </p>
-            <p>You agree to defend, indemnify, and hold PixelVerse harmless from any claims, damages, losses, and legal fees arising from your content, your use of the service, or your violation of these terms.</p>
+            <p>
+              You agree to defend, indemnify, and hold PixelVerse harmless from
+              any claims, damages, losses, and legal fees arising from your
+              content, your use of the service, or your violation of these
+              terms.
+            </p>
             <ul className="list-disc list-inside mt-2 space-y-1">
               <li>Your posted content</li>
               <li>Your violation of these terms</li>
