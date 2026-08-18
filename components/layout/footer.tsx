@@ -4,7 +4,7 @@ const Footer = () => {
       <p>
         &copy; {new Date().getFullYear()} PixelVerse - Made by{" "}
         <a
-          href="https://github.com/florixak"
+          href="https://ondrejptak.dev"
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline"
@@ -23,10 +23,6 @@ const Footer = () => {
           View Source
         </a>
         <span>•</span>
-        <a href="/about" className="hover:underline">
-          About
-        </a>
-        <span>•</span>
         <a href="/terms" className="hover:underline">
           Terms
         </a>
@@ -35,7 +31,7 @@ const Footer = () => {
           Privacy
         </a>
         <span>•</span>
-        <a href="mailto:ptakondrej@seznam.cz" className="hover:underline">
+        <a href="mailto:ondrej@ondrejptak.dev" className="hover:underline">
           Contact
         </a>
       </div>
